@@ -16,22 +16,22 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
+import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.gson.Gson;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.common.collect.ImmutableList;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.common.collect.Streams;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that handles comment data. */
 @WebServlet("/data")
@@ -43,18 +43,18 @@ public class DataServlet extends HttpServlet {
   private static final String MAX_COMMENT_PROP = "max-comments";
   private static final String DEFAULT_VAL = "";
 
-   @Override
+  @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     int max = Integer.parseInt(request.getParameter(MAX_COMMENT_PROP));
-    ImmutableList<Comment> comments = 
+    ImmutableList<Comment> comments =
         Streams.stream(results.asIterable())
             .map(DataServlet::makeComment)
             .limit(max)
             .collect(toImmutableList());
-            
+
     response.setContentType("application/json;");
     Gson gson = new Gson();
     String json = gson.toJson(comments);
@@ -81,13 +81,14 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/index.html");
   }
 
-    /**
+  /**
    * Returns value of request parameter name, or a default value if not specified.
+   *
    * @param request -- client comment servlet request
    * @param name -- parameter of servlet request to return
    * @param defaultValue -- value to return if not specified by client
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client.
+   * @return the request parameter, or the default value if the parameter was not specified by the
+   *     client.
    */
   private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
@@ -98,9 +99,11 @@ public class DataServlet extends HttpServlet {
   }
 
   private static Comment makeComment(Entity ent) {
-    Comment comment = new Comment(ent.getProperty(COMMENT_PROP).toString(), 
-                                  ent.getProperty(DISPLAY_PROP).toString(),
-                                  ent.getProperty(EMAIL_PROP).toString());
+    Comment comment =
+        new Comment(
+            ent.getProperty(COMMENT_PROP).toString(),
+            ent.getProperty(DISPLAY_PROP).toString(),
+            ent.getProperty(EMAIL_PROP).toString());
     return comment;
   }
 
@@ -116,4 +119,4 @@ public class DataServlet extends HttpServlet {
       this.email = email;
     }
   }
-}  
+}
