@@ -4,6 +4,52 @@
   width: 650px;
 }
 
+.heading {
+  text-align: center;
+}
+
 p {
   font-family: 'open sans', arial, sans-serif;
+}
+
+button {
+  background-color: #E0FFFF;
+}
+
+.profile-button {
+  float: right;
+}
+
+.explore-button {
+  float: left;
+}
+
+.split-profile {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 5%;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.left-profile {
+  left: 25%;
+}
+
+.right-profile {
+  right: -25%;
+}
+
+.inbox {
+  width: 200px;
+  border: 5px solid #000000;
+  padding: 30px;
+}
+
+.profile-pic {
+  width: 5%;
+  height: 5%;
+  margin-left: 50%;
 }
