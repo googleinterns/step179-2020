@@ -43,13 +43,32 @@ button {
 }
 
 .inbox {
-  width: 200px;
+  width: 300px;
   border: 5px solid #000000;
   padding: 30px;
 }
 
 .profile-pic {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   width: 5%;
-  height: 5%;
-  margin-left: 50%;
+}
+
+.top-navigation {
+  background-color: #333333;
+  overflow: hidden;
+}
+
+.top-navigation a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.top-navigation a:hover {
+  background-color: #ddd;
+  color: black;
 }
