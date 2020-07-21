@@ -55,11 +55,11 @@ button {
 }
 
 .full-screen-panel {
-  width: 100%;
+  width: 90%;
   height: 50%;
-  background-color: rgb(194, 194, 194);
+  background-color: #c2c2c2;
   padding: 20px;
-  margin: 20px;
+  margin: 10px 5% 10px 5%;
 }
 
 .club-listing {
@@ -67,11 +67,13 @@ button {
 }
 
 .club-logo {
-  width:100%;
-  height:auto;
+  width: 100%;
+  height: auto;
 }
 
-.club-logo-container, .club-info-container, .club-join-container {
+.club-logo-container, 
+.club-info-container, 
+.club-join-container {
   display: inline-block;
   padding: 5px;
   vertical-align: middle;
