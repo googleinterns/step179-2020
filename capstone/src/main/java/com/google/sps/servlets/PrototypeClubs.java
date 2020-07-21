@@ -15,7 +15,7 @@ class PrototypeClubs {
       ImmutableMap.of(
           CLUB_1,
               new Club(
-                  "Club 1",
+                  CLUB_1,
                   ImmutableList.of("Megan", "Megha", "Kevin", "Chris", "Linh"),
                   ImmutableList.of("Megan", "Megha", "Kevin"),
                   "This is our club. It is very cool. We do lots of things. We help people who are in need of help and those who have fallen down and can’t get up.",
@@ -23,7 +23,7 @@ class PrototypeClubs {
                   ImmutableList.of("Please pay your dues", "Another announcement very important")),
           CLUB_2,
               new Club(
-                  "Club 2",
+                  CLUB_2,
                   ImmutableList.of("Megan", "Megha", "Kevin"),
                   ImmutableList.of("Megha"),
                   "We do cool club things",
@@ -31,7 +31,7 @@ class PrototypeClubs {
                   ImmutableList.of("Meeting tomorrow :)")),
           CLUB_3,
               new Club(
-                  "Club 3",
+                  CLUB_3,
                   ImmutableList.of("Kevin"),
                   ImmutableList.of("Kevin"),
                   "Lonely club :( please join",
