@@ -1,12 +1,12 @@
 package com.google.sps.servlets;
 
 import com.google.common.collect.ImmutableList;
-import java.util.HashMap;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /* Creates hardcoded club information for prototype. */
 public class HardcodedClubs {
-  public static Map<String, Club> clubs = new HashMap<String, Club>();
+  public static Map<String, Club> clubs;
 
   public HardcodedClubs() {
     Club club1 =
@@ -35,8 +35,13 @@ public class HardcodedClubs {
             "Lonely club :( please join",
             "www.please-join.com",
             ImmutableList.of("Hi my name is Kevin"));
-    clubs.put("club 1", club1);
-    clubs.put("club 2", club2);
-    clubs.put("club 3", club3);
+    // clubs.put("Club 1", club1);
+    // clubs.put("Club 2", club2);
+    // clubs.put("Club 3", club3);
+    clubs =
+        ImmutableMap.of(
+            "Club 1", club1,
+            "Club 2", club2,
+            "Club 3", club3);
   }
 }

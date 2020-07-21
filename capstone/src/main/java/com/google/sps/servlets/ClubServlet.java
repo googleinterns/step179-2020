@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 public class ClubServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    HardcodedClubs hc = new HardcodedClubs();
-    Map<String, Club> clubs = hc.clubs;
+    HardcodedClubs clubData = new HardcodedClubs();
+    Map<String, Club> clubs = clubData.clubs;
     Gson gson = new Gson();
     // Only accesses Club club 1 for now
-    String json = gson.toJson(clubs.get("club 1"));
+    String json = gson.toJson(clubs.get("Club 1"));
     response.setContentType("text/html;");
     response.getWriter().println(json);
   }
