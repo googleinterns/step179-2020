@@ -5,15 +5,15 @@ import com.google.common.collect.ImmutableList;
 /** Each instance of Student contains all necessary student information */
 public class Student {
   private String name;
-  private Integer year;
+  private Integer gradYear;
   private String major;
   private String email;
   private ImmutableList<String> clubs;
 
   public Student(
-      String name, Integer year, String major, String email, ImmutableList<String> clubs) {
+      String name, Integer gradYear, String major, String email, ImmutableList<String> clubs) {
     this.name = name;
-    this.year = year;
+    this.gradYear = gradYear;
     this.major = major;
     this.email = email;
     this.clubs = clubs;
