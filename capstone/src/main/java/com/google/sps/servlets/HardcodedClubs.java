@@ -35,9 +35,7 @@ public class HardcodedClubs {
             "Lonely club :( please join",
             "www.please-join.com",
             ImmutableList.of("Hi my name is Kevin"));
-    // clubs.put("Club 1", club1);
-    // clubs.put("Club 2", club2);
-    // clubs.put("Club 3", club3);
+
     clubs =
         ImmutableMap.of(
             "Club 1", club1,
