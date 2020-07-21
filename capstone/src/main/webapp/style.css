@@ -1,7 +1,7 @@
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 80%;
 }
 
 .heading {
@@ -52,4 +52,40 @@ button {
   width: 5%;
   height: 5%;
   margin-left: 50%;
+}
+
+.full-screen-panel {
+  width: 100%;
+  height: 50%;
+  background-color: rgb(194, 194, 194);
+  padding: 20px;
+  margin: 20px;
+}
+
+.club-listing {
+    padding: 20px;
+}
+
+.club-logo {
+  width:100%;
+  height:auto;
+}
+
+.club-logo-container, .club-info-container, .club-join-container {
+  display: inline-block;
+  padding: 5px;
+  vertical-align: middle;
+  margin: 10px;
+}
+
+.club-logo-container {
+    width: 10%;
+}
+
+.club-info-container {
+    width: 60%;
+}
+
+.club-join-container {
+    width: 20%;
 }
