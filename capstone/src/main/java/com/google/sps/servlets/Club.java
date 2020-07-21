@@ -1,23 +1,23 @@
 package com.google.sps.servlets;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 /* Contains all information relevant to a club. */
 public class Club {
   private String name;
-  private List<String> members;
-  private List<String> officers;
+  private ImmutableList<String> members;
+  private ImmutableList<String> officers;
   private String description;
   private String website;
-  private List<String> announcements;
+  private ImmutableList<String> announcements;
 
   public Club(
       String name,
-      List<String> members,
-      List<String> officers,
+      ImmutableList<String> members,
+      ImmutableList<String> officers,
       String description,
       String website,
-      List<String> announcements) {
+      ImmutableList<String> announcements) {
     this.name = name;
     this.members = members;
     this.officers = officers;
