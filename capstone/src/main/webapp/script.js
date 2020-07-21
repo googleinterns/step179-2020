@@ -11,6 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+/** Load navigation bars */
+$(document).ready(function() {
+  $('#top-navigation').load('top-navbar.html');
+});
+
 $(document).ready(function() {
   $('#navbar').load('navbar.html');
 });
