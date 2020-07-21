@@ -1,7 +1,7 @@
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 80%;
 }
 
 .heading {
@@ -13,7 +13,7 @@ p {
 }
 
 button {
-  background-color: #E0FFFF;
+  background-color: #e0ffff;
 }
 
 .profile-button {
@@ -43,13 +43,70 @@ button {
 }
 
 .inbox {
-  width: 200px;
-  border: 5px solid #000000;
+  width: 300px;
+  border: 5px solid #000;
   padding: 30px;
 }
 
 .profile-pic {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   width: 5%;
-  height: 5%;
-  margin-left: 50%;
+}
+
+.full-screen-panel {
+  width: 90%;
+  height: 50%;
+  background-color: #ccc;
+  padding: 20px;
+  margin: 10px 5% 10px 5%;
+}
+
+.club-listing {
+    padding: 20px;
+}
+
+.club-logo {
+  width: 100%;
+  height: auto;
+}
+
+.club-logo-container, 
+.club-info-container, 
+.club-join-container {
+  display: inline-block;
+  padding: 5px;
+  vertical-align: middle;
+  margin: 10px;
+}
+
+.club-logo-container {
+    width: 10%;
+}
+
+.club-info-container {
+    width: 60%;
+}
+
+.club-join-container {
+    width: 20%;
+}
+
+.top-navigation {
+  background-color: #333;
+  overflow: hidden;
+}
+
+.top-navigation a {
+  float: right;
+  color: #fff;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.top-navigation a:hover {
+  background-color: #ddd;
+  color: #000;
 }
