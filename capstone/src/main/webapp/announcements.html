@@ -4,10 +4,22 @@
     <meta charset="UTF-8">
     <title>Announcements</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script.js"></script>
   </head>
   <body>
     <div id="navbar"></div>
+    <div id="post-announcement">
+      <form action="/clubs" method="POST">
+        <input type="text" name="announcement-text" placeholder="Add announcement...">
+        <input type="submit" value="Post">
+    </div>
+
+    <div id="announcements-display">
+      <ul>
+        <li>Megha: Reminder that club fees are due today! 07/18/2020 1:20 PM</li>
+        <li>From Megan: Hi guys! Welcome to my club! I love you all! 07/15/2020 3:47PM</li>
+      </ul>
+    </div>
   </body>
 </html>
