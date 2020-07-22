@@ -54,19 +54,19 @@ function createClubElement(text) {
 
 function getClubInfo() {
   fetch('/clubs').then(response => response.json()).then((clubInfo) => {
-    document.getElementById('club-name').innerHTML = '<h1>' + clubInfo['name'] + '</h1>';
-    document.getElementById('description').innerHTML = '<p>' + clubInfo['description'] + '</p>';
+    document.getElementById('club-name').innerHTML = clubInfo['name'];
+    document.getElementById('description').innerHTML = clubInfo['description'];
     
     var officerList = document.getElementById('officers');
     var officers = clubInfo['officers'];
-    officerList.innerHTML = '<p>Officers:</p>';
+    officerList.innerHTML = 'Officers:';
     officerList.innerHTML += '<ul>';
     for (const officer of officers) {
       officerList.innerHTML += '<li>' + officer + '</li>';
     }
     officerList.innerHTML += '</ul>'
 
-    document.getElementById('members').innerHTML = '<p># of Members: ' + clubInfo['members'].length + '</p>';
-    document.getElementById('website').innerHTML = '<p>Website: ' + clubInfo['website'] + '</p>';
+    document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
+    document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
   });   
 }
