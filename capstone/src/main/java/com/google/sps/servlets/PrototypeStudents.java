@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 
 /** Hard-coded student data for prototype */
 public final class PrototypeStudents {
-  public static final String MEGAN_EMAIL = "meghashi@google.com";
+  public static final String MEGAN_EMAIL = "meganshi@google.com";
   public static final String MEGHA_EMAIL = "kakm@google.com";
   public static final String KEVIN_EMAIL = "kshao@google.com";
   public static final String MEGAN_NAME = "Megan Shi";
