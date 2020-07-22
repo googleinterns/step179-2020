@@ -1,6 +1,6 @@
 package com.google.sps.servlets;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 /** Each instance of Student contains all necessary student information */
 public class Student {
@@ -8,10 +8,9 @@ public class Student {
   private Integer gradYear;
   private String major;
   private String email;
-  private ImmutableList<String> clubs;
+  private List<String> clubs;
 
-  public Student(
-      String name, Integer gradYear, String major, String email, ImmutableList<String> clubs) {
+  public Student(String name, Integer gradYear, String major, String email, List<String> clubs) {
     this.name = name;
     this.gradYear = gradYear;
     this.major = major;
@@ -35,7 +34,7 @@ public class Student {
     return email;
   }
 
-  public ImmutableList<String> getClubList() {
+  public List<String> getClubList() {
     return clubs;
   }
 }

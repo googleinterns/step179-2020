@@ -11,8 +11,8 @@ public final class PrototypeStudents {
   public static final String MEGAN_NAME = "Megan Shi";
   public static final String MEGHA_NAME = "Megha Kak";
   public static final String KEVIN_NAME = "Kevin Shao";
-  public static final Integer YEAR_2022 = 2022;
-  public static final Integer YEAR_2023 = 2023;
+  public static final int YEAR_2022 = 2022;
+  public static final int YEAR_2023 = 2023;
   public static final String MAJOR = "Computer Science";
   public static final String CLUB_1 = "Club 1";
   public static final String CLUB_2 = "Club 2";
