@@ -18,7 +18,7 @@ class PrototypeClubs {
                   CLUB_1,
                   ImmutableList.of("Megan", "Megha", "Kevin", "Chris", "Linh"),
                   ImmutableList.of("Megan", "Megha", "Kevin"),
-                  "This is our club. It is very cool. We do lots of things. We help people who are in need of help and those who have fallen down and can’t get up.",
+                  "This is our club. It is very cool. We do lots of things. We help people who are in need of help and those who have fallen down and can&rsquo;t get up.",
                   "www.club1.com",
                   ImmutableList.of("Please pay your dues", "Another announcement very important")),
           CLUB_2,
