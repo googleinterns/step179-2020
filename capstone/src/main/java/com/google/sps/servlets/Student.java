@@ -5,12 +5,12 @@ import java.util.List;
 /** Each instance of Student contains all necessary student information */
 public class Student {
   private String name;
-  private Integer gradYear;
+  private int gradYear;
   private String major;
   private String email;
   private List<String> clubs;
 
-  public Student(String name, Integer gradYear, String major, String email, List<String> clubs) {
+  public Student(String name, int gradYear, String major, String email, List<String> clubs) {
     this.name = name;
     this.gradYear = gradYear;
     this.major = major;
