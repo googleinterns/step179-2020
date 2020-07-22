@@ -51,3 +51,21 @@ function createClubElement(text) {
   liElement.innerHTML += '<button>Leave</button>';
   return liElement;
 }
+
+function getClubInfo() {
+  fetch('/clubs').then(response => response.json()).then((clubInfo) => {
+    document.getElementById('club-name').innerHTML = '<h1>' + clubInfo['name'] + '</h1>';
+    document.getElementById('description').innerHTML = '<p>' + clubInfo['description'] + '</p>';
+    
+    var officerList = document.getElementById('officers');
+    var officers = clubInfo['officers'];
+    officerList.innerHTML = '<p>Officers:</p>';
+    officerList.innerHTML += '<ul>';
+    for (const officer of officers) {
+      officerList.innerHTML += '<li>' + officer + '</li>';
+    }
+    
+    document.getElementById('members').innerHTML = '<p># of Members: ' + clubInfo['members'].length + '</p>';
+    document.getElementById('website').innerHTML = '<p>Website: ' + clubInfo['website'] + '</p>';
+  });   
+}
