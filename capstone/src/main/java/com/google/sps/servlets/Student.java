@@ -18,4 +18,24 @@ public class Student {
     this.email = email;
     this.clubs = clubs;
   }
+
+  public String getName() {
+    return name;
+  }
+
+  public Integer getGradYear() {
+    return gradYear;
+  }
+
+  public String getMajor() {
+    return major;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public ImmutableList<String> getClubList() {
+    return clubs;
+  }
 }

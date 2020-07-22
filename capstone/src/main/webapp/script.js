@@ -20,3 +20,34 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('#navbar').load('navbar.html');
 });
+
+/** Fetch student information and add it to the profile */
+function getStudentInfo() {
+  fetch('/student-data').then(response => response.json()).then((studentInfo) => {  
+    // Update profile name
+    var profileTitle = document.getElementById('heading');
+    profileTitle.innerHTML += studentInfo['name'];
+
+    // Update profile club list
+    var clubList = document.getElementById('club-content');
+    const clubs = studentInfo['clubs'];
+    for(const key in clubs) {
+      clubList.appendChild(createClubElement(clubs[key]));
+    }
+
+    // Add additional student information
+    var personalInfo = document.getElementById('student-info');
+    const newLine = '<br>';
+    personalInfo.innerHTML = 'Email: ' + studentInfo['email'] + newLine;
+    personalInfo.innerHTML += 'Grad Year: ' + studentInfo['gradYear'] + newLine;
+    personalInfo.innerHTML += 'Major: ' + studentInfo['major'] + newLine;
+  });
+}
+
+/** Create an <li> element containing club name and leave button */
+function createClubElement(text) {
+  var liElement = document.createElement('li');
+  liElement.innerText = text + "  ";
+  liElement.innerHTML += '<button>Leave</button>';
+  return liElement;
+}

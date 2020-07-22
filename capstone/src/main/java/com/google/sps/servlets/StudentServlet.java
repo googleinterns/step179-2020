@@ -1,6 +1,5 @@
 package com.google.sps.servlets;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -8,15 +7,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns students' profile content */
+/** Servlet that returns a student's profile content */
 @WebServlet("/student-data")
 public class StudentServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ImmutableMap<String, Student> students = PrototypeStudents.PROTOTYPE_STUDENTS;
-    String studentsJson = convertToJsonUsingGson(students.get(PrototypeStudents.KEVIN_EMAIL));
-    response.getWriter().println(studentsJson);
+    String studentJson =
+        convertToJsonUsingGson(
+            PrototypeStudents.PROTOTYPE_STUDENTS.get(PrototypeStudents.KEVIN_EMAIL));
+
+    response.setContentType("application/json;");
+    response.getWriter().println(studentJson);
   }
 
   private static String convertToJsonUsingGson(Student student) {

@@ -3,7 +3,7 @@ package com.google.sps.servlets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-/** Hardcoded student data for prototype */
+/** Hard-coded student data for prototype */
 public final class PrototypeStudents {
   public static final String MEGAN_EMAIL = "meghashi@google.com";
   public static final String MEGHA_EMAIL = "kakm@google.com";
