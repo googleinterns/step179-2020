@@ -47,7 +47,7 @@ function getStudentInfo() {
 /** Create an <li> element containing club name and leave button */
 function createClubElement(text) {
   var liElement = document.createElement('li');
-  liElement.innerText = text + "  ";
+  liElement.innerText = text + '  ';
   liElement.innerHTML += '<button>Leave</button>';
   return liElement;
 }
