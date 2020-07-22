@@ -15,7 +15,7 @@ function loadListings (json) {
   for (var index in json) {
     section.innerHTML += '<div class="club-listing">' + 
                            '<div class="club-logo-container">' + 
-                             '<img src="images/image1.png" class="club-logo" alt="Club logo">' + 
+                             '<img src="images/logo.png" class="club-logo" alt="Club logo">' + 
                            '</div>' + 
                            '<div class="club-info-container">' + 
                              '<h2>' + json[index].name + '</h2>' + 
