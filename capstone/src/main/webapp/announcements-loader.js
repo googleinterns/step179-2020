@@ -3,7 +3,7 @@ $(document).ready(function() {
 });
 
 async function loadAnnouncements () {
-  const query = "/announcements";
+  const query = '/announcements';
   const response = await fetch(query);
   const json = await response.json();
 

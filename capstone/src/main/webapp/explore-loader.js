@@ -1,17 +1,15 @@
 $(document).ready(function() {
-  getAnnouncements();
+  getListings();
 });
 
-async function getAnnouncements () {
-  const query = "/explore";
+async function getListings () {
+  const query = '/explore';
   const response = await fetch(query);
   const json = await response.json();
-  loadAnnouncements(json);
+  loadListings(json);
 }
 
-function loadAnnouncements (json) {
-  console.log('here');
-  console.log(json);
+function loadListings (json) {
   const section = document.getElementById('club-listings');
   section.innerHTML = '';
   for (var index in json) {
