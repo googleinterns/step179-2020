@@ -19,12 +19,20 @@ public class AuthServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String logoutUrl = userService.createLogoutURL(redirectURL);
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a></p>");
+      response
+          .getWriter()
+          .println(
+              "<button class='auth-button' onclick='window.location.href=\""
+                  + logoutUrl
+                  + "\"'>Logout here</button>");
     } else {
       String loginUrl = userService.createLoginURL(redirectURL);
       response
           .getWriter()
-          .println("<p>Login <a href=\"" + loginUrl + "\">here</a> to view your profile</p>");
+          .println(
+              "<button class='auth-button' onclick='window.location.href=\""
+                  + loginUrl
+                  + "\"'>Login here to view your profile</button>");
     }
   }
 }

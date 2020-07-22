@@ -16,6 +16,29 @@ button {
   background-color: #e0ffff;
 }
 
+button.auth-button {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color:#000080;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: 0.3s;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.auth-button:hover {
+  opacity: 1;
+}
+
 .profile-button {
   float: right;
 }
