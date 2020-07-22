@@ -7,22 +7,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getStudentInfo()">
     <div id="top-navigation"></div>
-    <h1 class="heading">Megan Shi</h1>
+    <h1 id="heading"></h1>
     <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
     <br><br>
     <div class="split-profile left-profile">
       <h1><u>Profile</u></h1>
       <h2>My Clubs:</h2>
-      <ul>
-        <li>Club 1 (Officer) <button>Leave</button></li>
-        <li>Club 2 (Member) <button>Leave</button></li>
-      </ul>
+      <ul id="club-content"></ul>
       <br>
-      <p>Email: meganshi@google.com</p>
-      <p>Year: Junior</p>
-      <p>Major: Computer Science</p>
+      <div id="student-info"></div>
       <button>Edit</button>
     </div>
     <div class="split-profile right-profile">
