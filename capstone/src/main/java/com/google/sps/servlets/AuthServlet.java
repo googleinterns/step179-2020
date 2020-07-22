@@ -24,15 +24,20 @@ public class AuthServlet extends HttpServlet {
           .println(
               "<button class='auth-button' onclick='window.location.href=\""
                   + logoutUrl
-                  + "\"'>Logout here</button>");
+                  + "\"'>Logout Here</button>");
     } else {
       String loginUrl = userService.createLoginURL(redirectURL);
-      response
-          .getWriter()
-          .println(
-              "<button class='auth-button' onclick='window.location.href=\""
-                  + loginUrl
-                  + "\"'>Login here to view your profile</button>");
+      response.getWriter().println(getLoginInfo(loginUrl));
     }
+  }
+
+  private static String getLoginInfo(String loginUrl) {
+    String loginIntro =
+        "<h1 class='login-intro'>Welcome to the ClubHub Profile page! Please login below to view your profile</h1>";
+    String loginButton =
+        "<button class='auth-button login-button' onclick='window.location.href=\""
+            + loginUrl
+            + "\"'>Login Here</button>";
+    return loginIntro + loginButton;
   }
 }
