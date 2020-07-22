@@ -110,3 +110,29 @@ button {
   background-color: #ddd;
   color: #000;
 }
+
+/* Navigation Bar */
+.club-navbar {
+  background-color: lightblue;
+  list-style-type: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.club-navbar-element{
+  float: left;
+}
+
+.club-navbar-element a {
+  color: white;
+  display: inline-block;
+  font: bold 14px Tahoma;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.club-navbar-element a:hover {
+  background-color: cornflowerblue;
+}
