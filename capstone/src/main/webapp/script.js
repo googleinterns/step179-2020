@@ -64,7 +64,8 @@ function getClubInfo() {
     for (const officer of officers) {
       officerList.innerHTML += '<li>' + officer + '</li>';
     }
-    
+    officerList.innerHTML += '</ul>'
+
     document.getElementById('members').innerHTML = '<p># of Members: ' + clubInfo['members'].length + '</p>';
     document.getElementById('website').innerHTML = '<p>Website: ' + clubInfo['website'] + '</p>';
   });   
