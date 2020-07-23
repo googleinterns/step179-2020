@@ -25,4 +25,8 @@ public class Club {
     this.website = website;
     this.announcements = announcements;
   }
+
+  public ImmutableList<String> getAnnouncements() {
+    return this.announcements;
+  }
 }

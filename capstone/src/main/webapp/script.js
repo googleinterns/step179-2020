@@ -20,3 +20,22 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('#navbar').load('navbar.html');
 });
+
+function getClubInfo() {
+  fetch('/clubs').then(response => response.json()).then((clubInfo) => {
+    document.getElementById('club-name').innerHTML = clubInfo['name'];
+    document.getElementById('description').innerHTML = clubInfo['description'];
+    
+    var officerList = document.getElementById('officers');
+    var officers = clubInfo['officers'];
+    officerList.innerHTML = 'Officers:';
+    officerList.innerHTML += '<ul>';
+    for (const officer of officers) {
+      officerList.innerHTML += '<li>' + officer + '</li>';
+    }
+    officerList.innerHTML += '</ul>'
+
+    document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
+    document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
+  });   
+}
