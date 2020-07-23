@@ -18,7 +18,7 @@ function loadListings (json) {
                              '<img src="images/logo.png" class="club-logo" alt="Club logo">' + 
                            '</div>' + 
                            '<div class="club-info-container">' + 
-                             '<h2>' + json[index].name + '</h2>' + 
+                             '<h2><a href="about-us.html">' + json[index].name + '</a></h2>' + 
                              '<p>' + json[index].description + '</p>' + 
                              '<p>' + json[index].members.length + ' members</p>' +     
                            '</div>' + 
