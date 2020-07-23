@@ -19,8 +19,7 @@ public class StudentServlet extends HttpServlet {
     String userEmail = userService.getCurrentUser().getEmail();
     System.out.println("here get: " + userEmail);
     String studentJson =
-        convertToJsonUsingGson(
-            PrototypeStudents.PROTOTYPE_STUDENTS.get(PrototypeStudents.KEVIN_EMAIL));
+        convertToJsonUsingGson(PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail));
 
     response.setContentType("application/json;");
     response.getWriter().println(studentJson);
@@ -34,9 +33,10 @@ public class StudentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(PrototypeStudents.KEVIN_EMAIL);
+
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
+    Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail);
     System.out.println("here: " + userEmail);
     String clubToRemove = request.getParameter("club");
     if (clubToRemove != null && !clubToRemove.isEmpty()) {
