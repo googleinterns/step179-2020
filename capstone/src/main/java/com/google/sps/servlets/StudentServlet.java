@@ -26,4 +26,29 @@ public class StudentServlet extends HttpServlet {
     String json = gson.toJson(student);
     return json;
   }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get student object based on the logged in email
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
+    Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail);
+
+    if (request.getParameter("action").equals("join")) {
+      String clubToJoin = request.getParameter("club");
+      if (clubToJoin != null && !clubToJoin.isEmpty()) {
+        student.joinClub(clubToJoin);
+      }    
+    }
+
+    if (request.getParameter("action").equals("leave")) {
+      String clubToRemove = request.getParameter("club");
+      if (clubToRemove != null && !clubToRemove.isEmpty()) {
+        student.removeClub(clubToRemove);
+      }
+    }
+
+    response.sendRedirect(request.getHeader("referer"));
+  }
+
 }
