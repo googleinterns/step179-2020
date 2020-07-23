@@ -6,24 +6,27 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
+    <script src="profile-loader.js"></script>
   </head>
-  <body onload="getStudentInfo()">
+  <body>
     <div id="top-navigation"></div>
-    <h1 id="heading"></h1>
-    <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
-    <br><br>
-    <div class="split-profile left-profile">
-      <h1><u>Profile</u></h1>
-      <h2>My Clubs:</h2>
-      <ul id="club-content"></ul>
-      <br>
-      <div id="student-info"></div>
-      <button>Edit</button>
-    </div>
-    <div class="split-profile right-profile">
-      <h1><u>Inbox</u></h1>
-      <br>
-      <p class="inbox">From Club 1 (Megha): Reminder that club fees are due today!</p>
+    <div id="profile-content">
+      <h1 id="heading"></h1>
+      <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
+      <br><br>
+      <div class="split-profile left-profile">
+        <h1><u>Profile</u></h1>
+        <h2>My Clubs:</h2>
+        <ul id="club-content"></ul>
+        <br>
+        <div id="student-info"></div>
+        <button>Edit</button>
+      </div>
+      <div class="split-profile right-profile">
+        <h1><u>Inbox</u></h1>
+        <br>
+        <p class="inbox">From Club 1 (Megha): Reminder that club fees are due today!</p>
+      </div>
     </div>
   </body>
 </html>

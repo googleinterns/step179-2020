@@ -4,8 +4,13 @@
   width: 80%;
 }
 
-#heading {
+#heading,
+.login-intro {
   text-align: center;
+}
+
+.login-intro {
+  margin-top: 10%;
 }
 
 p {
@@ -14,6 +19,34 @@ p {
 
 button {
   background-color: #e0ffff;
+}
+
+.auth-button {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color:#000080;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 20px;
+  opacity: 0.6;
+  transition: 0.3s;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.auth-button:hover {
+  opacity: 1;
+}
+
+.login-button {
+  margin-top: 5%;
+  font-size: 26px;
 }
 
 .profile-button {
