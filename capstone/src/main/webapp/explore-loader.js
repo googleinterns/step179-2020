@@ -23,6 +23,11 @@ function loadListings (json) {
                              '<p>' + json[index].members.length + ' members</p>' +     
                            '</div>' + 
                            '<div class="club-join-container">' + 
+                             '<form action="student-data" method="POST">' + 
+                               '<input type="hidden" name = "club" value="' + json[index].name + '">' + 
+                               '<input type="hidden" name = "action" value="join">' + 
+                               '<input type="submit" value="Join">' +
+                             '</form>' + 
                              '<button onclick="location.href=\'about-us.html\';">Join club</button>' + 
                            '</div>' + 
                          '</div>';
