@@ -33,7 +33,7 @@ function getStudentInfo() {
     // Add additional student information
     var personalInfo = document.getElementById('student-info');
     const newLine = '<br>';
-    personalInfo.innerHTML = 'Email: ' + studentInfo['email'] + newLine;
+    personalInfo.innerHTML += 'Email: ' + studentInfo['email'] + newLine;
     personalInfo.innerHTML += 'Grad Year: ' + studentInfo['gradYear'] + newLine;
     personalInfo.innerHTML += 'Major: ' + studentInfo['major'] + newLine;
   });
@@ -43,6 +43,10 @@ function getStudentInfo() {
 function createClubElement(text) {
   var liElement = document.createElement('li');
   liElement.innerText = text + '  ';
-  liElement.innerHTML += '<button>Leave</button>';
+
+  // Create leave button and set value to its respective club
+  liElement.innerHTML += '<button name="club" value="'
+    + text
+    + '" formmethod="POST">Leave</button>';
   return liElement;
 }
