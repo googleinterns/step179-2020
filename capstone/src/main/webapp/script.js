@@ -64,3 +64,8 @@ function showTab(tabName) {
     loadAnnouncements();
   }
 }
+
+/** Adds student to members list for current club */
+function joinClub() {
+
+}
