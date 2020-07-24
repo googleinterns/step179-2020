@@ -10,11 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example club content. */
 @WebServlet("/clubs")
 public class ClubServlet extends HttpServlet {
+  private static final String CLUB_NAME_PROP = "name";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Gson gson = new Gson();
-    // Only accesses Club club 1 for now
-    String json = gson.toJson(PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(PrototypeClubs.CLUB_1));
+    String json =
+        gson.toJson(PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(request.getParameter(CLUB_NAME_PROP)));
     response.setContentType("text/html;");
     response.getWriter().println(json);
   }

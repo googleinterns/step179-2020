@@ -19,7 +19,8 @@ $(document).ready(function() {
 
 /** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {
-  fetch('/clubs').then(response => response.json()).then((clubInfo) => {
+  var params = new URLSearchParams(window.location.search);
+  fetch('/clubs?name=' + params.get('name')).then(response => response.json()).then((clubInfo) => {
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
     
@@ -39,7 +40,8 @@ function getClubInfo() {
 
 /** Accesses and displays club announcement data from servlet. */
 async function loadAnnouncements () {
-  const query = '/announcements';
+  var params = new URLSearchParams(window.location.search);
+  const query = '/announcements?name=' + params.get('name');
   const response = await fetch(query);
   const json = await response.json();
   const announcementsSection = document.getElementById('announcements-display');
@@ -67,5 +69,4 @@ function showTab(tabName) {
 
 /** Adds student to members list for current club */
 function joinClub() {
-
 }
