@@ -48,6 +48,5 @@ function createClubElement(text) {
     + '  <button name="club" value="'
     + text
     + '" formmethod="POST">Leave</button>';
-  console.log(liElement.innerHTML);
   return liElement;
 }
