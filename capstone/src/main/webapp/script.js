@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Load navigation bar */
-$(document).ready(function() {
-  $('#top-navigation').load('top-navbar.html');
-});
+/** Add top navigation bar to the HTML */
+const topNavBar = 
+    '<div class="top-navigation">'
+    + '<a href="profile.html">My Profile</a>'
+    + '<a href="index.html">Explore</a>'
+    + '</div>';
+document.write(topNavBar);
 
 /** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {

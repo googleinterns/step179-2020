@@ -1,6 +1,4 @@
-$(document).ready(function() {
-  getListings();
-});
+getListings();
 
 async function getListings () {
   const query = '/explore';

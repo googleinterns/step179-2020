@@ -1,6 +1,4 @@
-$(document).ready(function() {
-  showOrHideProfile();
-});
+showOrHideProfile();
 
 /** Fetch login status and show or hide profile accordingly */
 function showOrHideProfile() {
