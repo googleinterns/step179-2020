@@ -1,8 +1,7 @@
 package com.google.sps.servlets;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /** Hard-coded student data for prototype */
 public final class PrototypeStudents {
@@ -26,30 +25,18 @@ public final class PrototypeStudents {
       ImmutableMap.of(
           MEGAN_EMAIL,
               new Student(
-                  MEGAN_NAME,
-                  YEAR_2022,
-                  MAJOR,
-                  MEGAN_EMAIL,
-                  new ArrayList(Arrays.asList(CLUB_1, CLUB_2))),
+                  MEGAN_NAME, YEAR_2022, MAJOR, MEGAN_EMAIL, ImmutableList.of(CLUB_1, CLUB_2)),
           MEGHA_EMAIL,
               new Student(
-                  MEGHA_NAME,
-                  YEAR_2022,
-                  MAJOR,
-                  MEGHA_EMAIL,
-                  new ArrayList(Arrays.asList(CLUB_2, CLUB_3))),
+                  MEGHA_NAME, YEAR_2022, MAJOR, MEGHA_EMAIL, ImmutableList.of(CLUB_2, CLUB_3)),
           KEVIN_EMAIL,
               new Student(
                   KEVIN_NAME,
                   YEAR_2023,
                   MAJOR,
                   KEVIN_EMAIL,
-                  new ArrayList(Arrays.asList(CLUB_1, CLUB_2, CLUB_3))),
+                  ImmutableList.of(CLUB_1, CLUB_2, CLUB_3)),
           TEST_EMAIL,
               new Student(
-                  TEST_NAME,
-                  YEAR_2023,
-                  TEST_MAJOR,
-                  TEST_EMAIL,
-                  new ArrayList(Arrays.asList(CLUB_1, CLUB_3))));
+                  TEST_NAME, YEAR_2023, TEST_MAJOR, TEST_EMAIL, ImmutableList.of(CLUB_1, CLUB_3)));
 }

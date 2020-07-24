@@ -33,16 +33,16 @@ public class StudentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get student object based on the logged in email
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
-    Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail);
+    // TODO: All commented steps below
 
-    // Remove club from student's club list
-    String clubToRemove = request.getParameter("club");
-    if (clubToRemove != null && !clubToRemove.isEmpty()) {
-      student.removeClub(clubToRemove);
-    }
+    // Get student object based on the logged in email
+
+    // Add club to logged in student's club list if requested
+
+    // Remove club from logged in student's club list if requested
+
+    // Update student information with edited content
+
     response.sendRedirect("/profile.html");
   }
 }

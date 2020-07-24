@@ -1,6 +1,6 @@
 package com.google.sps.servlets;
 
-import java.util.ArrayList;
+import com.google.common.collect.ImmutableList;
 
 /** Each instance of Student contains all necessary student information */
 public class Student {
@@ -8,9 +8,10 @@ public class Student {
   private int gradYear;
   private String major;
   private String email;
-  private ArrayList<String> clubs;
+  private ImmutableList<String> clubs;
 
-  public Student(String name, int gradYear, String major, String email, ArrayList<String> clubs) {
+  public Student(
+      String name, int gradYear, String major, String email, ImmutableList<String> clubs) {
     this.name = name;
     this.gradYear = gradYear;
     this.major = major;
@@ -34,11 +35,7 @@ public class Student {
     return email;
   }
 
-  public ArrayList<String> getClubList() {
+  public ImmutableList<String> getClubList() {
     return clubs;
-  }
-
-  public void removeClub(String club) {
-    clubs.remove(club);
   }
 }
