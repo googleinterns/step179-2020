@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Load navigation bars */
+/** Load navigation bar */
 $(document).ready(function() {
   $('#top-navigation').load('top-navbar.html');
 });
 
-$(document).ready(function() {
-  $('#navbar').load('navbar.html');
-});
-
+/** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {
   fetch('/clubs').then(response => response.json()).then((clubInfo) => {
     document.getElementById('club-name').innerHTML = clubInfo['name'];
@@ -37,5 +34,33 @@ function getClubInfo() {
 
     document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
     document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
-  });   
+  });
+}
+
+/** Accesses and displays club announcement data from servlet. */
+async function loadAnnouncements () {
+  const query = '/announcements';
+  const response = await fetch(query);
+  const json = await response.json();
+  const announcementsSection = document.getElementById('announcements-display');
+  announcementsSection.innerHTML = '<h1>Announcements</h1>';
+  announcementsSection.innerHTML += '<ul>';
+  for (var index in json) {
+      announcementsSection.innerHTML += '<li>'+json[index]+'</li>';
+  }
+  announcementsSection.innerHTML += '</ul>';
+}
+
+/** Displays club info tab, depending on which tab user selected. */
+function showTab(tabName) {
+  var template = document.querySelector(tabName);
+  const node = document.importNode(template.content, true);
+  document.getElementById('tab').innerHTML = '';
+  document.getElementById('tab').appendChild(node);
+
+  if (tabName == '#about-us') {
+    getClubInfo();
+  } else if (tabName == '#announcements') {
+    loadAnnouncements();
+  }
 }

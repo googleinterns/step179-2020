@@ -2,18 +2,36 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>About Us</title>
+    <title>Club Info</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="getClubInfo()">
+  <body onload="showTab('#about-us')">
     <div id="top-navigation"></div>
     <h1 id="club-name"></h1>
-    <div id="navbar"></div>
-    <p id="description"></p>
-    <p id="officers"></p>
-    <p id="members"></p>
-    <p id="website"></p>
+    <ul class="club-navbar">
+      <li class="club-navbar-element" onclick="showTab('#about-us')"><a >About Us</a></li>
+      <li class="club-navbar-element" onclick="showTab('#announcements')"><a>Announcements</a></li>
+      <li class="club-navbar-element" onclick="showTab('#calendar')"><a>Calendar</a></li>
+    </ul>
+    <div id="tab"></div>
+    <template id="about-us">
+      <p id="description"></p>
+      <p id="officers"></p>
+      <p id="members"></p>
+      <p id="website"></p>
+    </template>
+    <template id="announcements">
+      <div id="post-announcement" class="full-screen-panel">
+        <form action="/clubs" method="POST">
+          <input type="text" name="announcement-text" placeholder="Add announcement...">
+          <input type="submit" value="Post">
+      </div>
+      <div id="announcements-display" class="full-screen-panel"></div>
+    </template>
+    <template id="calendar">
+      <p>Calendar goes here</p>
+    </template>
   </body>
 </html>
