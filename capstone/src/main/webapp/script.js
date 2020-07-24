@@ -19,11 +19,6 @@ $(document).ready(function() {
 
 /** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {
-  var template = document.querySelector('#about-us');
-  const node = document.importNode(template.content, true);
-  document.getElementById('tab').innerHTML = '';
-  document.getElementById('tab').appendChild(node);
-
   fetch('/clubs').then(response => response.json()).then((clubInfo) => {
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
@@ -47,7 +42,7 @@ async function loadAnnouncements () {
   const query = '/announcements';
   const response = await fetch(query);
   const json = await response.json();
-   const announcementsSection = document.getElementById('announcements-display');
+  const announcementsSection = document.getElementById('announcements-display');
   announcementsSection.innerHTML = '<h1>Announcements</h1>';
   announcementsSection.innerHTML += '<ul>';
   for (var index in json) {
@@ -57,18 +52,15 @@ async function loadAnnouncements () {
 }
 
 /** Displays club info tab, depending on which tab user selected. */
-function showTab(tabNum) {
-  if (tabNum == 1) {
+function showTab(tabName) {
+  var template = document.querySelector(tabName);
+  const node = document.importNode(template.content, true);
+  document.getElementById('tab').innerHTML = '';
+  document.getElementById('tab').appendChild(node);
+
+  if (tabName == '#about-us') {
     getClubInfo();
-  } else {
-    if (tabNum == 2) {
-      var template = document.querySelector('#announcements');
-      loadAnnouncements();
-    } else if (tabNum == 3) {
-      var template = document.querySelector('#calendar');
-    }
-    const node = document.importNode(template.content, true);
-    document.getElementById('tab').innerHTML = '';
-    document.getElementById('tab').appendChild(node);
+  } else if (tabName == '#announcements') {
+    loadAnnouncements();
   }
 }

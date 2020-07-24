@@ -7,13 +7,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="getClubInfo()">
+  <body onload="showTab('#about-us')">
     <div id="top-navigation"></div>
     <h1 id="club-name"></h1>
     <ul class="club-navbar">
-      <li class="club-navbar-element" onclick="showTab('1')"><a >About Us</a></li>
-      <li class="club-navbar-element" onclick="showTab('2')"><a>Announcements</a></li>
-      <li class="club-navbar-element" onclick="showTab('3')"><a>Calendar</a></li>
+      <li class="club-navbar-element" onclick="showTab('#about-us')"><a >About Us</a></li>
+      <li class="club-navbar-element" onclick="showTab('#announcements')"><a>Announcements</a></li>
+      <li class="club-navbar-element" onclick="showTab('#calendar')"><a>Calendar</a></li>
     </ul>
     <div id="tab"></div>
     <template id="about-us">
