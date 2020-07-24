@@ -34,14 +34,10 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: All commented steps below
-
-    // Get student object based on the logged in email
-
-    // Add club to logged in student's club list if requested
-
-    // Remove club from logged in student's club list if requested
-
-    // Update student information with edited content
+    // 1. Get student object based on the logged in email
+    // 2. Add club to logged in student's club list if requested
+    // 3. Remove club from logged in student's club list if requested
+    // 4. Update student information with edited content
 
     response.sendRedirect("/profile.html");
   }
