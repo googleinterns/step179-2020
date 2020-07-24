@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Load navigation bars */
+/** Load navigation bar */
 $(document).ready(function() {
   $('#top-navigation').load('top-navbar.html');
 });
 
-$(document).ready(function() {
-  $('#navbar').load('navbar.html');
-});
-
+/** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {
+  var template = document.querySelector('#about-us');
+  const node = document.importNode(template.content, true);
+  document.getElementById('tab').innerHTML = '';
+  document.getElementById('tab').appendChild(node);
+
   fetch('/clubs').then(response => response.json()).then((clubInfo) => {
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
@@ -37,5 +39,36 @@ function getClubInfo() {
 
     document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
     document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
-  });   
+  });
+}
+
+/** Accesses and displays club announcement data from servlet. */
+async function loadAnnouncements () {
+  const query = '/announcements';
+  const response = await fetch(query);
+  const json = await response.json();
+   const announcementsSection = document.getElementById('announcements-display');
+  announcementsSection.innerHTML = '<h1>Announcements</h1>';
+  announcementsSection.innerHTML += '<ul>';
+  for (var index in json) {
+      announcementsSection.innerHTML += '<li>'+json[index]+'</li>';
+  }
+  announcementsSection.innerHTML += '</ul>';
+}
+
+/** Displays club info tab, depending on which tab user selected. */
+function showTab(tabNum) {
+  if (tabNum == 1) {
+    getClubInfo();
+  } else {
+    if (tabNum == 2) {
+      var template = document.querySelector('#announcements');
+      loadAnnouncements();
+    } else if (tabNum == 3) {
+      var template = document.querySelector('#calendar');
+    }
+    const node = document.importNode(template.content, true);
+    document.getElementById('tab').innerHTML = '';
+    document.getElementById('tab').appendChild(node);
+  }
 }
