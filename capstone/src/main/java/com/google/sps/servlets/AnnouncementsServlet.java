@@ -11,15 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example club content */
 @WebServlet("/announcements")
 public class AnnouncementsServlet extends HttpServlet {
-  private static final String CLUB_NAME_PROP = "name";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Only access Club 1, hardcoded
     Gson gson = new Gson();
     ImmutableList<String> announcements =
         PrototypeClubs.PROTOTYPE_CLUBS_MAP
-            .get(request.getParameter(CLUB_NAME_PROP))
+            .get(request.getParameter(Constants.CLUB_NAME_PROP))
             .getAnnouncements();
     String json = gson.toJson(announcements);
     response.setContentType("application/json;");
