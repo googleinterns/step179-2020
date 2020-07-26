@@ -13,32 +13,19 @@
     <h1>Explore Clubs</h1>
     <div id="content">
       <div id="club-listings" class="full-screen-panel">
-        <div class="club-listing">
+        <template id="club-listing">
           <div class="club-logo-container">
-            <img src="images/image1.png" class="club-logo" alt="Club logo">
+            <img src="" id="club-logo" class="club-logo" alt="Club logo">
           </div>
           <div class="club-info-container">
-            <h2>Club 1</h2>
-            <p>We are a club</p>
-            <p>10 members</p>
+            <h2><a href="" id="club-name"></a></h2>
+            <p id="description"></p>
+            <p id="members">10 members</p>
           </div> 
           <div class="club-join-container">
             <button onclick="location.href='about-us.html';">Join club</button>
           </div>
-        </div>
-        <div class="club-listing">
-          <div class="club-logo-container">
-            <img src="images/logo.png" class="club-logo" alt="Club logo">
-          </div>
-          <div class="club-info-container">
-            <h2>Club 2</h2>
-            <p>We do cool club things</p>
-            <p>20 members</p>
-          </div> 
-          <div class="club-join-container">
-            <button onclick="location.href='about-us.html';">Join club</button>
-          </div>
-        </div>
+        </template>
       </div>
       <button id="register-club-button" onclick="location.href='club-registration.html';">Register a new club!</button>
     </div>

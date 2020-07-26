@@ -10,21 +10,14 @@ async function getListings () {
 }
 
 function loadListings (json) {
-  const section = document.getElementById('club-listings');
-  section.innerHTML = '';
-  for (var index in json) {
-    section.innerHTML += '<div class="club-listing">' + 
-                           '<div class="club-logo-container">' + 
-                             '<img src="images/logo.png" class="club-logo" alt="Club logo">' + 
-                           '</div>' + 
-                           '<div class="club-info-container">' + 
-                             '<h2><a href="about-us.html?name=' + json[index].name + '">' + json[index].name + '</a></h2>' + 
-                             '<p>' + json[index].description + '</p>' + 
-                             '<p>' + json[index].members.length + ' members</p>' +     
-                           '</div>' + 
-                           '<div class="club-join-container">' + 
-                             '<button onclick="location.href=\'about-us.html\';">Join club</button>' + 
-                           '</div>' + 
-                         '</div>';
+  const template = document.querySelector('#club-listing');
+  for (var club of json) {
+    template.content.querySelector('#club-logo').src = 'images/logo.png';
+    template.content.querySelector('#club-name').innerHTML = club.name;
+    template.content.querySelector('#description').innerHTML = club.description;
+    template.content.querySelector('#members').innerHTML = club.members.length + " members";
+    var clone = document.importNode(template.content, true);
+    document.getElementById('club-listings').appendChild(clone);    
   }
 }
+
