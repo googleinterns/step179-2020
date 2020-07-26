@@ -14,6 +14,7 @@ function loadListings (json) {
   for (var club of json) {
     template.content.querySelector('#club-logo').src = 'images/logo.png';
     template.content.querySelector('#club-name').innerHTML = club.name;
+    template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;
     template.content.querySelector('#members').innerHTML = club.members.length + " members";
     var clone = document.importNode(template.content, true);
