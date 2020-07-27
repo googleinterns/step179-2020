@@ -53,7 +53,25 @@ async function loadAnnouncements () {
   announcementsSection.innerHTML += '</ul>';
 }
 
-/** Displays club info tab, depending on which tab user selected. */
+/** Displays a certain tab for a club, by first checking for a GET parameter 
+    that specifies which tab to load, then if that doesn't exist, loads a default tab.
+    This should be used at the initial load for the about-us.html page and to redirect
+    back to a specific tab. Overloaded with showTab(tabName), which displays the given tab. 
+ */
+function showTab() {
+  const params = new URLSearchParams(window.location.search);
+  const tabToLoad = params.get('tab');
+  const defaultTab = '#about-us'
+  if (tabToLoad) {
+    showTab('#' + tabToLoad);
+  } else {
+    showTab(defaultTab);
+  }
+}
+
+/** Displays club info tab, depending on which tab is passed in. Overloaded with showTab(), where
+    this one should be called with a specific tab to load.
+*/
 function showTab(tabName) {
   var template = document.querySelector(tabName);
   const node = document.importNode(template.content, true);
