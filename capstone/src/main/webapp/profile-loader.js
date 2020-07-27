@@ -1,6 +1,4 @@
-$(document).ready(function() {
-  showOrHideProfile();
-});
+showOrHideProfile();
 
 /** Fetch login status and show or hide profile accordingly */
 function showOrHideProfile() {
@@ -30,12 +28,18 @@ function getStudentInfo() {
       clubList.appendChild(createClubElement(clubs[key]));
     }
 
-    // Add additional student information
+    // Add additional student information and allow year and major to be editable
     var personalInfo = document.getElementById('student-info');
     const newLine = '<br>';
-    personalInfo.innerHTML = 'Email: ' + studentInfo['email'] + newLine;
-    personalInfo.innerHTML += 'Grad Year: ' + studentInfo['gradYear'] + newLine;
-    personalInfo.innerHTML += 'Major: ' + studentInfo['major'] + newLine;
+    // Create variables for start of div tag
+    const startOfDivYear = '<div id="edit-year"';
+    const startOfDivMajor = '<div id="edit-major"';
+    const editableDiv = 'class="edit-profile" contenteditable="true">';
+    const endDiv = '</div>';
+
+    personalInfo.innerHTML += 'Email: ' + studentInfo['email'] + newLine;
+    personalInfo.innerHTML += 'Grad Year: ' + startOfDivYear + editableDiv + studentInfo['gradYear'] + endDiv + newLine;
+    personalInfo.innerHTML += 'Major: ' + startOfDivMajor + editableDiv + studentInfo['major'] + endDiv + newLine;
   });
 }
 
@@ -49,4 +53,17 @@ function createClubElement(text) {
     + text
     + '" formmethod="POST">Leave</button>';
   return liElement;
+}
+
+/** Store edited content from profile page */
+function saveProfileChanges() {
+  const newYear = document.getElementById("edit-year").innerHTML;
+  const newMajor = document.getElementById("edit-major").innerHTML;
+
+  var updateProfile = document.getElementById("update-profile");
+
+  updateProfile.innerHTML = '<input type="hidden" name="new-year" value="' + newYear + '">';
+  updateProfile.innerHTML += '<input type="hidden" name="new-major" value="' + newMajor + '">';
+
+  document.forms['edit-profile'].submit();
 }

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>My Profile</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
     <script src="profile-loader.js"></script>
   </head>
@@ -21,8 +20,11 @@
           <ul id="club-content"></ul>
         </form>
         <br>
-        <div id="student-info"></div>
-        <button>Edit</button>
+        <form name="edit-profile" action="/student-data" method="POST">
+          <div id="student-info"></div><br>
+          <button name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
+          <div id="update-profile"></div>
+        </form>
       </div>
       <div class="split-profile right-profile">
         <h1><u>Inbox</u></h1>
