@@ -21,11 +21,16 @@ function getStudentInfo() {
     var profileTitle = document.getElementById('heading');
     profileTitle.innerHTML += studentInfo['name'];
 
-    // Update profile club list
+    // Update profile club list and announcements inbox
     var clubList = document.getElementById('club-content');
+    var inbox = document.getElementById('inbox');
     const clubs = studentInfo['clubs'];
     for(const key in clubs) {
-      clubList.appendChild(createClubElement(clubs[key]['name']));
+      const clubName = clubs[key]['name'];
+      clubList.appendChild(createClubElement(clubName));
+      inbox.innerHTML += clubName + ':<br>';
+      inbox.appendChild(addAnnoucements(clubs[key]['announcements']));
+      inbox.innerHTML += '<br>';
     }
 
     // Add additional student information and allow year and major to be editable
@@ -41,6 +46,18 @@ function getStudentInfo() {
     personalInfo.innerHTML += 'Grad Year: ' + startOfDivYear + editableDiv + studentInfo['gradYear'] + endDiv + newLine;
     personalInfo.innerHTML += 'Major: ' + startOfDivMajor + editableDiv + studentInfo['major'] + endDiv + newLine;
   });
+}
+
+/** Create ul and li elements for each club's announcements */
+function addAnnoucements(announcements) {
+  var inboxList = document.createElement('ul');
+
+  for(const announcement in announcements){
+    var liElement = document.createElement('li');
+    liElement.innerText = announcements[announcement];
+    inboxList.appendChild(liElement);
+  }
+  return inboxList;
 }
 
 /** Create an <li> element containing club name and leave button */
