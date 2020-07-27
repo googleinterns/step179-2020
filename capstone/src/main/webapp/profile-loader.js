@@ -25,11 +25,11 @@ function getStudentInfo() {
     var clubList = document.getElementById('club-content');
     var inbox = document.getElementById('inbox');
     const clubs = studentInfo['clubs'];
-    for(const key in clubs) {
-      const clubName = clubs[key]['name'];
+    for(const club of clubs) {
+      const clubName = club['name'];
       clubList.appendChild(createClubElement(clubName));
       inbox.innerHTML += clubName + ':<br>';
-      inbox.appendChild(addAnnoucements(clubs[key]['announcements']));
+      inbox.appendChild(addAnnoucements(club['announcements']));
       inbox.innerHTML += '<br>';
     }
 
@@ -52,9 +52,9 @@ function getStudentInfo() {
 function addAnnoucements(announcements) {
   var inboxList = document.createElement('ul');
 
-  for(const announcement in announcements){
+  for(const announcement of announcements){
     var liElement = document.createElement('li');
-    liElement.innerText = announcements[announcement];
+    liElement.innerText = announcement;
     inboxList.appendChild(liElement);
   }
   return inboxList;
