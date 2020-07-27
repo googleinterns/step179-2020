@@ -44,7 +44,6 @@ async function loadAnnouncements () {
   const query = '/announcements?name=' + params.get('name');
   const response = await fetch(query);
   const json = await response.json();
-  console.log(json);
   const template = document.querySelector('#announcement-element');
   for (var announcement of json) {
     template.content.querySelector('li').innerHTML = announcement;

@@ -16,7 +16,7 @@ function loadListings (json) {
     template.content.querySelector('#club-name').innerHTML = club.name;
     template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;
-    template.content.querySelector('#members').innerHTML = club.members.length + " members";
+    template.content.querySelector('#members').innerHTML = club.members.length + ' members';
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);    
   }
