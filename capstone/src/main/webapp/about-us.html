@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="showTab('#about-us')">
+  <body onload="showTab()">
     <div id="top-navigation"></div>
     <div id="club-header">
       <h1 id="club-name"></h1>
@@ -30,8 +30,9 @@
     <template id="announcements">
       <div id="post-announcement" class="full-screen-panel">
         <form action="/clubs" method="POST">
-          <input type="text" name="announcement-text" placeholder="Add announcement...">
+          <input type="text" name="announcement-content" placeholder="Add announcement...">
           <input type="submit" value="Post">
+          <input type="hidden" name="name" id="club-name">
       </div>
       <div id="announcements-display" class="full-screen-panel"></div>
     </template>
