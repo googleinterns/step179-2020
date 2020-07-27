@@ -34,7 +34,7 @@ function getStudentInfo() {
     // Create variables for start of div tag
     const startOfDivYear = '<div id="edit-year"';
     const startOfDivMajor = '<div id="edit-major"';
-    const editableDiv = ' class="edit-profile" contenteditable="true">';
+    const editableDiv = 'class="edit-profile" contenteditable="true">';
     const endDiv = '</div>';
 
     personalInfo.innerHTML += 'Email: ' + studentInfo['email'] + newLine;
