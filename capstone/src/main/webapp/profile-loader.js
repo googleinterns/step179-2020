@@ -25,7 +25,7 @@ function getStudentInfo() {
     var clubList = document.getElementById('club-content');
     const clubs = studentInfo['clubs'];
     for(const key in clubs) {
-      clubList.appendChild(createClubElement(clubs[key]));
+      clubList.appendChild(createClubElement(clubs[key]['name']));
     }
 
     // Add additional student information and allow year and major to be editable

@@ -8,10 +8,9 @@ public class Student {
   private int gradYear;
   private String major;
   private String email;
-  private ImmutableList<String> clubs;
+  private ImmutableList<Club> clubs;
 
-  public Student(
-      String name, int gradYear, String major, String email, ImmutableList<String> clubs) {
+  public Student(String name, int gradYear, String major, String email, ImmutableList<Club> clubs) {
     this.name = name;
     this.gradYear = gradYear;
     this.major = major;
@@ -20,22 +19,22 @@ public class Student {
   }
 
   public String getName() {
-    return name;
+    return this.name;
   }
 
   public int getGradYear() {
-    return gradYear;
+    return this.gradYear;
   }
 
   public String getMajor() {
-    return major;
+    return this.major;
   }
 
   public String getEmail() {
-    return email;
+    return this.email;
   }
 
-  public ImmutableList<String> getClubList() {
-    return clubs;
+  public ImmutableList<Club> getClubList() {
+    return this.clubs;
   }
 }
