@@ -63,7 +63,7 @@ async function loadAnnouncements () {
 function displayTab() {
   const params = new URLSearchParams(window.location.search);
   const tabToLoad = params.get('tab');
-  const defaultTab = '#about-us'
+  const defaultTab = '#about-us';
   if (tabToLoad) {
     showTab('#' + tabToLoad);
   } else {

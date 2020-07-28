@@ -25,20 +25,24 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/announcements")
 public class AnnouncementsServlet extends HttpServlet {
 
-  private static final String CLUB_NAME_PROP = "name";
   private static final String ANNOUNCEMENTS_CONTENT_PROP = "content";
+  private static final String ANNOUNCEMENT_PROP = "Announcement";
+  private static final String AUTHOR_PROP = "author";
+  private static final String TIME_PROP = "time";
+  private static final String CONTENT_PROP = "content";
+  private static final String CLUB_PROP = "club";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get announcements object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    String clubName = request.getParameter(CLUB_NAME_PROP);
+    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Query query =
-        new Query("Announcement")
-            .setFilter(new FilterPredicate("club", FilterOperator.EQUAL, clubName))
+        new Query(ANNOUNCEMENT_PROP)
+            .setFilter(new FilterPredicate(CLUB_PROP, FilterOperator.EQUAL, clubName))
             .addSort("time", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Announcement> announcements =
@@ -58,17 +62,17 @@ public class AnnouncementsServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    String clubName = request.getParameter(CLUB_NAME_PROP);
+    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
     String announcementContent = request.getParameter(ANNOUNCEMENTS_CONTENT_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     // TODO need to authenticate user as club officer
 
-    Entity announcementEntity = new Entity("Announcement");
-    announcementEntity.setProperty("author", userEmail);
-    announcementEntity.setProperty("time", System.currentTimeMillis());
-    announcementEntity.setProperty("content", announcementContent);
-    announcementEntity.setProperty("club", clubName);
+    Entity announcementEntity = new Entity(ANNOUNCEMENT_PROP);
+    announcementEntity.setProperty(AUTHOR_PROP, userEmail);
+    announcementEntity.setProperty(TIME_PROP, System.currentTimeMillis());
+    announcementEntity.setProperty(CONTENT_PROP, announcementContent);
+    announcementEntity.setProperty(CLUB_PROP, clubName);
 
     datastore.put(announcementEntity);
 
