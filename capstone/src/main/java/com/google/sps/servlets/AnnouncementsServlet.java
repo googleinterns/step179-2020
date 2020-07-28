@@ -1,14 +1,19 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.OrderBy;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.PropertyFilter;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.QueryResults;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -31,14 +36,23 @@ public class AnnouncementsServlet extends HttpServlet {
     String clubName = request.getParameter(CLUB_NAME_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Query<Entity> query = Query.newEntityQueryBuilder()
-        .setKind("Announcement")
-        .setFilter(PropertyFilter.eq("club", clubName))
-        .setOrderBy(OrderBy.desc("time"))
-        .setLimit(10)
-        .build();
-    QueryResults<Entity> announcements = datastore.run(query);
-
+    Query query =
+        new Query("Announcement")
+            .setFilter(new FilterPredicate("club", FilterOperator.EQUAL, clubName))
+            .addSort("time", SortDirection.DESCENDING);
+    // Query<Entity> query =
+    //     Query.newEntityQueryBuilder()
+    //         .setKind("Announcement")
+    //         .setFilter(PropertyFilter.eq("club", clubName))
+    //         .setOrderBy(OrderBy.desc("time"))
+    //         .setLimit(10)
+    //         .build();
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Announcement> announcements =
+        Streams.stream(results.asIterable())
+            .limit(Constants.LOAD_LIMIT)
+            .map(entity -> new Announcement(entity))
+            .collect(toImmutableList());
 
     Gson gson = new Gson();
     // ImmutableList<String> announcements =
@@ -52,13 +66,14 @@ public class AnnouncementsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
     String clubName = request.getParameter(CLUB_NAME_PROP);
     String announcementContent = request.getParameter(ANNOUNCEMENTS_CONTENT_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    //TODO need to authenticate user as club officer
+    // TODO need to authenticate user as club officer
 
     Entity announcementEntity = new Entity("Announcement");
     announcementEntity.setProperty("author", userEmail);
@@ -66,9 +81,8 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty("content", announcementContent);
     announcementEntity.setProperty("club", clubName);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(commentEntity);
+    datastore.put(announcementEntity);
 
-    response.sendRedirect("/about-us.html?name='" + clubName + "'&tab='announcements'");
+    response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
 }
