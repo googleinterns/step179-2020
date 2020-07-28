@@ -37,20 +37,21 @@ public class ClubServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
 
-    String clubName = request.getParameter("name");
-    String description = request.getParameter("description");
-    String website = request.getParameter("website");
-    BlobKey key = getBlobKey(request, "logo");
+    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
+    String description = request.getParameter(Constants.DESCRIP_PROP);
+    String website = request.getParameter(Constants.WEBSITE_PROP);
+    BlobKey key = getBlobKey(request, Constants.LOGO_PROP);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity clubEntity = new Entity("Club", clubName);
-    clubEntity.setProperty("name", clubName);
-    clubEntity.setProperty("description", description);
-    clubEntity.setProperty("members", ImmutableList.of(founderEmail));
-    clubEntity.setProperty("officers", ImmutableList.of(founderEmail));
-    clubEntity.setProperty("announcements", ImmutableList.of(""));
-    clubEntity.setProperty("logo", key);
+    clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
+    clubEntity.setProperty(Constants.DESCRIP_PROP, description);
+    clubEntity.setProperty(Constants.WEBSITE_PROP, website);
+    clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
+    clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
+    clubEntity.setProperty(Constants.ANNOUNCE_PROP, ImmutableList.of(""));
+    clubEntity.setProperty(Constants.LOGO_PROP, key);
     datastore.put(clubEntity);
   }
 
