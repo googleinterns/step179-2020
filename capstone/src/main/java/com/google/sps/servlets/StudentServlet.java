@@ -1,7 +1,11 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -18,16 +22,21 @@ public class StudentServlet extends HttpServlet {
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    String studentJson =
-        convertToJsonUsingGson(PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail));
+
+    // Store the student and each club's announcements in one StudentInfo object
+    Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail);
+    ImmutableList<ImmutableList<String>> announcements = getAllAnnouncements(student.getClubList());
+    StudentInfo allInfo = new StudentInfo(student, announcements);
+
+    String studentJson = convertToJsonUsingGson(allInfo);
 
     response.setContentType("application/json;");
     response.getWriter().println(studentJson);
   }
 
-  private static String convertToJsonUsingGson(Student student) {
+  private static String convertToJsonUsingGson(StudentInfo info) {
     Gson gson = new Gson();
-    String json = gson.toJson(student);
+    String json = gson.toJson(info);
     return json;
   }
 
@@ -40,5 +49,23 @@ public class StudentServlet extends HttpServlet {
     // 4. Update student information with edited content
 
     response.sendRedirect("/profile.html");
+  }
+
+  public ImmutableList<ImmutableList<String>> getAllAnnouncements(ImmutableList<String> clubNames) {
+    ImmutableList<ImmutableList<String>> announcements =
+        Streams.stream(clubNames)
+            .map(clubName -> PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(clubName).getAnnouncements())
+            .collect(toImmutableList());
+    return announcements;
+  }
+}
+
+class StudentInfo {
+  private Student student;
+  private ImmutableList<ImmutableList<String>> announcements;
+
+  public StudentInfo(Student student, ImmutableList<ImmutableList<String>> announcements) {
+    this.student = student;
+    this.announcements = announcements;
   }
 }

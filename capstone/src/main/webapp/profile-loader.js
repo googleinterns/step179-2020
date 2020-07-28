@@ -16,7 +16,9 @@ function showOrHideProfile() {
 
 /** Fetch student information and add it to the profile */
 function getStudentInfo() {
-  fetch('/student-data').then(response => response.json()).then((studentInfo) => {  
+  fetch('/student-data').then(response => response.json()).then((info) => {  
+    var studentInfo = info['student'];
+    var announcements = info['announcements'];
     // Update profile name
     var profileTitle = document.getElementById('heading');
     profileTitle.innerHTML += studentInfo['name'];
@@ -25,12 +27,13 @@ function getStudentInfo() {
     var clubList = document.getElementById('club-content');
     var inbox = document.getElementById('inbox');
     const clubs = studentInfo['clubs'];
+    var index = 0;
     for(const club of clubs) {
-      const clubName = club['name'];
-      clubList.appendChild(createClubElement(clubName));
-      inbox.innerHTML += clubName + ':<br>';
-      inbox.appendChild(addAnnoucements(club['announcements']));
+      clubList.appendChild(createClubElement(club));
+      inbox.innerHTML += club + ':<br>';
+      inbox.appendChild(addAnnoucements(announcements[index]));
       inbox.innerHTML += '<br>';
+      index += 1;
     }
 
     // Add additional student information and allow year and major to be editable

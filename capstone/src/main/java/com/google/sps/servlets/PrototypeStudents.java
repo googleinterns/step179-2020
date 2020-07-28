@@ -17,9 +17,9 @@ public final class PrototypeStudents {
   public static final int YEAR_2023 = 2023;
   public static final String MAJOR = "Computer Science";
   public static final String TEST_MAJOR = "Testing";
-  public static final Club CLUB_1 = PrototypeClubs.PROTOTYPE_CLUBS_MAP.get("Club 1");
-  public static final Club CLUB_2 = PrototypeClubs.PROTOTYPE_CLUBS_MAP.get("Club 2");
-  public static final Club CLUB_3 = PrototypeClubs.PROTOTYPE_CLUBS_MAP.get("Club 3");
+  public static final String CLUB_1 = "Club 1";
+  public static final String CLUB_2 = "Club 2";
+  public static final String CLUB_3 = "Club 3";
 
   public static final ImmutableMap<String, Student> PROTOTYPE_STUDENTS =
       ImmutableMap.of(
