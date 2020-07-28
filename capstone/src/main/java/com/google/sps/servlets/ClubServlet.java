@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/* Stores and returns data relating to clubs. */
+/* Servlet that stores and returns data relating to clubs. */
 @WebServlet("/clubs")
 public class ClubServlet extends HttpServlet {
 
