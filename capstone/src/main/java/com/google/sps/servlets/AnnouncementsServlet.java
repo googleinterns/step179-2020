@@ -40,13 +40,6 @@ public class AnnouncementsServlet extends HttpServlet {
         new Query("Announcement")
             .setFilter(new FilterPredicate("club", FilterOperator.EQUAL, clubName))
             .addSort("time", SortDirection.DESCENDING);
-    // Query<Entity> query =
-    //     Query.newEntityQueryBuilder()
-    //         .setKind("Announcement")
-    //         .setFilter(PropertyFilter.eq("club", clubName))
-    //         .setOrderBy(OrderBy.desc("time"))
-    //         .setLimit(10)
-    //         .build();
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Announcement> announcements =
         Streams.stream(results.asIterable())
@@ -55,10 +48,6 @@ public class AnnouncementsServlet extends HttpServlet {
             .collect(toImmutableList());
 
     Gson gson = new Gson();
-    // ImmutableList<String> announcements =
-    //     PrototypeClubs.PROTOTYPE_CLUBS_MAP
-    //         .get(request.getParameter(Constants.CLUB_NAME_PROP))
-    //         .getAnnouncements();
     String json = gson.toJson(announcements);
     response.setContentType("application/json;");
     response.getWriter().println(json);
