@@ -25,7 +25,7 @@ public class StudentServlet extends HttpServlet {
 
     // Store the student and each club's announcements in one StudentInfo object
     Student student = PrototypeStudents.PROTOTYPE_STUDENTS.get(userEmail);
-    ImmutableList<ImmutableList<String>> announcements = getAllAnnouncements(student.getClubList());
+    ImmutableList<String> announcements = getAllAnnouncements(student.getClubList());
     StudentInfo allInfo = new StudentInfo(student, announcements);
 
     String studentJson = convertToJsonUsingGson(allInfo);
@@ -51,10 +51,11 @@ public class StudentServlet extends HttpServlet {
     response.sendRedirect("/profile.html");
   }
 
-  public ImmutableList<ImmutableList<String>> getAllAnnouncements(ImmutableList<String> clubNames) {
-    ImmutableList<ImmutableList<String>> announcements =
+  public ImmutableList<String> getAllAnnouncements(ImmutableList<String> clubNames) {
+    ImmutableList<String> announcements =
         Streams.stream(clubNames)
-            .map(clubName -> PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(clubName).getAnnouncements())
+            .flatMap(
+                clubName -> PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(clubName).getAnnouncements().stream())
             .collect(toImmutableList());
     return announcements;
   }
@@ -62,9 +63,9 @@ public class StudentServlet extends HttpServlet {
 
 class StudentInfo {
   private Student student;
-  private ImmutableList<ImmutableList<String>> announcements;
+  private ImmutableList<String> announcements;
 
-  public StudentInfo(Student student, ImmutableList<ImmutableList<String>> announcements) {
+  public StudentInfo(Student student, ImmutableList<String> announcements) {
     this.student = student;
     this.announcements = announcements;
   }
