@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="showTab()">
+  <body onload="displayTab()">
     <div id="top-navigation"></div>
     <div id="club-header">
       <h1 id="club-name"></h1>
@@ -28,8 +28,8 @@
     </template>
     <template id="announcements">
       <div id="post-announcement" class="full-screen-panel">
-        <form action="/clubs" method="POST">
-          <input type="text" name="announcement-content" placeholder="Add announcement...">
+        <form action="/announcements" method="POST">
+          <input type="text" name="content" placeholder="Add announcement...">
           <input type="submit" value="Post">
           <input type="hidden" name="name" id="club-name">
       </div>
