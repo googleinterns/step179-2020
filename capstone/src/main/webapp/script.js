@@ -47,13 +47,12 @@ async function loadAnnouncements () {
   const query = '/announcements?name=' + params.get('name');
   const response = await fetch(query);
   const json = await response.json();
-  const announcementsSection = document.getElementById('announcements-display');
-  announcementsSection.innerHTML = '<h1>Announcements</h1>';
-  announcementsSection.innerHTML += '<ul>';
-  for (var index in json) {
-      announcementsSection.innerHTML += '<li>'+json[index]+'</li>';
+  const template = document.querySelector('#announcement-element');
+  for (var announcement of json) {
+    template.content.querySelector('li').innerHTML = announcement;
+    var clone = document.importNode(template.content, true);
+    document.getElementById('announcements-display').appendChild(clone);
   }
-  announcementsSection.innerHTML += '</ul>';
 }
 
 /** Displays club info tab, depending on which tab user selected. */
