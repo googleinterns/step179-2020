@@ -37,16 +37,20 @@ public class StudentServlet extends HttpServlet {
     Query query = new Query(userEmail);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+
+    // Add user to Datastore if this is the first time they login
     if (students.isEmpty()) {
-      return;
+      Entity studentEntity = createStudentEntity(userEmail);
+      datastore.put(studentEntity);
+      results = datastore.prepare(query);
+      students = ImmutableList.copyOf(results.asIterable());
     }
     // A user can only be logged in with one email address at a time
     Entity currentStudent = students.get(0);
 
-    // Get club list from entities and convert to an ImmutableList - initally empty in case there is
-    // no club list
+    // Get club list from entity and convert to an ImmutableList
+    // Initally empty in case there is no club list
     ImmutableList<String> clubs = ImmutableList.of();
     if (currentStudent.getProperty(PROPERTY_CLUBS) != null) {
       String clubsAsString = currentStudent.getProperty(PROPERTY_CLUBS).toString();
@@ -95,16 +99,21 @@ public class StudentServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
 
     if (Streams.stream(results.asIterable()).count() == 0) {
-      Entity studentEntity = new Entity(userEmail);
-      studentEntity.setProperty(PROPERTY_NAME, "First Last");
-      studentEntity.setProperty(PROPERTY_EMAIL, userEmail);
-      studentEntity.setProperty(PROPERTY_GRADYEAR, "0");
-      studentEntity.setProperty(PROPERTY_MAJOR, "");
-      studentEntity.setProperty(PROPERTY_CLUBS, ImmutableList.of());
+      Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
     }
 
     response.sendRedirect("/profile.html");
+  }
+
+  public Entity createStudentEntity(String userEmail) {
+    Entity studentEntity = new Entity(userEmail);
+    studentEntity.setProperty(PROPERTY_NAME, "First Last");
+    studentEntity.setProperty(PROPERTY_EMAIL, userEmail);
+    studentEntity.setProperty(PROPERTY_GRADYEAR, "0");
+    studentEntity.setProperty(PROPERTY_MAJOR, "");
+    studentEntity.setProperty(PROPERTY_CLUBS, ImmutableList.of());
+    return studentEntity;
   }
 
   public ImmutableList<String> getAllAnnouncements(ImmutableList<String> clubNames) {
