@@ -16,7 +16,9 @@ function showOrHideProfile() {
 
 /** Fetch student information and add it to the profile */
 function getStudentInfo() {
-  fetch('/student-data').then(response => response.json()).then((studentInfo) => {  
+  fetch('/student-data').then(response => response.json()).then((info) => {  
+    var studentInfo = info['student'];
+    var announcements = info['announcements'];
     // Update profile name
     var profileTitle = document.getElementById('heading');
     profileTitle.innerHTML += studentInfo['name'];
@@ -24,9 +26,13 @@ function getStudentInfo() {
     // Update profile club list
     var clubList = document.getElementById('club-content');
     const clubs = studentInfo['clubs'];
-    for(const key in clubs) {
-      clubList.appendChild(createClubElement(clubs[key]));
+    for(const club of clubs) {
+      clubList.appendChild(createClubElement(club));
     }
+
+    // Add announcements to student's inbox
+    var inbox = document.getElementById('inbox');
+    inbox.appendChild(addAnnoucements(announcements));
 
     // Add additional student information and allow year and major to be editable
     var personalInfo = document.getElementById('student-info');
@@ -41,6 +47,17 @@ function getStudentInfo() {
     personalInfo.innerHTML += 'Grad Year: ' + startOfDivYear + editableDiv + studentInfo['gradYear'] + endDiv + newLine;
     personalInfo.innerHTML += 'Major: ' + startOfDivMajor + editableDiv + studentInfo['major'] + endDiv + newLine;
   });
+}
+
+/** Create ul and li elements for each club's announcements */
+function addAnnoucements(announcements) {
+  var inboxList = document.createElement('ul');
+  for(const announcement of announcements){
+    var liElement = document.createElement('li');
+    liElement.innerText = announcement;
+    inboxList.appendChild(liElement);
+  }
+  return inboxList;
 }
 
 /** Create an <li> element containing club name and leave button */
