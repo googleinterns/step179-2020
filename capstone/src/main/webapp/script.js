@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Load navigation bar */
-$(document).ready(function() {
-  $('#top-navigation').load('top-navbar.html');
-});
+/** Add top navigation bar to the HTML */
+const topNavBar = 
+    '<div class="top-navigation">'
+    + '<a href="profile.html">My Profile</a>'
+    + '<a href="index.html">Explore</a>'
+    + '</div>';
+document.write(topNavBar);
 
 /** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
 function getClubInfo() {
@@ -44,13 +47,12 @@ async function loadAnnouncements () {
   const query = '/announcements?name=' + params.get('name');
   const response = await fetch(query);
   const json = await response.json();
-  const announcementsSection = document.getElementById('announcements-display');
-  announcementsSection.innerHTML = '<h1>Announcements</h1>';
-  announcementsSection.innerHTML += '<ul>';
-  for (var index in json) {
-      announcementsSection.innerHTML += '<li>'+json[index]+'</li>';
+  const template = document.querySelector('#announcement-element');
+  for (var announcement of json) {
+    template.content.querySelector('li').innerHTML = announcement;
+    var clone = document.importNode(template.content, true);
+    document.getElementById('announcements-display').appendChild(clone);
   }
-  announcementsSection.innerHTML += '</ul>';
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Club Info</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
   </head>
   <body onload="showTab()">
@@ -34,7 +33,14 @@
           <input type="submit" value="Post">
           <input type="hidden" name="name" id="club-name">
       </div>
-      <div id="announcements-display" class="full-screen-panel"></div>
+      <div class="full-screen-panel">
+        <h1>Announcements</h1>
+        <ul id="announcements-display">
+          <template id="announcement-element">
+            <li></li>
+          </template>
+        </ul>
+      </div>
     </template>
     <template id="calendar">
       <p>Calendar goes here</p>
