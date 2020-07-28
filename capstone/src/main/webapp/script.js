@@ -73,3 +73,15 @@ function showTab(tabName) {
 /** Adds student to members list for current club */
 function joinClub() {
 }
+
+/* Fetches blobstore image upload url. */
+async function fetchBlobstoreUrl() {
+  fetch('/blobstore-url')
+      .then((response) => {
+        return response.text();
+      })
+      .then((imageUploadUrl) => {
+        const messageForm = document.getElementById('club-form');
+        messageForm.action = imageUploadUrl;
+      });
+}

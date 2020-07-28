@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="fetchBlobstoreUrl()">
     <div id="navbar"></div>
     <h2>Club Registration</h2>
-    <form class="full-screen-panel">
+    <form id="club-form" class="full-screen-panel" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" name="name" id="club-name"/>
@@ -19,12 +19,16 @@
         <input type="text" name="description" id="club-description"/>
       </div>
       <div class="form-group">
+        <label for="name">Website:</label>
+        <input type="text" name="website" id="club-website"/>
+      </div>      
+      <div class="form-group">
         <label for="name">Google Calendar link:</label>
         <input type="text" name="calendar-link" id="club-calendar-link"/>
       </div>
       <div class="form-group">
         <label for="name">Upload logo:</label>
-        <input type="text" name="logo" id="club-logo"/>
+        <input type="file" name="logo" id="club-logo"/>
       </div>
       <input type="submit" name="Create Club"/>
     </form>
