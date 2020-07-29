@@ -48,7 +48,13 @@ public class AnnouncementsServlet extends HttpServlet {
     ImmutableList<Announcement> announcements =
         Streams.stream(results.asIterable())
             .limit(Constants.LOAD_LIMIT)
-            .map(entity -> new Announcement(entity))
+            .map(
+                entity ->
+                    new Announcement(
+                        entity.getProperty("author").toString(),
+                        entity.getProperty("club").toString(),
+                        Long.parseLong(entity.getProperty("time").toString()),
+                        entity.getProperty("content").toString()))
             .collect(toImmutableList());
 
     Gson gson = new Gson();
