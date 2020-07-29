@@ -6,9 +6,14 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
@@ -37,12 +42,27 @@ public class ClubServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
 
+    // Check if club name is valid
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.CLUB_NAME_PROP,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.CLUB_NAME_PROP)));
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery prepared = datastore.prepare(query);
+    response.setContentType("text/html;");
+    boolean isValid = Iterables.isEmpty(prepared.asIterable());
+
+    response.getWriter().println("<p>isValid = " + isValid + "</p>");
+    System.out.println("isValid = " + isValid);
+
     String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
     String description = request.getParameter(Constants.DESCRIP_PROP);
     String website = request.getParameter(Constants.WEBSITE_PROP);
     BlobKey key = getBlobKey(request, Constants.LOGO_PROP);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity clubEntity = new Entity("Club", clubName);
     clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
@@ -52,6 +72,7 @@ public class ClubServlet extends HttpServlet {
     clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
     clubEntity.setProperty(Constants.ANNOUNCE_PROP, ImmutableList.of(""));
     clubEntity.setProperty(Constants.LOGO_PROP, key);
+    response.sendRedirect("/club-registration.html");
     datastore.put(clubEntity);
   }
 

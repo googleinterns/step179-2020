@@ -85,3 +85,16 @@ async function fetchBlobstoreUrl() {
         messageForm.action = imageUploadUrl;
       });
 }
+
+// async function checkName() {
+//   const name = document.getElementById('club-name');
+//   const response = await fetch('/club-check?name=' + name.value);
+//   const text = await response.text();
+//   console.log(text);
+//   if (text.trim() == false) {
+//     alert('This club name is already taken! Please try a new one.');
+//     console.log('it was false');
+//   }
+//   console.log('hello there');
+//   return false;
+// }
