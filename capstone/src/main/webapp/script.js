@@ -74,7 +74,7 @@ function showTab(tabName) {
 function joinClub() {
 }
 
-/* Fetches blobstore image upload url. */
+/** Fetches blobstore image upload url. */
 async function fetchBlobstoreUrl() {
   fetch('/blobstore-url')
       .then((response) => {
@@ -86,15 +86,16 @@ async function fetchBlobstoreUrl() {
       });
 }
 
-// async function checkName() {
-//   const name = document.getElementById('club-name');
-//   const response = await fetch('/club-check?name=' + name.value);
-//   const text = await response.text();
-//   console.log(text);
-//   if (text.trim() == false) {
-//     alert('This club name is already taken! Please try a new one.');
-//     console.log('it was false');
-//   }
-//   console.log('hello there');
-//   return false;
-// }
+/** Displays status of club registration form submission. */
+function getRegMessage() {
+  var params = new URLSearchParams(window.location.search);
+  var valid = params.get('is-valid');
+  var template;
+  if (valid == 'true') {
+    template = document.querySelector('#valid');
+  } else {
+    template = document.querySelector('#invalid'); 
+  }
+  const node = document.importNode(template.content, true);
+  document.body.appendChild(node);  
+}

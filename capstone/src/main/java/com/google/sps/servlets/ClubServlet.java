@@ -56,24 +56,24 @@ public class ClubServlet extends HttpServlet {
     response.setContentType("text/html;");
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
 
-    response.getWriter().println("<p>isValid = " + isValid + "</p>");
-    System.out.println("isValid = " + isValid);
+    if (isValid) {
+      String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
+      String description = request.getParameter(Constants.DESCRIP_PROP);
+      String website = request.getParameter(Constants.WEBSITE_PROP);
+      BlobKey key = getBlobKey(request, Constants.LOGO_PROP);
 
-    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
-    String description = request.getParameter(Constants.DESCRIP_PROP);
-    String website = request.getParameter(Constants.WEBSITE_PROP);
-    BlobKey key = getBlobKey(request, Constants.LOGO_PROP);
+      Entity clubEntity = new Entity("Club", clubName);
+      clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
+      clubEntity.setProperty(Constants.DESCRIP_PROP, description);
+      clubEntity.setProperty(Constants.WEBSITE_PROP, website);
+      clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
+      clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
+      clubEntity.setProperty(Constants.ANNOUNCE_PROP, ImmutableList.of(""));
+      clubEntity.setProperty(Constants.LOGO_PROP, key);
+      datastore.put(clubEntity);
+    }
 
-    Entity clubEntity = new Entity("Club", clubName);
-    clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
-    clubEntity.setProperty(Constants.DESCRIP_PROP, description);
-    clubEntity.setProperty(Constants.WEBSITE_PROP, website);
-    clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
-    clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-    clubEntity.setProperty(Constants.ANNOUNCE_PROP, ImmutableList.of(""));
-    clubEntity.setProperty(Constants.LOGO_PROP, key);
-    response.sendRedirect("/club-registration.html");
-    datastore.put(clubEntity);
+    response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
   }
 
   /* Return BlobKey for image uploaded through form. */
