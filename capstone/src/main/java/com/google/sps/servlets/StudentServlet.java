@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class StudentServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    if (Streams.stream(results.asIterable()).count() == 0) {
+    if (Iterables.isEmpty(results.asIterable())) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
     }
