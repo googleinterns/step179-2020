@@ -1,6 +1,5 @@
 package com.google.sps.servlets;
 
-
 public class Announcement {
   private String author;
   private String club;
