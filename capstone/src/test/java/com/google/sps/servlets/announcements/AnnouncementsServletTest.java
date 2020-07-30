@@ -43,7 +43,7 @@ import org.mockito.MockitoAnnotations;
 
 /** */
 @RunWith(JUnit4.class)
-public final class AnnouncementTest {
+public final class AnnouncementsServletTest {
 
   private static final String ANNOUNCEMENT_PROP = "Announcement";
   private static final String AUTHOR_PROP = "author";
@@ -98,7 +98,7 @@ public final class AnnouncementTest {
   }
 
   @Test
-  public void club2HasNoAnnouncements() throws IOException {
+  public void clubHasNoAnnouncements() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_2);
 
@@ -109,7 +109,7 @@ public final class AnnouncementTest {
   }
 
   @Test
-  public void club1HasOnlyOneAnnouncement() throws IOException {
+  public void clubHasOnlyOneAnnouncement() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_1);
 
