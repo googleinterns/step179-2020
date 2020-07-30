@@ -22,11 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns a student's profile content */
 @WebServlet("/student-data")
 public class StudentServlet extends HttpServlet {
-  private static final String PROPERTY_NAME = "name";
-  private static final String PROPERTY_EMAIL = "email";
-  private static final String PROPERTY_GRADYEAR = "gradYear";
-  private static final String PROPERTY_MAJOR = "major";
-  private static final String PROPERTY_CLUBS = "clubs";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -53,8 +48,8 @@ public class StudentServlet extends HttpServlet {
     // Get club list from entity and convert to an ImmutableList
     // Initally empty in case there is no club list
     ImmutableList<String> clubs = ImmutableList.of();
-    if (currentStudent.getProperty(PROPERTY_CLUBS) != null) {
-      String clubsAsString = currentStudent.getProperty(PROPERTY_CLUBS).toString();
+    if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
+      String clubsAsString = currentStudent.getProperty(Constants.PROPERTY_CLUBS).toString();
       // Convert string representation of a list to an ImmutableList
       clubs =
           ImmutableList.copyOf(clubsAsString.substring(1, clubsAsString.length() - 1).split(","));
@@ -63,10 +58,10 @@ public class StudentServlet extends HttpServlet {
     // Create Student object based on stored information
     Student student =
         new Student(
-            currentStudent.getProperty(PROPERTY_NAME).toString(),
-            Integer.parseInt(currentStudent.getProperty(PROPERTY_GRADYEAR).toString()),
-            currentStudent.getProperty(PROPERTY_MAJOR).toString(),
-            currentStudent.getProperty(PROPERTY_EMAIL).toString(),
+            currentStudent.getProperty(Constants.PROPERTY_NAME).toString(),
+            Integer.parseInt(currentStudent.getProperty(Constants.PROPERTY_GRADYEAR).toString()),
+            currentStudent.getProperty(Constants.PROPERTY_MAJOR).toString(),
+            currentStudent.getProperty(Constants.PROPERTY_EMAIL).toString(),
             clubs);
 
     ImmutableList<String> announcements = getAllAnnouncements(student.getClubList());
@@ -109,11 +104,11 @@ public class StudentServlet extends HttpServlet {
 
   public Entity createStudentEntity(String userEmail) {
     Entity studentEntity = new Entity(userEmail);
-    studentEntity.setProperty(PROPERTY_NAME, "First Last");
-    studentEntity.setProperty(PROPERTY_EMAIL, userEmail);
-    studentEntity.setProperty(PROPERTY_GRADYEAR, "0");
-    studentEntity.setProperty(PROPERTY_MAJOR, "");
-    studentEntity.setProperty(PROPERTY_CLUBS, ImmutableList.of());
+    studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
+    studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
+    studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, "0");
+    studentEntity.setProperty(Constants.PROPERTY_MAJOR, "");
+    studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     return studentEntity;
   }
 
