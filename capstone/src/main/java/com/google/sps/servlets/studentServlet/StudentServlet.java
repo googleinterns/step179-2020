@@ -10,7 +10,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -85,24 +84,15 @@ public class StudentServlet extends HttpServlet {
     // 2. Remove club from logged in student's club list if requested
     // 3. Update student information with edited content
 
+    // No need to check if user's information is not in Datastore - this is done in doGet method
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
 
-    // Add user to Datastore if not already stored
-    Query query = new Query(userEmail);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-
-    if (Iterables.isEmpty(results.asIterable())) {
-      Entity studentEntity = createStudentEntity(userEmail);
-      datastore.put(studentEntity);
-    }
-
     response.sendRedirect("/profile.html");
   }
 
-  public Entity createStudentEntity(String userEmail) {
+  private Entity createStudentEntity(String userEmail) {
     Entity studentEntity = new Entity(userEmail);
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
@@ -112,7 +102,7 @@ public class StudentServlet extends HttpServlet {
     return studentEntity;
   }
 
-  public ImmutableList<String> getAllAnnouncements(ImmutableList<String> clubNames) {
+  private ImmutableList<String> getAllAnnouncements(ImmutableList<String> clubNames) {
     // TODO: Get announcements from Datastore once announcements have been loaded into Datastore
     ImmutableList<String> announcements =
         Streams.stream(clubNames)

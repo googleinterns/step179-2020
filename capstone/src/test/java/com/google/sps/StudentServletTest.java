@@ -79,9 +79,7 @@ public final class StudentServletTest {
   private JsonObject doGetStudentServletResponse() throws ServletException, IOException {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
-
     when(response.getWriter()).thenReturn(printWriter);
-
     studentServlet.doGet(request, response);
 
     String responseStr = stringWriter.getBuffer().toString().trim();
@@ -94,7 +92,6 @@ public final class StudentServletTest {
   private String doPostStudentServletResponse() throws ServletException, IOException {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
-
     when(response.getWriter()).thenReturn(printWriter);
 
     studentServlet.doPost(request, response);
@@ -168,5 +165,13 @@ public final class StudentServletTest {
     Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
     Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
     Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+  }
+
+  @Test
+  public void doPost_StudentIsLoggedIn() throws ServletException, IOException {
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    String response = doPostStudentServletResponse();
+
+    Assert.assertTrue(response.isEmpty());
   }
 }
