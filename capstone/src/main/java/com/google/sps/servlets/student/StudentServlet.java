@@ -49,14 +49,10 @@ public class StudentServlet extends HttpServlet {
     ImmutableList<String> clubs = ImmutableList.of();
     if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
       String clubsAsString = currentStudent.getProperty(Constants.PROPERTY_CLUBS).toString();
-      // Convert string representation of a list to an ImmutableList
-      // JsonElement clubsJson = new JsonParser().parse(clubsAsString);
-      System.out.println("here: " + clubsAsString);
-      //   clubs =
-      //       Streams.stream(clubsJson.getAsJsonArray())
-      //           .map(club -> club.toString().replaceAll("\"", ""))
-      //           .collect(toImmutableList());
-      //   System.out.println(clubs);
+
+      // Convert string representation of a list to an ImmutableList e.g. "[1, 2, 3]" -> [1, 2, 3]
+      // Substring to remove beginning and closing brackets of list
+      // Split by commas separating each element
       clubs =
           ImmutableList.copyOf(clubsAsString.substring(1, clubsAsString.length() - 1).split(","));
     }
