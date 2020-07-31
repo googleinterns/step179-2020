@@ -75,7 +75,7 @@ public class ClubServletTest {
   @Test
   public void doPost_registerNewValidClub() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
 
@@ -89,12 +89,12 @@ public class ClubServletTest {
         new Query("Club")
             .setFilter(
                 new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
+                    Constants.PROPERTY_NAME,
                     FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
+                    request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
-    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.CLUB_NAME_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
     Assert.assertEquals(SAMPLE_BLOB, clubEntity.getProperty(Constants.LOGO_PROP));
@@ -107,7 +107,7 @@ public class ClubServletTest {
   @Test
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
 
@@ -125,9 +125,9 @@ public class ClubServletTest {
         new Query("Club")
             .setFilter(
                 new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
+                    Constants.PROPERTY_NAME,
                     FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
+                    request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
   }

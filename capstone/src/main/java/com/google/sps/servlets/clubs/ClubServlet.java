@@ -34,7 +34,7 @@ public class ClubServlet extends HttpServlet {
 
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
 
-    String name = clubEntity.getProperty(Constants.CLUB_NAME_PROP).toString();
+    String name = clubEntity.getProperty(Constants.PROPERTY_NAME).toString();
     ImmutableList<String> members =
         ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
     ImmutableList<String> officers =
@@ -72,13 +72,13 @@ public class ClubServlet extends HttpServlet {
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
 
     if (isValid) {
-      String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
+      String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
 
       Entity clubEntity = new Entity("Club", clubName);
-      clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
+      clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
@@ -112,9 +112,9 @@ public class ClubServlet extends HttpServlet {
         new Query("Club")
             .setFilter(
                 new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
+                    Constants.PROPERTY_NAME,
                     FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
+                    request.getParameter(Constants.PROPERTY_NAME)));
     PreparedQuery prepared = datastore.prepare(query);
     return prepared;
   }

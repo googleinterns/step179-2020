@@ -37,7 +37,7 @@ public class AnnouncementsServlet extends HttpServlet {
     // Get announcements object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
+    String clubName = request.getParameter(Constants.PROPERTY_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Query query =
@@ -68,7 +68,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
+    String clubName = request.getParameter(Constants.PROPERTY_NAME);
     String announcementContent = request.getParameter(ANNOUNCEMENTS_CONTENT_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
