@@ -49,6 +49,7 @@ public class ClubServletTest {
   private BlobstoreService blobstore;
   private ClubServlet clubServlet;
   private DatastoreService datastore;
+  private BlobstoreServlet blobstoreServlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
@@ -61,6 +62,7 @@ public class ClubServletTest {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
     this.clubServlet = new ClubServlet();
+    this.blobstoreServlet = new BlobstoreServlet();
     datastore = DatastoreServiceFactory.getDatastoreService();
     blobstore = Mockito.mock(BlobstoreService.class);
   }
@@ -102,7 +104,7 @@ public class ClubServletTest {
     Mockito.verify(response).sendRedirect(VALID_URL);
   }
 
-  @Test()
+  @Test
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(SAMPLE_CLUB_NAME);
