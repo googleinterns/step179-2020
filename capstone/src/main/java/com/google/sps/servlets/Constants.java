@@ -11,4 +11,6 @@ class Constants {
   static final String MEMBER_PROP = "members";
   static final String OFFICER_PROP = "officers";
   static final String ANNOUNCE_PROP = "announcements";
+  static final int LOAD_LIMIT = 10;
+
 }

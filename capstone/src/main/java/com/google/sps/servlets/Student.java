@@ -20,22 +20,22 @@ public class Student {
   }
 
   public String getName() {
-    return name;
+    return this.name;
   }
 
   public int getGradYear() {
-    return gradYear;
+    return this.gradYear;
   }
 
   public String getMajor() {
-    return major;
+    return this.major;
   }
 
   public String getEmail() {
-    return email;
+    return this.email;
   }
 
   public ImmutableList<String> getClubList() {
-    return clubs;
+    return this.clubs;
   }
 }

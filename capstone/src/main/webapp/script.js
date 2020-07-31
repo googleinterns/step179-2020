@@ -47,25 +47,48 @@ async function loadAnnouncements () {
   const query = '/announcements?name=' + params.get('name');
   const response = await fetch(query);
   const json = await response.json();
-  const announcementsSection = document.getElementById('announcements-display');
-  announcementsSection.innerHTML = '<h1>Announcements</h1>';
-  announcementsSection.innerHTML += '<ul>';
-  for (var index in json) {
-      announcementsSection.innerHTML += '<li>'+json[index]+'</li>';
+  const template = document.querySelector('#announcement-element');
+  for (var announcement in json) {
+    template.content.querySelector('li').innerHTML = json[announcement].content;
+    var clone = document.importNode(template.content, true);
+    document.getElementById('announcements-display').appendChild(clone);
   }
-  announcementsSection.innerHTML += '</ul>';
 }
 
-/** Displays club info tab, depending on which tab user selected. */
+/** Displays a certain tab for a club, by first checking for a GET parameter 
+    that specifies which tab to load, then if that doesn't exist, loads a default tab.
+    This should be used at the initial load for the about-us.html page and to redirect
+    back to a specific tab. Similar to showTab(tabName), which displays the given tab. 
+ */
+function displayTab() {
+  const params = new URLSearchParams(window.location.search);
+  const tabToLoad = params.get('tab');
+  const defaultTab = '#about-us';
+  if (tabToLoad) {
+    showTab('#' + tabToLoad);
+  } else {
+    showTab(defaultTab);
+  }
+}
+
+/** Displays club info tab, depending on which tab is passed in. Similar to showTab(), where
+    this one should be called with a specific tab to load.
+*/
 function showTab(tabName) {
   var template = document.querySelector(tabName);
+
+  const params = new URLSearchParams(window.location.search);
+  if (tabName === '#announcements') {
+    template.content.querySelector('#club-name').value = params.get('name');
+  }
+
   const node = document.importNode(template.content, true);
   document.getElementById('tab').innerHTML = '';
   document.getElementById('tab').appendChild(node);
 
-  if (tabName == '#about-us') {
+  if (tabName === '#about-us') {
     getClubInfo();
-  } else if (tabName == '#announcements') {
+  } else if (tabName === '#announcements') {
     loadAnnouncements();
   }
 }
