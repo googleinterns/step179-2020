@@ -122,7 +122,7 @@ public class StudentServlet extends HttpServlet {
   }
 
   private ImmutableList<String> getClubAnnouncements(String clubName, DatastoreService datastore) {
-    // Get all announcements from given club name
+    // Get all announcements from given club name in reverse chronological order
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)
             .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName))
