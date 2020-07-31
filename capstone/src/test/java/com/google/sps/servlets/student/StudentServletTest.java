@@ -46,29 +46,11 @@ public final class StudentServletTest {
   private LocalServiceTestHelper localHelper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private Entity student_megha;
-  private Entity student_megan;
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     localHelper.setUp();
-
-    student_megha = new Entity(MEGHA_EMAIL);
-    student_megha.setProperty(Constants.PROPERTY_NAME, MEGHA_NAME);
-    student_megha.setProperty(Constants.PROPERTY_EMAIL, MEGHA_EMAIL);
-    student_megha.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    student_megha.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    student_megha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
-    datastore.put(student_megha);
-
-    student_megan = new Entity(MEGAN_EMAIL);
-    student_megan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
-    student_megan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
-    student_megan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    student_megan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    student_megan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
-    datastore.put(student_megan);
   }
 
   @After
@@ -76,7 +58,7 @@ public final class StudentServletTest {
     localHelper.tearDown();
   }
 
-  private JsonObject doGetStudentServletResponse() throws ServletException, IOException {
+  private JsonObject doGet_studentServletResponse() throws ServletException, IOException {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
@@ -89,7 +71,7 @@ public final class StudentServletTest {
     return responseJson;
   }
 
-  private String doPostStudentServletResponse() throws ServletException, IOException {
+  private String doPost_studentServletResponse() throws ServletException, IOException {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
@@ -103,7 +85,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(KEVIN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(KEVIN_EMAIL);
 
-    JsonObject responseJson = doGetStudentServletResponse();
+    JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
 
     String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
@@ -122,10 +104,18 @@ public final class StudentServletTest {
 
   @Test
   public void doGet_studentIsInNoClubs() throws ServletException, IOException {
+    Entity studentMegha = new Entity(MEGHA_EMAIL);
+    studentMegha.setProperty(Constants.PROPERTY_NAME, MEGHA_NAME);
+    studentMegha.setProperty(Constants.PROPERTY_EMAIL, MEGHA_EMAIL);
+    studentMegha.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegha.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(studentMegha);
+
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGHA_EMAIL);
 
-    JsonObject responseJson = doGetStudentServletResponse();
+    JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
 
     String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
@@ -135,19 +125,27 @@ public final class StudentServletTest {
     ImmutableList responseClubs =
         ImmutableList.copyOf(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray());
 
-    Assert.assertEquals(student_megha.getProperty(Constants.PROPERTY_NAME), responseName);
-    Assert.assertEquals(student_megha.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
-    Assert.assertEquals(student_megha.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
-    Assert.assertEquals(student_megha.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
-    Assert.assertEquals(student_megha.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_NAME), responseName);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
   }
 
   @Test
   public void doGet_studentIsInOneClub() throws ServletException, IOException {
+    Entity studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
+    datastore.put(studentMegan);
+
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
 
-    JsonObject responseJson = doGetStudentServletResponse();
+    JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
 
     String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
@@ -160,17 +158,25 @@ public final class StudentServletTest {
             .map(club -> club.toString().replaceAll("\"", ""))
             .collect(toImmutableList());
 
-    Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_NAME), responseName);
-    Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
-    Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
-    Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
-    Assert.assertEquals(student_megan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_NAME), responseName);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
   }
 
   @Test
   public void doPost_studentIsLoggedIn() throws ServletException, IOException {
+    Entity studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
+    datastore.put(studentMegan);
+
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    String response = doPostStudentServletResponse();
+    String response = doPost_studentServletResponse();
 
     Assert.assertTrue(response.isEmpty());
   }
