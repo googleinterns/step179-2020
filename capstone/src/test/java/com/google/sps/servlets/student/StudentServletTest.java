@@ -31,6 +31,7 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnit4.class)
 public final class StudentServletTest {
   private static final String STUDENT = "student";
+  private static final String ANNOUNCEMENTS = "announcements";
   public static final String MEGHA_EMAIL = "kakm@google.com";
   public static final String KEVIN_EMAIL = "kshao@google.com";
   public static final String MEGAN_EMAIL = "meganshi@google.com";
@@ -163,6 +164,49 @@ public final class StudentServletTest {
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+  }
+
+  @Test
+  public void doGet_studentIsInOneClubWithAnnouncement() throws ServletException, IOException {
+    String announcementContent = "This is a test announcement";
+    Entity announcementEntity = new Entity(Constants.ANNOUNCEMENT_PROP);
+    announcementEntity.setProperty(Constants.AUTHOR_PROP, MEGHA_EMAIL);
+    announcementEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
+    announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
+    announcementEntity.setProperty(Constants.CLUB_PROP, CLUB_1);
+    datastore.put(announcementEntity);
+
+    Entity studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
+    datastore.put(studentMegan);
+
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
+
+    JsonObject responseJson = doGet_studentServletResponse();
+    JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
+    String responseAnnouncement = responseJson.get(ANNOUNCEMENTS).toString();
+
+    String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
+    String responseEmail = responseStudent.get(Constants.PROPERTY_EMAIL).getAsString();
+    String responseMajor = responseStudent.get(Constants.PROPERTY_MAJOR).getAsString();
+    int responseYear = responseStudent.get(Constants.PROPERTY_GRADYEAR).getAsInt();
+    // Remove additional quotation marks from JSON Array and convert to ImmutableList
+    ImmutableList responseClubs =
+        Streams.stream(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray())
+            .map(club -> club.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_NAME), responseName);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
+    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+    Assert.assertTrue(responseAnnouncement.contains(announcementContent));
   }
 
   @Test
