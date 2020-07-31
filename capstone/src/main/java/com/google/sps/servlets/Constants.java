@@ -10,4 +10,5 @@ class Constants {
   static final String PROPERTY_GRADYEAR = "gradYear";
   static final String PROPERTY_MAJOR = "major";
   static final String PROPERTY_CLUBS = "clubs";
+  static final int LOAD_LIMIT = 10;
 }
