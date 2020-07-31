@@ -100,7 +100,7 @@ public final class AnnouncementsServletTest {
   @Test
   public void clubHasNoAnnouncements() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_2);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_2);
 
     JsonArray response = getServletResponse(servlet);
 
@@ -111,7 +111,7 @@ public final class AnnouncementsServletTest {
   @Test
   public void clubHasOnlyOneAnnouncement() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_1);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_1);
 
     JsonArray response = getServletResponse(servlet);
 

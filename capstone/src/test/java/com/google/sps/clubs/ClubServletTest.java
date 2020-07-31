@@ -131,4 +131,10 @@ public class ClubServletTest {
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
   }
+
+  @Test
+  public void doGet_fetchClubExists() throws ServletException, IOException {}
+
+  @Test
+  public void doGet_fetchClubDoesNotExist() throws ServletException, IOException {}
 }

@@ -33,22 +33,24 @@ public class ClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
-
-    String name = clubEntity.getProperty(Constants.PROPERTY_NAME).toString();
-    ImmutableList<String> members =
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
-    ImmutableList<String> officers =
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
-    String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
-    String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
-    ImmutableList<String> announcements =
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.ANNOUNCE_PROP));
-    Club club = new Club(name, members, officers, description, website, announcements);
-
-    Gson gson = new Gson();
-    String json = gson.toJson(club);
-    response.setContentType("text/html;");
-    response.getWriter().println(json);
+    if (clubEntity != null) {
+      String name = clubEntity.getProperty(Constants.PROPERTY_NAME).toString();
+      ImmutableList<String> members =
+          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+      ImmutableList<String> officers =
+          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+      String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
+      String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
+      ImmutableList<String> announcements =
+          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.ANNOUNCE_PROP));
+      Club club = new Club(name, members, officers, description, website, announcements);
+      Gson gson = new Gson();
+      String json = gson.toJson(club);
+      response.setContentType("text/html;");
+      response.getWriter().println(json);
+    } else {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
   }
 
   @Override
