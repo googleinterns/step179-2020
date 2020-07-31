@@ -26,11 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AnnouncementsServlet extends HttpServlet {
 
   private static final String ANNOUNCEMENTS_CONTENT_PROP = "content";
-  private static final String ANNOUNCEMENT_PROP = "Announcement";
-  private static final String AUTHOR_PROP = "author";
-  private static final String TIME_PROP = "time";
-  private static final String CONTENT_PROP = "content";
-  private static final String CLUB_PROP = "club";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -41,8 +36,8 @@ public class AnnouncementsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Query query =
-        new Query(ANNOUNCEMENT_PROP)
-            .setFilter(new FilterPredicate(CLUB_PROP, FilterOperator.EQUAL, clubName))
+        new Query(Constants.ANNOUNCEMENT_PROP)
+            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName))
             .addSort("time", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Announcement> announcements =
@@ -74,11 +69,11 @@ public class AnnouncementsServlet extends HttpServlet {
 
     // TODO need to authenticate user as club officer
 
-    Entity announcementEntity = new Entity(ANNOUNCEMENT_PROP);
-    announcementEntity.setProperty(AUTHOR_PROP, userEmail);
-    announcementEntity.setProperty(TIME_PROP, System.currentTimeMillis());
-    announcementEntity.setProperty(CONTENT_PROP, announcementContent);
-    announcementEntity.setProperty(CLUB_PROP, clubName);
+    Entity announcementEntity = new Entity(Constants.ANNOUNCEMENT_PROP);
+    announcementEntity.setProperty(Constants.AUTHOR_PROP, userEmail);
+    announcementEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
+    announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
+    announcementEntity.setProperty(Constants.CLUB_PROP, clubName);
 
     datastore.put(announcementEntity);
 
