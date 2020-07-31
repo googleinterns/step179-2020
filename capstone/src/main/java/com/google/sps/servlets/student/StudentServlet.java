@@ -50,6 +50,13 @@ public class StudentServlet extends HttpServlet {
     if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
       String clubsAsString = currentStudent.getProperty(Constants.PROPERTY_CLUBS).toString();
       // Convert string representation of a list to an ImmutableList
+      // JsonElement clubsJson = new JsonParser().parse(clubsAsString);
+      System.out.println("here: " + clubsAsString);
+      //   clubs =
+      //       Streams.stream(clubsJson.getAsJsonArray())
+      //           .map(club -> club.toString().replaceAll("\"", ""))
+      //           .collect(toImmutableList());
+      //   System.out.println(clubs);
       clubs =
           ImmutableList.copyOf(clubsAsString.substring(1, clubsAsString.length() - 1).split(","));
     }
@@ -96,7 +103,7 @@ public class StudentServlet extends HttpServlet {
     Entity studentEntity = new Entity(userEmail);
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
-    studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, "0");
+    studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, 0);
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     return studentEntity;

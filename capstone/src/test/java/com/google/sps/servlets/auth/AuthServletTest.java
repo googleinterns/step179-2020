@@ -49,7 +49,7 @@ public final class AuthServletTest {
   }
 
   @Test
-  public void doGet_StudentIsLoggedIn() throws ServletException, IOException {
+  public void doGet_studentIsLoggedIn() throws ServletException, IOException {
     localHelper.setEnvIsLoggedIn(true);
 
     String response = getAuthServletResponse();
@@ -59,7 +59,7 @@ public final class AuthServletTest {
   }
 
   @Test
-  public void doGet_StudentIsLoggedOut() throws ServletException, IOException {
+  public void doGet_studentIsLoggedOut() throws ServletException, IOException {
     localHelper.setEnvIsLoggedIn(false);
 
     String response = getAuthServletResponse();

@@ -99,9 +99,9 @@ public final class StudentServletTest {
   }
 
   @Test
-  public void doGet_StudentLogsInForFirstTime() throws ServletException, IOException {
+  public void doGet_studentLogsInForFirstTime() throws ServletException, IOException {
     localHelper.setEnvEmail(KEVIN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn("kshao@google.com");
+    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(KEVIN_EMAIL);
 
     JsonObject responseJson = doGetStudentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -121,7 +121,7 @@ public final class StudentServletTest {
   }
 
   @Test
-  public void doGet_StudentIsInNoClubs() throws ServletException, IOException {
+  public void doGet_studentIsInNoClubs() throws ServletException, IOException {
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGHA_EMAIL);
 
@@ -143,7 +143,7 @@ public final class StudentServletTest {
   }
 
   @Test
-  public void doGet_StudentIsInOneClub() throws ServletException, IOException {
+  public void doGet_studentIsInOneClub() throws ServletException, IOException {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
 
@@ -168,7 +168,7 @@ public final class StudentServletTest {
   }
 
   @Test
-  public void doPost_StudentIsLoggedIn() throws ServletException, IOException {
+  public void doPost_studentIsLoggedIn() throws ServletException, IOException {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     String response = doPostStudentServletResponse();
 
