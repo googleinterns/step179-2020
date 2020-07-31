@@ -96,3 +96,29 @@ function showTab(tabName) {
 /** Adds student to members list for current club */
 function joinClub() {
 }
+
+/** Fetches blobstore image upload url. */
+async function fetchBlobstoreUrl() {
+  fetch('/blobstore-url')
+      .then((response) => {
+        return response.text();
+      })
+      .then((imageUploadUrl) => {
+        const messageForm = document.getElementById('club-form');
+        messageForm.action = imageUploadUrl;
+      });
+}
+
+/** Displays status of club registration form submission. */
+function getRegMessage() {
+  var params = new URLSearchParams(window.location.search);
+  var valid = params.get('is-valid');
+  var template;
+  if (valid == 'true') {
+    template = document.querySelector('#valid');
+  } else {
+    template = document.querySelector('#invalid'); 
+  }
+  const node = document.importNode(template.content, true);
+  document.body.appendChild(node);  
+}
