@@ -61,7 +61,7 @@
         <artifactId>appengine-api-labs</artifactId>
         <version>1.9.60</version>
         <scope>test</scope>
-    </dependency>
+    </dependency> 
     <dependency>
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-api-stubs</artifactId>
@@ -73,7 +73,7 @@
       <artifactId>appengine-tools-sdk</artifactId>
       <version>1.9.60</version>
       <scope>test</scope>
-    </dependency>
+    </dependency>       
   </dependencies>
 
   <build>
