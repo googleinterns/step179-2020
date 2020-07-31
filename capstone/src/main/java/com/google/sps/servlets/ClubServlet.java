@@ -39,6 +39,17 @@ public class ClubServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    doPostHelper(request, response, blobstore, datastore);
+  }
+
+  public void doPostHelper(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      BlobstoreService blobstore,
+      DatastoreService datastore)
+      throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
 
@@ -51,7 +62,6 @@ public class ClubServlet extends HttpServlet {
                     FilterOperator.EQUAL,
                     request.getParameter(Constants.CLUB_NAME_PROP)));
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepared = datastore.prepare(query);
     response.setContentType("text/html;");
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
@@ -60,7 +70,7 @@ public class ClubServlet extends HttpServlet {
       String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
-      BlobKey key = getBlobKey(request, Constants.LOGO_PROP);
+      BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
 
       Entity clubEntity = new Entity("Club", clubName);
       clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
@@ -77,8 +87,8 @@ public class ClubServlet extends HttpServlet {
   }
 
   /* Return BlobKey for image uploaded through form. */
-  private BlobKey getBlobKey(HttpServletRequest request, String formInputElementName) {
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+  private BlobKey getBlobKey(
+      HttpServletRequest request, String formInputElementName, BlobstoreService blobstoreService) {
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
