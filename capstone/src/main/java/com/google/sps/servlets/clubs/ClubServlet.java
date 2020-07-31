@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
@@ -29,10 +30,23 @@ public class ClubServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
+
+    String name = clubEntity.getProperty(Constants.CLUB_NAME_PROP).toString();
+    ImmutableList<String> members =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+    ImmutableList<String> officers =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+    String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
+    String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
+    ImmutableList<String> announcements =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.ANNOUNCE_PROP));
+    Club club = new Club(name, members, officers, description, website, announcements);
+
     Gson gson = new Gson();
-    String json =
-        gson.toJson(
-            PrototypeClubs.PROTOTYPE_CLUBS_MAP.get(request.getParameter(Constants.CLUB_NAME_PROP)));
+    String json = gson.toJson(club);
     response.setContentType("text/html;");
     response.getWriter().println(json);
   }
@@ -54,16 +68,7 @@ public class ClubServlet extends HttpServlet {
     String founderEmail = userService.getCurrentUser().getEmail();
 
     // Check if club name is valid
-    Query query =
-        new Query("Club")
-            .setFilter(
-                new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
-                    FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
-
-    PreparedQuery prepared = datastore.prepare(query);
-    response.setContentType("text/html;");
+    PreparedQuery prepared = retrieveClub(request, datastore);
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
 
     if (isValid) {
@@ -100,5 +105,17 @@ public class ClubServlet extends HttpServlet {
     // Our form only contains a single file input, so get the first index.
     BlobKey blobKey = blobKeys.get(0);
     return blobKey;
+  }
+
+  private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.CLUB_NAME_PROP,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.CLUB_NAME_PROP)));
+    PreparedQuery prepared = datastore.prepare(query);
+    return prepared;
   }
 }
