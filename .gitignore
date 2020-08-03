@@ -1,3 +1,3 @@
 target/
 .idea
-appengine-generated/
+WEB_INF/appengine-generated/
