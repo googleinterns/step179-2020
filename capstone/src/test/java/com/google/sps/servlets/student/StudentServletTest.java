@@ -256,13 +256,12 @@ public final class StudentServletTest {
     String time = formatDate.format(new Date(System.currentTimeMillis()));
 
     String fullAnnouncement =
-        announcement.getProperty(Constants.CONTENT_PROP)
-            + " from "
-            + announcement.getProperty(Constants.AUTHOR_PROP)
-            + " in "
-            + announcement.getProperty(Constants.CLUB_PROP)
-            + " sent at "
-            + time;
+        String.format(
+            "%1$s from %2$s in %3$s sent at %4$s",
+            announcement.getProperty(Constants.CONTENT_PROP),
+            announcement.getProperty(Constants.AUTHOR_PROP),
+            announcement.getProperty(Constants.CLUB_PROP),
+            time);
     return fullAnnouncement;
   }
 }

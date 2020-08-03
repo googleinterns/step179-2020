@@ -151,13 +151,12 @@ public class StudentServlet extends HttpServlet {
     String time = formatDate.format(calendar.getTime());
 
     String fullAnnouncement =
-        announcement.getProperty(Constants.CONTENT_PROP).toString()
-            + " from "
-            + announcement.getProperty(Constants.AUTHOR_PROP)
-            + " in "
-            + announcement.getProperty(Constants.CLUB_PROP).toString()
-            + " sent at "
-            + time;
+        String.format(
+            "%1$s from %2$s in %3$s sent at %4$s",
+            announcement.getProperty(Constants.CONTENT_PROP),
+            announcement.getProperty(Constants.AUTHOR_PROP),
+            announcement.getProperty(Constants.CLUB_PROP),
+            time);
     return fullAnnouncement;
   }
 }
