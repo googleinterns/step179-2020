@@ -72,7 +72,7 @@ public class ClubServlet extends HttpServlet {
       String website = request.getParameter(Constants.WEBSITE_PROP);
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
 
-      Entity clubEntity = new Entity("Club", clubName);
+      Entity clubEntity = new Entity(Constants.CLUB_PROP, clubName);
       clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
