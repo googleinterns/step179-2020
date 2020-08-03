@@ -55,11 +55,18 @@ public final class StudentServletTest {
   private LocalServiceTestHelper localHelper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  private Entity studentMegan;
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     localHelper.setUp();
+    studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
   }
 
   @After
@@ -143,12 +150,6 @@ public final class StudentServletTest {
 
   @Test
   public void doGet_studentIsInOneClub() throws ServletException, IOException {
-    Entity studentMegan = new Entity(MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
-    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
@@ -183,13 +184,6 @@ public final class StudentServletTest {
     announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
     announcementEntity.setProperty(Constants.CLUB_PROP, CLUB_1);
     datastore.put(announcementEntity);
-
-    Entity studentMegan = new Entity(MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
-    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
@@ -225,12 +219,6 @@ public final class StudentServletTest {
 
   @Test
   public void doPost_studentIsLoggedIn() throws ServletException, IOException {
-    Entity studentMegan = new Entity(MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
-    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
