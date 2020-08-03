@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import javax.servlet.annotation.WebServlet;
@@ -56,13 +57,9 @@ public class StudentServlet extends HttpServlet {
     // Initally empty in case there is no club list
     ImmutableList<String> clubs = ImmutableList.of();
     if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
-      String clubsAsString = currentStudent.getProperty(Constants.PROPERTY_CLUBS).toString();
-
-      // Convert string representation of a list to an ImmutableList e.g. "[1, 2, 3]" -> [1, 2, 3]
-      // Substring to remove beginning and closing brackets of list
-      // Split by commas separating each element
       clubs =
-          ImmutableList.copyOf(clubsAsString.substring(1, clubsAsString.length() - 1).split(","));
+          ImmutableList.copyOf(
+              (ArrayList<String>) currentStudent.getProperty(Constants.PROPERTY_CLUBS));
     }
 
     // Create Student object based on stored information
@@ -100,10 +97,25 @@ public class StudentServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
 
+    Query query = new Query(userEmail);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+
     // Remove club from student's club list
-    String joinedClub = request.getParameter("join");
-    if (joinedClub != null && !joinedClub.isEmpty()) {
-      System.out.println("here: " + joinedClub);
+    String clubToJoin = request.getParameter("join");
+    if (clubToJoin != null && !clubToJoin.isEmpty()) {
+      // Get student's current club list and add new club
+      ArrayList<String> clubList = new ArrayList<String>();
+      if (student.getProperty(Constants.PROPERTY_CLUBS) != null) {
+        clubList = ((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+      }
+      if (!clubList.contains(clubToJoin)) {
+        clubList.add(clubToJoin);
+      }
+      // Update Datastore with new club list
+      student.setProperty(Constants.PROPERTY_CLUBS, clubList);
+      datastore.put(student);
       response.sendRedirect("index.html");
     } else {
       response.sendRedirect("profile.html");
