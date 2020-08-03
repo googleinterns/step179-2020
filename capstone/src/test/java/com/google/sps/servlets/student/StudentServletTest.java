@@ -227,6 +227,18 @@ public final class StudentServletTest {
     Assert.assertTrue(response.isEmpty());
   }
 
+  @Test
+  public void doPost_studentClicksJoinClub() throws ServletException, IOException {
+    datastore.put(studentMegan);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);
+    
+    String response = doPost_studentServletResponse();
+    String clubList = studentMegan.getProperty(Constants.PROPERTY_CLUBS).toString();
+
+    Assert.assertEquals(ImmutableList.of(CLUB_1).toString(), clubList);
+  }
+
   private String getAnnouncement(String announcementContent) {
     // Get announcement from test Datastore based on content
     Query query =

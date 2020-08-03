@@ -103,7 +103,7 @@ public class StudentServlet extends HttpServlet {
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
 
     // Remove club from student's club list
-    String clubToJoin = request.getParameter("join");
+    String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
     if (clubToJoin != null && !clubToJoin.isEmpty()) {
       // Get student's current club list and add new club
       ArrayList<String> clubList = new ArrayList<String>();
