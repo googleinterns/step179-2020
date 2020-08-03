@@ -1,3 +1,3 @@
 target/
 .idea
-capstone/WEB-INF/appengine-generated/datastore-indexes-auto.xml
+appengine-generated/
