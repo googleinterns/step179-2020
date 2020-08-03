@@ -100,7 +100,14 @@ public class StudentServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
 
-    response.sendRedirect("/profile.html");
+    // Remove club from student's club list
+    String joinedClub = request.getParameter("join");
+    if (joinedClub != null && !joinedClub.isEmpty()) {
+      System.out.println("here: " + joinedClub);
+      response.sendRedirect("index.html");
+    } else {
+      response.sendRedirect("profile.html");
+    }
   }
 
   private Entity createStudentEntity(String userEmail) {
