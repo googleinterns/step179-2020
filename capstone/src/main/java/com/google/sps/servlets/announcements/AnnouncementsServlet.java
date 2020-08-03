@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/announcements")
 public class AnnouncementsServlet extends HttpServlet {
 
-  private static final String ANNOUNCEMENTS_CONTENT_PROP = "content";
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get announcements object based on the logged in email
@@ -64,7 +62,7 @@ public class AnnouncementsServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
     String clubName = request.getParameter(Constants.CLUB_NAME_PROP);
-    String announcementContent = request.getParameter(ANNOUNCEMENTS_CONTENT_PROP);
+    String announcementContent = request.getParameter(Constants.CONTENT_PROP);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     // TODO need to authenticate user as club officer

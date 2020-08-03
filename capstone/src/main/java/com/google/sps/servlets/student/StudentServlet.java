@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns a student's profile content */
 @WebServlet("/student-data")
 public class StudentServlet extends HttpServlet {
+  private static String TIMEZONE_PST = "PST";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -132,15 +133,14 @@ public class StudentServlet extends HttpServlet {
     // Stream through results and get formatted announcements
     ImmutableList<String> announcements =
         Streams.stream(results.asIterable())
-            .limit(Constants.LOAD_LIMIT)
-            .map(entity -> getAnnouncementAsString(entity))
+            .map(StudentServlet::getAnnouncementAsString)
             .collect(toImmutableList());
     return announcements;
   }
 
-  private String getAnnouncementAsString(Entity announcement) {
+  private static String getAnnouncementAsString(Entity announcement) {
     // Set calendar timezone and time
-    TimeZone timePST = TimeZone.getTimeZone("PST");
+    TimeZone timePST = TimeZone.getTimeZone(TIMEZONE_PST);
     Calendar calendar = Calendar.getInstance(timePST);
     calendar.setTimeInMillis(
         Long.parseLong(announcement.getProperty(Constants.TIME_PROP).toString()));

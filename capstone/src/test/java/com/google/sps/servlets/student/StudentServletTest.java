@@ -6,6 +6,10 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
@@ -16,6 +20,10 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -189,7 +197,11 @@ public final class StudentServletTest {
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
+
+    // Get announcement and remove list brackets and quotes
     String responseAnnouncement = responseJson.get(ANNOUNCEMENTS).toString();
+    responseAnnouncement =
+        responseAnnouncement.substring(1, responseAnnouncement.length() - 1).replaceAll("\"", "");
 
     String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
     String responseEmail = responseStudent.get(Constants.PROPERTY_EMAIL).getAsString();
@@ -201,12 +213,14 @@ public final class StudentServletTest {
             .map(club -> club.toString().replaceAll("\"", ""))
             .collect(toImmutableList());
 
+    String expectedAnnouncement = getAnnouncement(announcementContent);
+
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_NAME), responseName);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
     Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
-    Assert.assertTrue(responseAnnouncement.contains(announcementContent));
+    Assert.assertEquals(expectedAnnouncement, responseAnnouncement);
   }
 
   @Test
@@ -223,5 +237,32 @@ public final class StudentServletTest {
     String response = doPost_studentServletResponse();
 
     Assert.assertTrue(response.isEmpty());
+  }
+
+  private String getAnnouncement(String announcementContent) {
+    // Get announcement from test Datastore based on content
+    Query query =
+        new Query(Constants.ANNOUNCEMENT_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.CONTENT_PROP, FilterOperator.EQUAL, announcementContent));
+    PreparedQuery results = datastore.prepare(query);
+    Entity announcement = ImmutableList.copyOf(results.asIterable()).get(0);
+
+    // Format current time to match pattern in Datastore
+    TimeZone timePST = TimeZone.getTimeZone("PST");
+    DateFormat formatDate = new SimpleDateFormat("HH:mm MM-dd-yyyy");
+    formatDate.setTimeZone(timePST);
+    String time = formatDate.format(new Date(System.currentTimeMillis()));
+
+    String fullAnnouncement =
+        announcement.getProperty(Constants.CONTENT_PROP)
+            + " from "
+            + announcement.getProperty(Constants.AUTHOR_PROP)
+            + " in "
+            + announcement.getProperty(Constants.CLUB_PROP)
+            + " sent at "
+            + time;
+    return fullAnnouncement;
   }
 }
