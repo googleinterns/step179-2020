@@ -102,7 +102,7 @@ public class StudentServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
 
-    // Remove club from student's club list
+    // Add club to student's club list
     String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
     if (clubToJoin != null && !clubToJoin.isEmpty()) {
       // Get student's current club list and add new club
