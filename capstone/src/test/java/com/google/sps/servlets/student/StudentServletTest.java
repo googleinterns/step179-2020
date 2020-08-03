@@ -48,6 +48,7 @@ public final class StudentServletTest {
   public static final int YEAR_2022 = 2022;
   public static final String MAJOR = "Computer Science";
   public static final String CLUB_1 = "Club 1";
+  public static final String CLUB_2 = "Club 2";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -56,17 +57,26 @@ public final class StudentServletTest {
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private Entity studentMegan;
+  private Entity studentMegha;
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     localHelper.setUp();
+
     studentMegan = new Entity(MEGAN_EMAIL);
     studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
     studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
     studentMegan.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
     studentMegan.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
     studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
+
+    studentMegha = new Entity(MEGHA_EMAIL);
+    studentMegha.setProperty(Constants.PROPERTY_NAME, MEGHA_NAME);
+    studentMegha.setProperty(Constants.PROPERTY_EMAIL, MEGHA_EMAIL);
+    studentMegha.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
+    studentMegha.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
+    studentMegha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
   }
 
   @After
@@ -120,12 +130,6 @@ public final class StudentServletTest {
 
   @Test
   public void doGet_studentIsInNoClubs() throws ServletException, IOException {
-    Entity studentMegha = new Entity(MEGHA_EMAIL);
-    studentMegha.setProperty(Constants.PROPERTY_NAME, MEGHA_NAME);
-    studentMegha.setProperty(Constants.PROPERTY_EMAIL, MEGHA_EMAIL);
-    studentMegha.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
-    studentMegha.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
-    studentMegha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     datastore.put(studentMegha);
 
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
@@ -229,12 +233,34 @@ public final class StudentServletTest {
 
   @Test
   public void doPost_studentClicksJoinClub() throws ServletException, IOException {
+    datastore.put(studentMegha);
+    localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_2);
+
+    String response = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGHA_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+
+    Assert.assertEquals(ImmutableList.of(CLUB_2).toString(), clubList);
+  }
+
+  @Test
+  public void doPost_studentJoinsClubTheyAreAlreadyIn() throws ServletException, IOException {
     datastore.put(studentMegan);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);
-    
+
     String response = doPost_studentServletResponse();
-    String clubList = studentMegan.getProperty(Constants.PROPERTY_CLUBS).toString();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
 
     Assert.assertEquals(ImmutableList.of(CLUB_1).toString(), clubList);
   }
@@ -253,7 +279,9 @@ public final class StudentServletTest {
     TimeZone timePST = TimeZone.getTimeZone("PST");
     DateFormat formatDate = new SimpleDateFormat("HH:mm MM-dd-yyyy");
     formatDate.setTimeZone(timePST);
-    String time = formatDate.format(new Date(System.currentTimeMillis()));
+    String time =
+        formatDate.format(
+            new Date(Long.parseLong(announcement.getProperty(Constants.TIME_PROP).toString())));
 
     String fullAnnouncement =
         String.format(
