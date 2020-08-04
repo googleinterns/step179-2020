@@ -19,12 +19,23 @@
     </div>  
     <div id="tab"></div>
     <template id="about-us">
-      <div class="full-screen-panel">
+      <div id="about-us-view">
         <p id="description"></p>
-        <p id="officers"></p>
+        <p id="officers">Officers:
+          <ul id="officers-list"></ul>
+        </p>
+        <p id="website-container">Website: 
+          <p id="website"></p>
+        </p>
         <p id="members"></p>
-        <p id="website"></p>
       </div>
+      <button hidden id="edit-button" onclick="showEdit()">Edit</button>
+      <form hidden action="/club-edit" method="POST" id="edit-form" name="edit-about">
+        <input type="hidden" id="name" name="name">
+        <input type="hidden" id="new-desc" name="description">
+        <input type="hidden" id="new-web" name="website">
+        <button name="edit-club" onclick="saveClubChanges()">Save Changes</button>
+      </form>
     </template>
     <template id="announcements">
       <div id="post-announcement" class="full-screen-panel">

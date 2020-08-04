@@ -15,6 +15,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class ClubServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
 
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
     if (clubEntity != null) {
@@ -43,9 +46,12 @@ public class ClubServlet extends HttpServlet {
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
       ImmutableList<String> announcements =
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.ANNOUNCE_PROP));
+      boolean isOfficer = officers.contains(userEmail);
       Club club = new Club(name, members, officers, description, website, announcements);
       Gson gson = new Gson();
-      String json = gson.toJson(club);
+      JsonElement jsonElement = gson.toJsonTree(club);
+      jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
+      String json = gson.toJson(jsonElement);
       response.setContentType("text/html;");
       response.getWriter().println(json);
     } else {

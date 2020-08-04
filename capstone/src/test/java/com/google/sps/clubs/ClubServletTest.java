@@ -122,6 +122,7 @@ public class ClubServletTest {
 
   @Test
   public void doGet_clubExists() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     ImmutableList<String> expectedMembers =
         ImmutableList.of("student@example.com", "officer@example.com");
@@ -161,6 +162,7 @@ public class ClubServletTest {
 
   @Test
   public void doGet_clubDoesNotExist() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn("Imaginary Club");
     clubServlet.doGet(request, response);
     Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);

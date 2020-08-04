@@ -31,18 +31,18 @@ async function getClubInfo() {
     const clubInfo = await response.json();
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
-    
-    var officerList = document.getElementById('officers');
+    var officerList = document.getElementById('officers-list');
     var officers = clubInfo['officers'];
-    officerList.innerHTML = 'Officers:';
-    officerList.innerHTML += '<ul>';
     for (const officer of officers) {
       officerList.innerHTML += '<li>' + officer + '</li>';
     }
-    officerList.innerHTML += '</ul>'
 
     document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
-    document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
+    document.getElementById('website').innerHTML = clubInfo['website'];
+
+    if(clubInfo['isOfficer']) {
+      document.getElementById('edit-button').removeAttribute('hidden');
+    }
   }
 }
 
@@ -126,4 +126,30 @@ function getRegMessage() {
   }
   const node = document.importNode(template.content, true);
   document.body.appendChild(node);  
+}
+
+function showEdit() {
+  document.getElementById('description').contentEditable = 'true';
+  document.getElementById('website').contentEditable = 'true';
+  document.getElementById('officers-list').contentEditable = 'true';
+  document.getElementById('edit-button').hidden = 'true';
+  document.getElementById('edit-form').removeAttribute('hidden');
+}
+
+/** Store edited content from profile page */
+function saveClubChanges() {
+  const newDesc = document.getElementById("description").innerHTML;
+  const newWebsite = document.getElementById("website").innerHTML;
+
+   const list = document.getElementById('officers-list');
+   const newOfficers = list.getElementsByTagName('li');
+   for (var i = 0; i < newOfficers.length; i++) {
+     console.log(newOfficers[i]);
+   }
+  
+  document.getElementById('new-desc').value = newDesc;
+  document.getElementById('new-web').value = newWebsite;
+  document.getElementById('name').value = document.getElementById('club-name').innerHTML;
+  document.forms['edit-form'].submit();
+  alert("Changes saved!");
 }
