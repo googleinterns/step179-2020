@@ -37,7 +37,12 @@ async function getClubInfo() {
       officerList.innerHTML += '<li>' + officer + '</li>';
     }
 
-    document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
+    const membersElement = document.getElementById('members');
+    if (clubInfo['members'].length == 1) {
+      membersElement.innerHTML = 'There is 1 member in this club.';
+    } else {
+      membersElement.innerHTML = 'There are ' + clubInfo['members'].length + ' members in this club.';
+    }
     document.getElementById('website').innerHTML = clubInfo['website'];
 
     if(clubInfo['isOfficer']) {

@@ -146,7 +146,7 @@ button {
 
 /* Navigation Bar */
 .club-navbar {
-  background-color: lightblue;
+  background-color: cornflowerblue;
   list-style-type: none;
   margin: 0;
   overflow: hidden;
@@ -167,7 +167,7 @@ button {
 }
 
 .club-navbar-element a:hover {
-  background-color: cornflowerblue;
+  background-color: royalblue;
 }
 
 .edit-profile {
@@ -191,3 +191,19 @@ button {
   background: #efefef;
   outline: 2px solid #0000FF;
 }
+
+.club-element {
+  padding: 5px;
+  margin-left: 20px;
+}
+
+.club-element[contenteditable="true"] {
+  background: #efefef;
+  outline: 2px solid #0000FF;
+}
+
+#about-us-view {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
