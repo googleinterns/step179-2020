@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +23,9 @@ public class EditClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
-    System.out.println(request.getParameter("name"));
+    ImmutableList<String> officers =
+        ImmutableList.copyOf(request.getParameter(Constants.OFFICER_PROP).split(","));
+        
     Query query =
         new Query("Club")
             .setFilter(
@@ -31,9 +34,10 @@ public class EditClubServlet extends HttpServlet {
                     FilterOperator.EQUAL,
                     request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
-    System.out.println(clubEntity);
+
     clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
     clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
+    clubEntity.setProperty(Constants.OFFICER_PROP, officers);
     datastore.put(clubEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubEntity.getProperty(Constants.PROPERTY_NAME));

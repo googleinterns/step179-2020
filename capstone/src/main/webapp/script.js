@@ -140,15 +140,18 @@ function showEdit() {
 function saveClubChanges() {
   const newDesc = document.getElementById("description").innerHTML;
   const newWebsite = document.getElementById("website").innerHTML;
+  var newOfficers = [];
 
-   const list = document.getElementById('officers-list');
-   const newOfficers = list.getElementsByTagName('li');
-   for (var i = 0; i < newOfficers.length; i++) {
-     console.log(newOfficers[i]);
-   }
+  const list = document.getElementById('officers-list');
+  const officerList = list.getElementsByTagName('li');
+  for (var i = 0; i < officerList.length; i++) {
+    console.log(officerList[i].innerText);
+    newOfficers.push(officerList[i].innerText);
+  }
   
   document.getElementById('new-desc').value = newDesc;
   document.getElementById('new-web').value = newWebsite;
+  document.getElementById('new-officers').value = newOfficers;
   document.getElementById('name').value = document.getElementById('club-name').innerHTML;
   document.forms['edit-form'].submit();
   alert("Changes saved!");
