@@ -136,7 +136,7 @@ function showEdit() {
   document.getElementById('edit-form').removeAttribute('hidden');
 }
 
-/** Store edited content from profile page */
+/** Store edited content from club page */
 function saveClubChanges() {
   const newDesc = document.getElementById("description").innerHTML;
   const newWebsite = document.getElementById("website").innerHTML;

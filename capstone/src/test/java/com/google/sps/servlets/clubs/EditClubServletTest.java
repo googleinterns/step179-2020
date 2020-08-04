@@ -1,0 +1,126 @@
+package com.google.sps.servlets;
+
+import static org.mockito.Mockito.when;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+@RunWith(JUnit4.class)
+public class EditClubServletTest {
+
+  private final String SAMPLE_CLUB_NAME = "Test Club";
+  private final String SAMPLE_CLUB_DESC_1 = "Test club description";
+  private final String SAMPLE_CLUB_WEB = "www.test-club.com";
+  private final String TEST_EMAIL = "test-email@gmail.com";
+
+  @Mock private HttpServletRequest request;
+  @Mock private HttpServletResponse response;
+  private DatastoreService datastore;
+  private EditClubServlet editClubServlet;
+
+  private LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(
+          new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0),
+          new LocalUserServiceTestConfig(),
+          new LocalBlobstoreServiceTestConfig());
+
+  @Before
+  public void setUp() throws IOException {
+    helper.setUp();
+    MockitoAnnotations.initMocks(this);
+    this.editClubServlet = new EditClubServlet();
+    datastore = DatastoreServiceFactory.getDatastoreService();
+  }
+
+  @After
+  public void tearDown() {
+    helper.tearDown();
+  }
+
+  @Test
+  public void doPost_editClubAllValidOfficers() throws ServletException, IOException {
+    prepClubEnv();
+    String description = "new test description";
+    String website = "new-website.com";
+    String newOfficer = "kakm@google.com";
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(description);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(website);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+
+    Assert.assertNotNull(clubEntity);
+    Assert.assertEquals(description, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(website, clubEntity.getProperty(Constants.WEBSITE_PROP));
+    Assert.assertEquals(
+        ImmutableList.of(TEST_EMAIL, newOfficer),
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP)));
+  }
+
+  @Test
+  public void doPost_editClubSomeValidOfficers() throws ServletException, IOException {
+    prepClubEnv();
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP))
+        .thenReturn("fake-person@fake.com," + TEST_EMAIL);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+
+    Assert.assertNotNull(clubEntity);
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
+    Assert.assertEquals(
+        ImmutableList.of(TEST_EMAIL),
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP)));
+  }
+
+  private void prepClubEnv() {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    Entity clubEntity = new Entity("Club");
+    clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
+    clubEntity.setProperty(Constants.DESCRIP_PROP, SAMPLE_CLUB_DESC_1);
+    clubEntity.setProperty(Constants.WEBSITE_PROP, SAMPLE_CLUB_WEB);
+    clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(TEST_EMAIL));
+    clubEntity.setProperty(
+        Constants.MEMBER_PROP,
+        ImmutableList.of(TEST_EMAIL, "meganshi@google.com", "kakm@google.com", "kshao@google.com"));
+    datastore.put(clubEntity);
+  }
+}

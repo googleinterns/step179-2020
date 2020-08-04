@@ -1,5 +1,7 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -10,6 +12,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +28,7 @@ public class EditClubServlet extends HttpServlet {
     String founderEmail = userService.getCurrentUser().getEmail();
     ImmutableList<String> officers =
         ImmutableList.copyOf(request.getParameter(Constants.OFFICER_PROP).split(","));
-        
+
     Query query =
         new Query("Club")
             .setFilter(
@@ -35,9 +38,16 @@ public class EditClubServlet extends HttpServlet {
                     request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
+    // Only accepts officers that are listed as members of the club
+    ImmutableList<String> members =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+
+    ImmutableList<String> intersect =
+        members.stream().filter(officers::contains).collect(toImmutableList());
+
     clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
     clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
-    clubEntity.setProperty(Constants.OFFICER_PROP, officers);
+    clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
     datastore.put(clubEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubEntity.getProperty(Constants.PROPERTY_NAME));
