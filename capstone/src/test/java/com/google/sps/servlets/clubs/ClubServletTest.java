@@ -127,7 +127,6 @@ public class ClubServletTest {
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     ImmutableList<String> expectedMembers = ImmutableList.of("student@example.com", officerEmail);
     ImmutableList<String> expectedOfficers = ImmutableList.of(officerEmail);
-    ImmutableList<String> expectedAnnouncements = ImmutableList.of("an announcement");
 
     Entity clubEntity = new Entity("Club");
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
@@ -135,7 +134,6 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.MEMBER_PROP, expectedMembers);
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
-    clubEntity.setProperty(Constants.ANNOUNCE_PROP, expectedAnnouncements);
     datastore.put(clubEntity);
 
     StringWriter stringWriter = new StringWriter();
@@ -149,15 +147,12 @@ public class ClubServletTest {
 
     ImmutableList<String> actualMembers = convertJsonList(response.get(Constants.MEMBER_PROP));
     ImmutableList<String> actualOfficers = convertJsonList(response.get(Constants.OFFICER_PROP));
-    ImmutableList<String> acutalAnnouncements =
-        convertJsonList(response.get(Constants.ANNOUNCE_PROP));
 
     Assert.assertEquals(SAMPLE_CLUB_NAME, response.get(Constants.PROPERTY_NAME).getAsString());
     Assert.assertEquals("test description", response.get(Constants.DESCRIP_PROP).getAsString());
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
-    Assert.assertEquals(expectedAnnouncements, acutalAnnouncements);
   }
 
   @Test
