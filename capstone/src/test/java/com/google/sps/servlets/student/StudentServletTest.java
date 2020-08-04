@@ -58,6 +58,8 @@ public final class StudentServletTest {
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private Entity studentMegan;
   private Entity studentMegha;
+  private Entity club1;
+  private Entity club2;
 
   @Before
   public void setUp() throws Exception {
@@ -77,6 +79,14 @@ public final class StudentServletTest {
     studentMegha.setProperty(Constants.PROPERTY_GRADYEAR, YEAR_2022);
     studentMegha.setProperty(Constants.PROPERTY_MAJOR, MAJOR);
     studentMegha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+
+    club1 = new Entity("Club");
+    club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
+    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGAN_EMAIL));
+
+    club2 = new Entity("Club");
+    club2.setProperty(Constants.PROPERTY_NAME, CLUB_2);
+    club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of());
   }
 
   @After
@@ -233,6 +243,7 @@ public final class StudentServletTest {
 
   @Test
   public void doPost_studentClicksJoinClub() throws ServletException, IOException {
+    datastore.put(club2);
     datastore.put(studentMegha);
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_2);
@@ -250,6 +261,7 @@ public final class StudentServletTest {
 
   @Test
   public void doPost_studentJoinsClubTheyAreAlreadyIn() throws ServletException, IOException {
+    datastore.put(club1);
     datastore.put(studentMegan);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);

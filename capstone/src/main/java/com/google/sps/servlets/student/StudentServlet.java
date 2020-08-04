@@ -88,9 +88,8 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: All commented steps below
-    // 1. Add club to logged in student's club list if requested
-    // 2. Remove club from logged in student's club list if requested
-    // 3. Update student information with edited content
+    // 1. Remove club from logged in student's club list if requested
+    // 2. Update student information with edited content
 
     // No need to check if user's information is not in Datastore - this is done in doGet method
     // Get student object based on the logged in email
@@ -102,20 +101,14 @@ public class StudentServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
 
-    // Add club to student's club list
     String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
     if (clubToJoin != null && !clubToJoin.isEmpty()) {
-      // Get student's current club list and add new club
-      ArrayList<String> clubList = new ArrayList<String>();
-      if (student.getProperty(Constants.PROPERTY_CLUBS) != null) {
-        clubList = ((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
-      }
-      if (!clubList.contains(clubToJoin)) {
-        clubList.add(clubToJoin);
-      }
-      // Update Datastore with new club list
-      student.setProperty(Constants.PROPERTY_CLUBS, clubList);
-      datastore.put(student);
+      // Add member to club's member list and update Datastore
+      Entity club = retrieveClub(clubToJoin, datastore);
+      addItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP);
+
+      // Add new club to student's club list and update Datastore
+      addItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS);
       response.sendRedirect("index.html");
     } else {
       response.sendRedirect("profile.html");
@@ -177,6 +170,31 @@ public class StudentServlet extends HttpServlet {
             announcement.getProperty(Constants.CLUB_PROP),
             time);
     return fullAnnouncement;
+  }
+
+  private Entity retrieveClub(String clubName, DatastoreService datastore) {
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
+    PreparedQuery results = datastore.prepare(query);
+    Entity club = ImmutableList.copyOf(results.asIterable()).get(0);
+    return club;
+  }
+
+  private void addItemToEntity(
+      Entity entity, DatastoreService datastore, String itemToAdd, String property) {
+    // Create emtpy ArrayList if property does not exist yet
+    ArrayList<String> generalList = new ArrayList<String>();
+    if (entity.getProperty(property) != null) {
+      generalList = ((ArrayList<String>) entity.getProperty(property));
+    }
+    if (!generalList.contains(itemToAdd)) {
+      generalList.add(itemToAdd);
+    }
+    // Add updated entity to Datastore
+    entity.setProperty(property, generalList);
+    datastore.put(entity);
   }
 }
 
