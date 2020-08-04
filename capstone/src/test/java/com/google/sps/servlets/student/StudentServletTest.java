@@ -134,7 +134,7 @@ public final class StudentServletTest {
     Assert.assertEquals("First Last", responseName);
     Assert.assertEquals(KEVIN_EMAIL, responseEmail);
     Assert.assertEquals(0, responseYear);
-    Assert.assertEquals("", responseMajor);
+    Assert.assertEquals("Enter your major here", responseMajor);
     Assert.assertEquals(ImmutableList.of(), responseClubs);
   }
 

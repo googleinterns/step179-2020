@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,22 +37,8 @@ public class StudentServlet extends HttpServlet {
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-
-    // Get the user's information from Datastore
-    Query query = new Query(userEmail);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
-
-    // Add user to Datastore if this is the first time they login
-    if (students.isEmpty()) {
-      Entity studentEntity = createStudentEntity(userEmail);
-      datastore.put(studentEntity);
-      results = datastore.prepare(query);
-      students = ImmutableList.copyOf(results.asIterable());
-    }
-    // A user can only be logged in with one email address at a time
-    Entity currentStudent = students.get(0);
+    Entity currentStudent = getStudent(userEmail, datastore);
 
     // Get club list from entity and convert to an ImmutableList
     // Initally empty in case there is no club list
@@ -91,28 +78,46 @@ public class StudentServlet extends HttpServlet {
     // 1. Remove club from logged in student's club list if requested
     // 2. Update student information with edited content
 
-    // No need to check if user's information is not in Datastore - this is done in doGet method
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-
-    Query query = new Query(userEmail);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    Entity student = getStudent(userEmail, datastore);
 
     String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
     if (clubToJoin != null && !clubToJoin.isEmpty()) {
       // Add member to club's member list and update Datastore
-      Entity club = retrieveClub(clubToJoin, datastore);
+      Entity club = retrieveClub(clubToJoin, datastore, response);
+      if (club == null) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
       addItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP);
 
       // Add new club to student's club list and update Datastore
       addItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS);
-      response.sendRedirect("index.html");
+      response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
     } else {
       response.sendRedirect("profile.html");
     }
+  }
+
+  private Entity getStudent(String userEmail, DatastoreService datastore) {
+    // Get the user's information from Datastore
+    Query query = new Query(userEmail);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+
+    // Add user to Datastore if this is the first time they login
+    if (students.isEmpty()) {
+      Entity studentEntity = createStudentEntity(userEmail);
+      datastore.put(studentEntity);
+      results = datastore.prepare(query);
+      students = ImmutableList.copyOf(results.asIterable());
+    }
+    // A user can only be logged in with one email address at a time
+    Entity currentStudent = students.get(0);
+    return currentStudent;
   }
 
   private Entity createStudentEntity(String userEmail) {
@@ -120,7 +125,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
     studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, 0);
-    studentEntity.setProperty(Constants.PROPERTY_MAJOR, "");
+    studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     return studentEntity;
   }
@@ -172,20 +177,21 @@ public class StudentServlet extends HttpServlet {
     return fullAnnouncement;
   }
 
-  private Entity retrieveClub(String clubName, DatastoreService datastore) {
+  private Entity retrieveClub(
+      String clubName, DatastoreService datastore, HttpServletResponse response) {
     Query query =
         new Query("Club")
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     PreparedQuery results = datastore.prepare(query);
-    Entity club = ImmutableList.copyOf(results.asIterable()).get(0);
-    return club;
+    ImmutableList<Entity> clubs = ImmutableList.copyOf(results.asIterable());
+    return clubs.isEmpty() ? null : clubs.get(0);
   }
 
   private void addItemToEntity(
       Entity entity, DatastoreService datastore, String itemToAdd, String property) {
-    // Create emtpy ArrayList if property does not exist yet
-    ArrayList<String> generalList = new ArrayList<String>();
+    // Create emtpy List if property does not exist yet
+    List<String> generalList = new ArrayList<String>();
     if (entity.getProperty(property) != null) {
       generalList = ((ArrayList<String>) entity.getProperty(property));
     }
