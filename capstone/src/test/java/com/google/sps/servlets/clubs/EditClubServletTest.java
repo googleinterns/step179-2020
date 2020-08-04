@@ -62,13 +62,13 @@ public class EditClubServletTest {
   @Test
   public void doPost_editClubAllValidOfficers() throws ServletException, IOException {
     prepClubEnv();
-    String description = "new test description";
-    String website = "new-website.com";
+    String newDescription = "new test description";
+    String newWebsite = "new-website.com";
     String newOfficer = "kakm@google.com";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
-    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(description);
-    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(website);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
     editClubServlet.doPost(request, response);
 
     Query query =
@@ -79,8 +79,8 @@ public class EditClubServletTest {
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
     Assert.assertNotNull(clubEntity);
-    Assert.assertEquals(description, clubEntity.getProperty(Constants.DESCRIP_PROP));
-    Assert.assertEquals(website, clubEntity.getProperty(Constants.WEBSITE_PROP));
+    Assert.assertEquals(newDescription, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(newWebsite, clubEntity.getProperty(Constants.WEBSITE_PROP));
     Assert.assertEquals(
         ImmutableList.of(TEST_EMAIL, newOfficer),
         ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP)));

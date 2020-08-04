@@ -150,7 +150,6 @@ function saveClubChanges() {
   const list = document.getElementById('officers-list');
   const officerList = list.getElementsByTagName('li');
   for (var i = 0; i < officerList.length; i++) {
-    console.log(officerList[i].innerText);
     newOfficers.push(officerList[i].innerText);
   }
   
@@ -159,5 +158,5 @@ function saveClubChanges() {
   document.getElementById('new-officers').value = newOfficers;
   document.getElementById('name').value = document.getElementById('club-name').innerHTML;
   document.forms['edit-form'].submit();
-  alert("Changes saved!");
+  alert('Changes saved!');
 }
