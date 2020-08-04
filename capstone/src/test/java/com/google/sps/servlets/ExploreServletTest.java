@@ -41,7 +41,10 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-/** */
+/**
+ * Class to test ExploreServlet by adding a few mock clubs and ensuring their existence and
+ * properties
+ */
 @RunWith(JUnit4.class)
 public final class ExploreServletTest {
 
@@ -64,9 +67,6 @@ public final class ExploreServletTest {
   @Mock private HttpServletResponse response;
   private DatastoreService datastore;
 
-  private Entity club1;
-  private Entity club2;
-
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
           new LocalDatastoreServiceTestConfig(),
@@ -79,23 +79,6 @@ public final class ExploreServletTest {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
     this.datastore = DatastoreServiceFactory.getDatastoreService();
-
-    club1 = new Entity(Constants.CLUB_PROP);
-    club1.setProperty(Constants.CLUB_NAME_PROP, CLUB_1);
-    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA, MEGAN, KEVIN));
-    club1.setProperty(Constants.OFFICER_PROP, ImmutableList.of(MEGHA));
-    club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
-    club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
-
-    club2 = new Entity(Constants.CLUB_PROP);
-    club2.setProperty(Constants.CLUB_NAME_PROP, CLUB_2);
-    club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(KEVIN));
-    club2.setProperty(Constants.OFFICER_PROP, ImmutableList.of(KEVIN));
-    club2.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_2);
-    club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
-
-    this.datastore.put(club1);
-    this.datastore.put(club2);
   }
 
   @After
@@ -107,6 +90,23 @@ public final class ExploreServletTest {
   public void correctNumberReturned() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_2);
+
+    Entity club1 = new Entity(Constants.CLUB_PROP);
+    club1.setProperty(Constants.CLUB_NAME_PROP, CLUB_1);
+    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA, MEGAN, KEVIN));
+    club1.setProperty(Constants.OFFICER_PROP, ImmutableList.of(MEGHA));
+    club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
+    club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
+
+    Entity club2 = new Entity(Constants.CLUB_PROP);
+    club2.setProperty(Constants.CLUB_NAME_PROP, CLUB_2);
+    club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(KEVIN));
+    club2.setProperty(Constants.OFFICER_PROP, ImmutableList.of(KEVIN));
+    club2.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_2);
+    club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
+
+    this.datastore.put(club1);
+    this.datastore.put(club2);
 
     JsonArray response = getServletResponse(servlet);
 
