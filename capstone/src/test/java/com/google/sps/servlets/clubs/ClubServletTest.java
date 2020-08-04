@@ -123,10 +123,10 @@ public class ClubServletTest {
   @Test
   public void doGet_clubExists() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    String officerEmail = "officer@example.com";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
-    ImmutableList<String> expectedMembers =
-        ImmutableList.of("student@example.com", "officer@example.com");
-    ImmutableList<String> expectedOfficers = ImmutableList.of("officer@example.com");
+    ImmutableList<String> expectedMembers = ImmutableList.of("student@example.com", officerEmail);
+    ImmutableList<String> expectedOfficers = ImmutableList.of(officerEmail);
     ImmutableList<String> expectedAnnouncements = ImmutableList.of("an announcement");
 
     Entity clubEntity = new Entity("Club");
