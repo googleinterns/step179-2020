@@ -106,10 +106,6 @@ function showTab(tabName) {
   }
 }
 
-/** Adds student to members list for current club */
-function joinClub() {
-}
-
 /** Fetches blobstore image upload url. */
 async function fetchBlobstoreUrl() {
   fetch('/blobstore-url')
@@ -164,3 +160,4 @@ function saveClubChanges() {
   document.forms['edit-form'].submit();
   alert('Changes submitted!');
 }
+
