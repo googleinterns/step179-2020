@@ -115,7 +115,6 @@ public final class AnnouncementsServletTest {
     Assert.assertEquals(expectedSize, response.size());
 
     JsonObject announcement = response.get(0).getAsJsonObject();
-    System.out.println(announcement);
     Assert.assertEquals(AUTHOR_1, announcement.get(Constants.AUTHOR_PROP).getAsString());
     Assert.assertEquals(CLUB_1, announcement.get(Constants.CLUB_PROP).getAsString());
     Assert.assertEquals(CONTENT_1, announcement.get(Constants.CONTENT_PROP).getAsString());
