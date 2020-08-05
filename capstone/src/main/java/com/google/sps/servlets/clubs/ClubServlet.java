@@ -70,6 +70,7 @@ public class ClubServlet extends HttpServlet {
     String founderEmail = userService.getCurrentUser().getEmail();
 
     // Check if club name is valid
+
     PreparedQuery prepared = retrieveClub(request, datastore);
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
 
@@ -79,8 +80,8 @@ public class ClubServlet extends HttpServlet {
       String website = request.getParameter(Constants.WEBSITE_PROP);
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
 
-      Entity clubEntity = new Entity("Club", clubName);
-      clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
+      Entity clubEntity = new Entity(Constants.CLUB_PROP, clubName);
+      clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
