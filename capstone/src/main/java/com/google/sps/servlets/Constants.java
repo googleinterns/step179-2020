@@ -22,4 +22,5 @@ class Constants {
   static final String TIME_PROP = "time";
   static final String CONTENT_PROP = "content";
   static final String JOIN_CLUB_PROP = "join";
+  static final String LEAVE_CLUB_PROP = "leave";
 }

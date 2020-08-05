@@ -304,4 +304,39 @@ public final class StudentServletTest {
             time);
     return fullAnnouncement;
   }
+
+  @Test
+  public void doPost_studentClicksLeaveButton() throws ServletException, IOException {
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1, CLUB_2));
+    datastore.put(studentMegan);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+
+    String response = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+
+    Assert.assertEquals(ImmutableList.of(CLUB_2).toString(), clubList);
+  }
+
+  @Test
+  public void doPost_studentClicksLeaveButtonWithOnlyOneClub()
+      throws ServletException, IOException {
+    datastore.put(studentMegan);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+
+    String response = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+
+    Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
+  }
 }
