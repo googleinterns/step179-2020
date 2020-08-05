@@ -85,6 +85,8 @@ public class StudentServlet extends HttpServlet {
     Entity student = getStudent(userEmail, datastore);
 
     String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
+    String clubToRemove = request.getParameter(Constants.LEAVE_CLUB_PROP);
+
     if (clubToJoin != null && !clubToJoin.isEmpty()) {
       // Add member to club's member list and update Datastore
       Entity club = retrieveClub(clubToJoin, datastore, response);
@@ -97,6 +99,19 @@ public class StudentServlet extends HttpServlet {
       // Add new club to student's club list and update Datastore
       addItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS);
       response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
+    } else if (clubToRemove != null && !clubToRemove.isEmpty()) {
+      // Get student's current club list and add new club
+      ArrayList<String> clubList = new ArrayList<String>();
+      if (student.getProperty(Constants.PROPERTY_CLUBS) != null) {
+        clubList = ((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+      }
+      if (clubList.contains(clubToRemove)) {
+        clubList.remove(clubToRemove);
+      }
+      // Update Datastore with new club list
+      student.setProperty(Constants.PROPERTY_CLUBS, clubList);
+      datastore.put(student);
+      response.sendRedirect("profile.html");
     } else {
       response.sendRedirect("profile.html");
     }
