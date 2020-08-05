@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.blobstore.BlobKey;
@@ -16,7 +17,13 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Streams;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -36,13 +43,10 @@ public class ClubServletTest {
 
   private final String SAMPLE_CLUB_NAME = "Club 1";
   private final String SAMPLE_CLUB_DESC_1 = "Test club description";
-  private final String SAMPLE_CLUB_DESC_2 = "Another club description";
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final BlobKey SAMPLE_BLOB = new BlobKey("test-blobkey");
   private final String TEST_EMAIL = "test-email@gmail.com";
   private final ImmutableList<String> STUDENT_LIST = ImmutableList.of(TEST_EMAIL);
-  private final String VALID_URL = "/registration-msg.html?is-valid=true";
-  private final String INVALID_URL = "/registration-msg.html?is-valid=false";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -74,61 +78,110 @@ public class ClubServletTest {
 
   @Test
   public void doPost_registerNewValidClub() throws ServletException, IOException {
-    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(SAMPLE_CLUB_NAME);
-    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
-    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-
-    ImmutableList<BlobKey> keys = ImmutableList.of(SAMPLE_BLOB);
-    ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
-    when(blobstore.getUploads(request)).thenReturn(blobMap);
-
+    doPost_helper();
     clubServlet.doPostHelper(request, response, blobstore, datastore);
 
     Query query =
         new Query("Club")
             .setFilter(
                 new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
+                    Constants.PROPERTY_NAME,
                     FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
+                    request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
-    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.CLUB_NAME_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
     Assert.assertEquals(SAMPLE_BLOB, clubEntity.getProperty(Constants.LOGO_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
 
-    Mockito.verify(response).sendRedirect(VALID_URL);
+    Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
 
   @Test
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
+    doPost_helper();
+    clubServlet.doPostHelper(request, response, blobstore, datastore);
+
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
+    clubServlet.doPostHelper(request, response, blobstore, datastore);
+
+    Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.PROPERTY_NAME)));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+  }
+
+  @Test
+  public void doGet_clubExists() throws ServletException, IOException {
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    ImmutableList<String> expectedMembers =
+        ImmutableList.of("student@example.com", "officer@example.com");
+    ImmutableList<String> expectedOfficers = ImmutableList.of("officer@example.com");
+    ImmutableList<String> expectedAnnouncements = ImmutableList.of("an announcement");
+
+    Entity clubEntity = new Entity("Club");
+    clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
+    clubEntity.setProperty(Constants.DESCRIP_PROP, "test description");
+    clubEntity.setProperty(Constants.MEMBER_PROP, expectedMembers);
+    clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
+    clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
+    clubEntity.setProperty(Constants.ANNOUNCE_PROP, expectedAnnouncements);
+    datastore.put(clubEntity);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(printWriter);
+    clubServlet.doGet(request, response);
+
+    String responseStr = stringWriter.toString().trim();
+    JsonElement responseJsonElement = new JsonParser().parse(responseStr);
+    JsonObject response = responseJsonElement.getAsJsonObject();
+
+    ImmutableList<String> actualMembers = convertJsonList(response.get(Constants.MEMBER_PROP));
+    ImmutableList<String> actualOfficers = convertJsonList(response.get(Constants.OFFICER_PROP));
+    ImmutableList<String> acutalAnnouncements =
+        convertJsonList(response.get(Constants.ANNOUNCE_PROP));
+
+    Assert.assertEquals(SAMPLE_CLUB_NAME, response.get(Constants.PROPERTY_NAME).getAsString());
+    Assert.assertEquals("test description", response.get(Constants.DESCRIP_PROP).getAsString());
+    Assert.assertEquals(expectedMembers, actualMembers);
+    Assert.assertEquals(expectedOfficers, actualOfficers);
+    Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
+    Assert.assertEquals(expectedAnnouncements, acutalAnnouncements);
+  }
+
+  @Test
+  public void doGet_clubDoesNotExist() throws ServletException, IOException {
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn("Imaginary Club");
+    clubServlet.doGet(request, response);
+    Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  private ImmutableList<String> convertJsonList(JsonElement responseProp) {
+    ImmutableList<String> converted =
+        Streams.stream(responseProp.getAsJsonArray())
+            .map(element -> element.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+    return converted;
+  }
+
+  private void doPost_helper() {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
 
     ImmutableList<BlobKey> keys = ImmutableList.of(SAMPLE_BLOB);
     ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
     when(blobstore.getUploads(request)).thenReturn(blobMap);
-
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
-
-    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_2);
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
-
-    Mockito.verify(response).sendRedirect(INVALID_URL);
-    Query query =
-        new Query("Club")
-            .setFilter(
-                new FilterPredicate(
-                    Constants.CLUB_NAME_PROP,
-                    FilterOperator.EQUAL,
-                    request.getParameter(Constants.CLUB_NAME_PROP)));
-    Entity clubEntity = datastore.prepare(query).asSingleEntity();
-    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
   }
 }

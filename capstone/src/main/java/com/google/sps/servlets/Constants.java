@@ -18,4 +18,10 @@ class Constants {
   static final String OFFICER_PROP = "officers";
   static final String ANNOUNCE_PROP = "announcements";
   static final int LOAD_LIMIT = 10;
+  static final String CLUB_PROP = "club";
+  static final String ANNOUNCEMENT_PROP = "Announcement";
+  static final String AUTHOR_PROP = "author";
+  static final String TIME_PROP = "time";
+  static final String CONTENT_PROP = "content";
+  static final String JOIN_CLUB_PROP = "join";
 }

@@ -21,9 +21,14 @@ const topNavBar =
 document.write(topNavBar);
 
 /** Load 'About Us' Club info tab. Default page displayed when user first enters club page. */
-function getClubInfo() {
+async function getClubInfo() {
   var params = new URLSearchParams(window.location.search);
-  fetch('/clubs?name=' + params.get('name')).then(response => response.json()).then((clubInfo) => {
+  const response = await fetch('/clubs?name=' + params.get('name'));
+  if (response.status == 400) {
+    alert("Invalid club! Returning to Explore.");
+    window.location.replace("index.html");
+  } else {
+    const clubInfo = await response.json();
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
     
@@ -38,7 +43,7 @@ function getClubInfo() {
 
     document.getElementById('members').innerHTML = '# of Members: ' + clubInfo['members'].length;
     document.getElementById('website').innerHTML = 'Website: ' + clubInfo['website'];
-  });
+  }
 }
 
 /** Accesses and displays club announcement data from servlet. */
@@ -91,10 +96,6 @@ function showTab(tabName) {
   } else if (tabName === '#announcements') {
     loadAnnouncements();
   }
-}
-
-/** Adds student to members list for current club */
-function joinClub() {
 }
 
 /** Fetches blobstore image upload url. */
