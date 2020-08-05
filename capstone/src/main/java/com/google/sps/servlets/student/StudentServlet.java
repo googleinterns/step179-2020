@@ -91,26 +91,25 @@ public class StudentServlet extends HttpServlet {
       // Add member to club's member list and update Datastore
       Entity club = retrieveClub(clubToJoin, datastore, response);
       if (club == null) {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      addItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP);
+      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, true);
 
       // Add new club to student's club list and update Datastore
-      addItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS);
+      addOrRemoveItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS, true);
       response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
     } else if (clubToRemove != null && !clubToRemove.isEmpty()) {
-      // Get student's current club list and add new club
-      ArrayList<String> clubList = new ArrayList<String>();
-      if (student.getProperty(Constants.PROPERTY_CLUBS) != null) {
-        clubList = ((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+      // Remove member from club's member list and update Datastore
+      Entity club = retrieveClub(clubToRemove, datastore, response);
+      if (club == null) {
+        return;
       }
-      if (clubList.contains(clubToRemove)) {
-        clubList.remove(clubToRemove);
-      }
-      // Update Datastore with new club list
-      student.setProperty(Constants.PROPERTY_CLUBS, clubList);
-      datastore.put(student);
+
+      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, false);
+
+      // Remove club from student's club list and update Datastore
+      addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
+
       response.sendRedirect("profile.html");
     } else {
       response.sendRedirect("profile.html");
@@ -200,18 +199,29 @@ public class StudentServlet extends HttpServlet {
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> clubs = ImmutableList.copyOf(results.asIterable());
-    return clubs.isEmpty() ? null : clubs.get(0);
+    if (clubs.isEmpty()) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return null;
+    }
+    return clubs.get(0);
   }
 
-  private void addItemToEntity(
-      Entity entity, DatastoreService datastore, String itemToAdd, String property) {
+  private static void addOrRemoveItemToEntity(
+      Entity entity,
+      DatastoreService datastore,
+      String itemToAddOrRemove,
+      String property,
+      Boolean addItem) {
     // Create empty List if property does not exist yet
     List<String> generalList = new ArrayList<String>();
     if (entity.getProperty(property) != null) {
       generalList = ((ArrayList<String>) entity.getProperty(property));
     }
-    if (!generalList.contains(itemToAdd)) {
-      generalList.add(itemToAdd);
+    if (addItem && !generalList.contains(itemToAddOrRemove)) {
+      generalList.add(itemToAddOrRemove);
+    }
+    if (!addItem && generalList.contains(itemToAddOrRemove)) {
+      generalList.remove(itemToAddOrRemove);
     }
     // Add updated entity to Datastore
     entity.setProperty(property, generalList);

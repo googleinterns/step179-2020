@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
@@ -254,9 +255,11 @@ public final class StudentServletTest {
     Query query = new Query(MEGHA_EMAIL);
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
-    Assert.assertEquals(ImmutableList.of(CLUB_2).toString(), clubList);
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_2, clubList.get(0));
   }
 
   @Test
@@ -272,9 +275,11 @@ public final class StudentServletTest {
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
-    Assert.assertEquals(ImmutableList.of(CLUB_1).toString(), clubList);
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_1, clubList.get(0));
   }
 
   private String getAnnouncement(String announcementContent) {
@@ -309,6 +314,7 @@ public final class StudentServletTest {
   public void doPost_studentClicksLeaveButton() throws ServletException, IOException {
     studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1, CLUB_2));
     datastore.put(studentMegan);
+    datastore.put(club1);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
 
@@ -318,15 +324,18 @@ public final class StudentServletTest {
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
-    Assert.assertEquals(ImmutableList.of(CLUB_2).toString(), clubList);
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_2, clubList.get(0));
   }
 
   @Test
   public void doPost_studentClicksLeaveButtonWithOnlyOneClub()
       throws ServletException, IOException {
     datastore.put(studentMegan);
+    datastore.put(club1);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
 
