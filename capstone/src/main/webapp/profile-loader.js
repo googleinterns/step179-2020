@@ -66,7 +66,7 @@ function createClubElement(text) {
 
   // Create leave button and set value to its respective club
   liElement.innerHTML += text
-    + '  <button name="club" value="'
+    + '  <button name="leave" value="'
     + text
     + '" formmethod="POST">Leave</button>';
   return liElement;
