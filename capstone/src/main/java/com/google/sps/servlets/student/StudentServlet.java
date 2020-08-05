@@ -190,7 +190,7 @@ public class StudentServlet extends HttpServlet {
 
   private void addItemToEntity(
       Entity entity, DatastoreService datastore, String itemToAdd, String property) {
-    // Create emtpy List if property does not exist yet
+    // Create empty List if property does not exist yet
     List<String> generalList = new ArrayList<String>();
     if (entity.getProperty(property) != null) {
       generalList = ((ArrayList<String>) entity.getProperty(property));
