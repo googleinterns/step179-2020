@@ -136,6 +136,7 @@ function getRegMessage() {
   document.body.appendChild(node);  
 }
 
+/** Make club info content editable when user enables editing. */
 function showEdit() {
   document.getElementById('description').contentEditable = 'true';
   document.getElementById('website').contentEditable = 'true';
