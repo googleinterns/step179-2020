@@ -39,17 +39,31 @@ public class EditClubServlet extends HttpServlet {
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
     // Only accepts officers that are listed as members of the club
-    ImmutableList<String> members =
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+    if (clubEntity != null) {
+      ImmutableList<String> members =
+          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
 
-    ImmutableList<String> intersect =
-        members.stream().filter(officers::contains).collect(toImmutableList());
+      ImmutableList<String> intersect =
+          members.stream().filter(officers::contains).collect(toImmutableList());
 
-    clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
-    clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
-    clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
-    datastore.put(clubEntity);
+      boolean isInvalid = intersect.isEmpty();
+      // If all officers are invalid, officers list does not change
+      if (intersect.isEmpty()) {
+        intersect =
+            ImmutableList.copyOf(
+                (ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+      }
 
-    response.sendRedirect("/about-us.html?name=" + clubEntity.getProperty(Constants.PROPERTY_NAME));
+      clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
+      clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
+      clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
+      datastore.put(clubEntity);
+
+      response.sendRedirect(
+          "/about-us.html?name="
+              + clubEntity.getProperty(Constants.PROPERTY_NAME)
+              + "&is-invalid="
+              + isInvalid);
+    }
   }
 }

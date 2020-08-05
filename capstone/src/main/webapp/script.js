@@ -28,6 +28,9 @@ async function getClubInfo() {
     alert("Invalid club! Returning to Explore.");
     window.location.replace("index.html");
   } else {
+    if (params.get('is-invalid') == 'true') {
+      alert('Unable to update officers list: no officer was a member of the club.');
+    }
     const clubInfo = await response.json();
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
@@ -158,5 +161,5 @@ function saveClubChanges() {
   document.getElementById('new-officers').value = newOfficers;
   document.getElementById('name').value = document.getElementById('club-name').innerHTML;
   document.forms['edit-form'].submit();
-  alert('Changes saved!');
+  alert('Changes submitted!');
 }

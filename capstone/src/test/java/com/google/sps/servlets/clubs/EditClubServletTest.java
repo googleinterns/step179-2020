@@ -77,13 +77,15 @@ public class EditClubServletTest {
                 new FilterPredicate(
                     Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> updatedOfficers =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
 
     Assert.assertNotNull(clubEntity);
     Assert.assertEquals(newDescription, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(newWebsite, clubEntity.getProperty(Constants.WEBSITE_PROP));
-    Assert.assertEquals(
-        ImmutableList.of(TEST_EMAIL, newOfficer),
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP)));
+    Assert.assertEquals(2, updatedOfficers.size());
+    Assert.assertEquals(TEST_EMAIL, updatedOfficers.get(0));
+    Assert.assertEquals(newOfficer, updatedOfficers.get(1));
   }
 
   @Test
@@ -102,13 +104,37 @@ public class EditClubServletTest {
                 new FilterPredicate(
                     Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> updatedOfficers =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
 
     Assert.assertNotNull(clubEntity);
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
-    Assert.assertEquals(
-        ImmutableList.of(TEST_EMAIL),
-        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP)));
+    Assert.assertEquals(1, updatedOfficers.size());
+    Assert.assertEquals(TEST_EMAIL, updatedOfficers.get(0));
+  }
+
+  @Test
+  public void doPost_editClubNoValidOfficers() throws ServletException, IOException {
+    prepClubEnv();
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn("fake-person@fake.com");
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> updatedOfficers =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+
+    Assert.assertNotNull(clubEntity);
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
   }
 
   private void prepClubEnv() {
