@@ -46,10 +46,6 @@ import org.mockito.MockitoAnnotations;
 public final class AnnouncementsServletTest {
 
   private static final String ANNOUNCEMENT_PROP = "Announcement";
-  private static final String AUTHOR_PROP = "author";
-  private static final String TIME_PROP = "time";
-  private static final String CONTENT_PROP = "content";
-  private static final String CLUB_PROP = "club";
 
   private static final String AUTHOR_1 = "kshao@google.com";
   private static final String AUTHOR_2 = "kakm@google.com";
@@ -84,10 +80,10 @@ public final class AnnouncementsServletTest {
     this.datastore = DatastoreServiceFactory.getDatastoreService();
 
     announcement1 = new Entity(ANNOUNCEMENT_PROP);
-    announcement1.setProperty(AUTHOR_PROP, AUTHOR_1);
-    announcement1.setProperty(CLUB_PROP, CLUB_1);
-    announcement1.setProperty(CONTENT_PROP, CONTENT_1);
-    announcement1.setProperty(TIME_PROP, TIME_10);
+    announcement1.setProperty(Constants.AUTHOR_PROP, AUTHOR_1);
+    announcement1.setProperty(Constants.CLUB_PROP, CLUB_1);
+    announcement1.setProperty(Constants.CONTENT_PROP, CONTENT_1);
+    announcement1.setProperty(Constants.TIME_PROP, TIME_10);
 
     this.datastore.put(announcement1);
   }
@@ -119,10 +115,11 @@ public final class AnnouncementsServletTest {
     Assert.assertEquals(expectedSize, response.size());
 
     JsonObject announcement = response.get(0).getAsJsonObject();
-    Assert.assertEquals(AUTHOR_1, announcement.get(AUTHOR_PROP).getAsString());
-    Assert.assertEquals(CLUB_1, announcement.get(CLUB_PROP).getAsString());
-    Assert.assertEquals(CONTENT_1, announcement.get(CONTENT_PROP).getAsString());
-    Assert.assertEquals(TIME_10, announcement.get(TIME_PROP).getAsLong());
+    System.out.println(announcement);
+    Assert.assertEquals(AUTHOR_1, announcement.get(Constants.AUTHOR_PROP).getAsString());
+    Assert.assertEquals(CLUB_1, announcement.get(Constants.CLUB_PROP).getAsString());
+    Assert.assertEquals(CONTENT_1, announcement.get(Constants.CONTENT_PROP).getAsString());
+    Assert.assertEquals(TIME_10, announcement.get(Constants.TIME_PROP).getAsLong());
   }
 
   private JsonArray getServletResponse(AnnouncementsServlet servlet) throws IOException {

@@ -95,14 +95,14 @@ public final class ExploreServletTest {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_2);
 
-    Entity club1 = new Entity(Constants.CLUB_PROP);
+    Entity club1 = new Entity(Constants.CLUB_ENTITY_PROP);
     club1.setProperty(Constants.CLUB_NAME_PROP, CLUB_1);
     club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA, MEGAN, KEVIN));
     club1.setProperty(Constants.OFFICER_PROP, ImmutableList.of(MEGHA));
     club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
     club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
 
-    Entity club2 = new Entity(Constants.CLUB_PROP);
+    Entity club2 = new Entity(Constants.CLUB_ENTITY_PROP);
     club2.setProperty(Constants.CLUB_NAME_PROP, CLUB_2);
     club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(KEVIN));
     club2.setProperty(Constants.OFFICER_PROP, ImmutableList.of(KEVIN));

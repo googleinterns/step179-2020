@@ -4,7 +4,7 @@ package com.google.sps.servlets;
 class Constants {
   private Constants() {}
 
-  static final String CLUB_PROP = "Club";
+  static final String CLUB_PROP = "club";
   static final String CLUB_NAME_PROP = "name";
   static final String PROPERTY_NAME = "name";
   static final String PROPERTY_EMAIL = "email";
@@ -18,7 +18,7 @@ class Constants {
   static final String OFFICER_PROP = "officers";
   static final String ANNOUNCE_PROP = "announcements";
   static final int LOAD_LIMIT = 10;
-  static final String CLUB_PROP = "club";
+  static final String CLUB_ENTITY_PROP = "Club";
   static final String ANNOUNCEMENT_PROP = "Announcement";
   static final String AUTHOR_PROP = "author";
   static final String TIME_PROP = "time";
