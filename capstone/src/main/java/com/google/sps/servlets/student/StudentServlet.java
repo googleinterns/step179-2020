@@ -74,9 +74,7 @@ public class StudentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: All commented steps below
-    // 1. Remove club from logged in student's club list if requested
-    // 2. Update student information with edited content
+    // TODO: Update student information with edited content
 
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
@@ -104,12 +102,10 @@ public class StudentServlet extends HttpServlet {
       if (club == null) {
         return;
       }
-
       addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, false);
 
       // Remove club from student's club list and update Datastore
       addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
-
       response.sendRedirect("profile.html");
     } else {
       response.sendRedirect("profile.html");
