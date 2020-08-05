@@ -106,9 +106,9 @@ public class StudentServlet extends HttpServlet {
 
       // Remove club from student's club list and update Datastore
       addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
-      response.sendRedirect("profile.html");
+      response.sendRedirect("/profile.html");
     } else {
-      response.sendRedirect("profile.html");
+      response.sendRedirect("/profile.html");
     }
   }
 

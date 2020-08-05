@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
@@ -237,9 +238,10 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
-    Assert.assertTrue(response.isEmpty());
+    Assert.assertTrue(responseStr.isEmpty());
+    Mockito.verify(response).sendRedirect("/profile.html");
   }
 
   @Test
@@ -249,7 +251,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_2);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGHA_EMAIL);
@@ -257,9 +259,11 @@ public final class StudentServletTest {
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+    String club = clubList.get(0);
 
     Assert.assertEquals(1, clubList.size());
-    Assert.assertEquals(CLUB_2, clubList.get(0));
+    Assert.assertEquals(CLUB_2, club);
+    Mockito.verify(response).sendRedirect("/about-us.html?name=" + club);
   }
 
   @Test
@@ -269,7 +273,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
@@ -318,7 +322,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
@@ -329,6 +333,7 @@ public final class StudentServletTest {
 
     Assert.assertEquals(1, clubList.size());
     Assert.assertEquals(CLUB_2, clubList.get(0));
+    Mockito.verify(response).sendRedirect("/profile.html");
   }
 
   @Test
@@ -339,7 +344,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
@@ -347,5 +352,6 @@ public final class StudentServletTest {
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
 
     Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
+    Mockito.verify(response).sendRedirect("/profile.html");
   }
 }
