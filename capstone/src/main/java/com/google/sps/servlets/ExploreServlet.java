@@ -45,6 +45,6 @@ public class ExploreServlet extends HttpServlet {
         ImmutableList.copyOf((List<String>) entity.getProperty(Constants.OFFICER_PROP)),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
-        null);
+        null); // announcements = null, unnecessary due to change in data structure
   }
 }

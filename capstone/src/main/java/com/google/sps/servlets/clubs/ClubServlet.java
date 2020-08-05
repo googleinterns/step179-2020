@@ -55,7 +55,7 @@ public class ClubServlet extends HttpServlet {
 
     // Check if club name is valid
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.CLUB_NAME_PROP,
