@@ -125,6 +125,7 @@ function showTab(tabName) {
   if (tabName === '#about-us') {
     getClubInfo();
   } else if (tabName === '#announcements') {
+    getClubInfo();
     loadAnnouncements();
     showHidePostAnnouncement();
   }
