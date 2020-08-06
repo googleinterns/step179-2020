@@ -365,4 +365,30 @@ public final class StudentServletTest {
     Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
     Mockito.verify(response).sendRedirect("/profile.html");
   }
+
+  @Test
+  public void doPost_studentChangesProfileContent() throws ServletException, IOException {
+    String newName = "Megan";
+    String newYear = "2023";
+    String newMajor = "Testing";
+    datastore.put(studentMegan);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter("new-name")).thenReturn(newName);
+    when(request.getParameter("new-year")).thenReturn(newYear);
+    when(request.getParameter("new-major")).thenReturn(newMajor);
+
+    String responseStr = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's edited name
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+
+    Assert.assertEquals(newName, student.getProperty(Constants.PROPERTY_NAME));
+    Assert.assertEquals(newYear, student.getProperty(Constants.PROPERTY_GRADYEAR));
+    Assert.assertEquals(newMajor, student.getProperty(Constants.PROPERTY_MAJOR));
+    Mockito.verify(response).sendRedirect("/profile.html");
+  }
 }
