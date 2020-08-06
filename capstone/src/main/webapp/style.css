@@ -207,3 +207,28 @@ button {
   margin-right: 100px;
 }
 
+#announcement-profile-picture, 
+#announcement-body,
+#announcement-time {
+  display: inline-block;
+  padding: 5px;
+  vertical-align: middle;
+  margin: 10px;
+}
+
+#announcement-profile-picture {
+    width: 5%;
+}
+
+#announcement-body {
+  width: 65%;
+}
+
+#announcement-time {
+  width: 20%;
+}
+
+#announcement-content,
+#announcement-author {
+    display:inline-block;
+}

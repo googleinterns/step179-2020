@@ -61,8 +61,20 @@ async function loadAnnouncements () {
   const response = await fetch(query);
   const json = await response.json();
   const template = document.querySelector('#announcement-element');
+
+  var backgroundColor;
+  const color1 = "#AAA";
+  const color2 = "#BBB";
+  var evenOdd = true;
   for (var announcement in json) {
-    template.content.querySelector('li').innerHTML = json[announcement].content;
+    template.content.querySelector('img').src = 'images/logo.png';
+    template.content.querySelector('#announcement-author').innerHTML = json[announcement].author;
+    template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
+    template.content.querySelector('#announcement-time').innerHTML = json[announcement].time;
+    backgroundColor = evenOdd ? color1 : color2; //In order to switch background colors every announcement
+    template.content.querySelector('#announcement-container').style = 'background-color:' + backgroundColor;
+    evenOdd = !evenOdd;
+
     var clone = document.importNode(template.content, true);
     document.getElementById('announcements-display').appendChild(clone);
   }
