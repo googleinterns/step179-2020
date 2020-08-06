@@ -19,8 +19,10 @@ function showOrHideProfile() {
 function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
     var studentInfo = info['student'];
-    // Display profile name
-    document.getElementById('edit-name').innerHTML += studentInfo['name'];
+    // Display profile name with edit icon
+    const pencilIcon = '<i class="far fa-edit pencil-edit"></i>';
+    document.getElementById('edit-name').innerHTML = studentInfo['name'];
+    document.getElementById('heading').innerHTML += pencilIcon;
 
     // Display profile club list
     getClubElements(studentInfo['clubs']);
