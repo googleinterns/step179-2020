@@ -61,7 +61,6 @@ async function showHidePostAnnouncement () {
   const response = await fetch(query);
   const text = await response.text();
   if (Boolean(text)) {
-    console.log('here');
     document.getElementById('post-announcement').removeAttribute('hidden');
   }
 }
@@ -84,7 +83,7 @@ async function loadAnnouncements () {
     template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
     template.content.querySelector('#announcement-time').innerHTML = json[announcement].time;
     backgroundColor = evenOdd ? color1 : color2; //In order to switch background colors every announcement
-    template.content.querySelector('#announcement-container').style = 'background-color:' + backgroundColor;
+    template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
     evenOdd = !evenOdd;
 
     var clone = document.importNode(template.content, true);
