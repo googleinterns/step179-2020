@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +67,10 @@ public class AnnouncementsServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    // TODO need to authenticate user as club officer
+    Club club = getClub(datastore, clubName);
+    if (!club.hasOfficer(userEmail)) {
+      return; // Not authenticated to post.
+    }
 
     Entity announcementEntity = new Entity(Constants.ANNOUNCEMENT_PROP);
     announcementEntity.setProperty(Constants.AUTHOR_PROP, userEmail);
@@ -77,5 +81,22 @@ public class AnnouncementsServlet extends HttpServlet {
     datastore.put(announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
+  }
+
+  private Club getClub(DatastoreService datastore, String clubName) {
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
+    Entity entity = datastore.prepare(query).asSingleEntity();
+    if (entity == null) {
+      return null;
+    }
+    return new Club(
+        entity.getProperty(Constants.CLUB_NAME_PROP).toString(),
+        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.MEMBER_PROP)),
+        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
+        entity.getProperty(Constants.DESCRIP_PROP).toString(),
+        entity.getProperty(Constants.WEBSITE_PROP).toString());
   }
 }
