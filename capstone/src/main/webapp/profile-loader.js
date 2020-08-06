@@ -19,50 +19,48 @@ function showOrHideProfile() {
 function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
     var studentInfo = info['student'];
-    var announcements = info['announcements'];
-
-    // Update profile name
+    // Display profile name
     document.getElementById('edit-name').innerHTML += studentInfo['name'];
 
-    // Update profile club list
-    var clubList = document.getElementById('club-content');
-    const clubs = studentInfo['clubs'];
-    for(const club of clubs) {
-      clubList.appendChild(createClubElement(club));
-    }
+    // Display profile club list
+    getClubElements(studentInfo['clubs']);
 
-    // Add announcements to student's inbox
-    var inbox = document.getElementById('inbox');
-    inbox.appendChild(addAnnoucements(announcements));
-
-    // Add additional student information and allow year and major to be editable
+    // Add additional student information
     document.getElementById('email').innerHTML += studentInfo['email'];
     document.getElementById('edit-year').innerHTML += studentInfo['gradYear'];
     document.getElementById('edit-major').innerHTML += studentInfo['major'];
+
+    // Add announcements to student's inbox
+    addAnnoucements(info['announcements']);
   });
 }
 
-/** Create ul and li elements for each club's announcements */
+/** Fill in inbox template with each club's announcements */
 function addAnnoucements(announcements) {
-  var inboxList = document.createElement('ul');
+  const template = document.querySelector('#inbox-list');
   for(const announcement of announcements){
-    var liElement = document.createElement('li');
-    liElement.innerText = announcement;
-    inboxList.appendChild(liElement);
+    template.content.querySelector('li').innerHTML = announcement;
+    var clone = document.importNode(template.content, true);
+    document.getElementById('inbox').appendChild(clone);
   }
-  return inboxList;
 }
 
-/** Create an <li> element containing club name and leave button */
-function createClubElement(text) {
-  var liElement = document.createElement('li');
+/** Fill in club list template with all club names and leave buttons */
+function getClubElements(clubs) {
+  const template = document.querySelector('#club-list');
+  for(const club of clubs){
+    template.content.querySelector('li').innerHTML = getClubContent(club);
+    var clone = document.importNode(template.content, true);
+    document.getElementById('club-content').appendChild(clone);
+  }
+}
 
-  // Create leave button and set value to its respective club
-  liElement.innerHTML += text
+function getClubContent(club) {
+  const content = club
     + '  <button name="leave" value="'
-    + text
+    + club
     + '" formmethod="POST">Leave</button>';
-  return liElement;
+  return content;
 }
 
 /** Store edited content from profile page */
@@ -71,7 +69,6 @@ function saveProfileChanges() {
   const newMajor = document.getElementById("edit-major").innerHTML;
   const newName = document.getElementById("edit-name").innerHTML;
 
-  //var updateProfile = document.getElementById("update-profile");
   document.getElementsByName('new-year')[0].value = newYear;
   document.getElementsByName('new-major')[0].value = newMajor;
   document.getElementsByName('new-name')[0].value = newName;

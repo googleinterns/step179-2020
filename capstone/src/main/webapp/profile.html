@@ -18,7 +18,11 @@
         <h1><u>Profile</u></h1>
         <h2>My Clubs:</h2>
         <form name="leave" action="/student-data" method="GET">
-          <ul id="club-content"></ul>
+          <ul id="club-content">
+            <template id="club-list">
+              <li></li>
+            </template>
+          </ul>
         </form>
         <br>
         <form name="edit-profile" action="/student-data" method="POST">
@@ -40,7 +44,11 @@
       <div class="split-profile right-profile">
         <h1><u>Inbox</u></h1>
         <br>
-        <div id="inbox"></div>
+        <ul id="inbox">
+          <template id="inbox-list">
+            <li></li>
+          </template>
+        </ul>
       </div>
       <div class="split profile middle-profile">
         <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
