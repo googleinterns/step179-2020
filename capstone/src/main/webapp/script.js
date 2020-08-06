@@ -81,7 +81,9 @@ async function loadAnnouncements () {
     template.content.querySelector('img').src = 'images/logo.png';
     template.content.querySelector('#announcement-author').innerHTML = json[announcement].author;
     template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
-    template.content.querySelector('#announcement-time').innerHTML = json[announcement].time;
+    const dateString = new Date(json[announcement].time).toLocaleDateString("en-US");
+    const timeString = new Date(json[announcement].time).toLocaleTimeString("en-US");
+    template.content.querySelector('#announcement-time').innerHTML = timeString + " on " + dateString;
     backgroundColor = evenOdd ? color1 : color2; //In order to switch background colors every announcement
     template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
     evenOdd = !evenOdd;
