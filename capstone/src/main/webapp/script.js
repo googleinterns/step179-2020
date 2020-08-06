@@ -54,6 +54,18 @@ async function getClubInfo() {
   }
 }
 
+/**Shows or hides the area to post announcements depending on if user is authorized. */
+async function showHidePostAnnouncement () {
+  var params = new URLSearchParams(window.location.search);
+  const query = '/officer?name=' + params.get('name');
+  const response = await fetch(query);
+  const text = await response.text();
+  if (Boolean(text)) {
+    console.log('here');
+    document.getElementById('post-announcement').removeAttribute('hidden');
+  }
+}
+
 /** Accesses and displays club announcement data from servlet. */
 async function loadAnnouncements () {
   var params = new URLSearchParams(window.location.search);
@@ -115,6 +127,7 @@ function showTab(tabName) {
     getClubInfo();
   } else if (tabName === '#announcements') {
     loadAnnouncements();
+    showHidePostAnnouncement();
   }
 }
 
