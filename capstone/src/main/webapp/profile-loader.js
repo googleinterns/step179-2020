@@ -56,10 +56,7 @@ function getClubElements(clubs) {
 }
 
 function getClubContent(club) {
-  const content = club
-    + '  <button name="leave" value="'
-    + club
-    + '" formmethod="POST">Leave</button>';
+  const content = club + '  <button name="leave" value="' + club + '" formmethod="POST">Leave</button>';
   return content;
 }
 
