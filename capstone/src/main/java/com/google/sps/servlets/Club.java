@@ -9,17 +9,20 @@ public class Club {
   private ImmutableList<String> officers;
   private String description;
   private String website;
+  private String logo;
 
   public Club(
       String name,
       ImmutableList<String> members,
       ImmutableList<String> officers,
       String description,
-      String website) {
+      String website,
+      String logo) {
     this.name = name;
     this.members = members;
     this.officers = officers;
     this.description = description;
     this.website = website;
+    this.logo = logo;
   }
 }

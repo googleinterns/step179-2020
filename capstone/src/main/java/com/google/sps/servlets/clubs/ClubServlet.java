@@ -45,7 +45,7 @@ public class ClubServlet extends HttpServlet {
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website);
+      Club club = new Club(name, members, officers, description, website, "");
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -90,10 +90,9 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.LOGO_PROP, key);
+      clubEntity.setProperty(Constants.LOGO_PROP, key.getKeyString());
       datastore.put(clubEntity);
     }
-
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
   }
 

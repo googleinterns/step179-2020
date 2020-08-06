@@ -39,11 +39,16 @@ public class ExploreServlet extends HttpServlet {
   }
 
   private Club createClubFromEntity(Entity entity) {
+    String key = "";
+    if (entity.getProperty(Constants.LOGO_PROP) != null) {
+      key = entity.getProperty(Constants.LOGO_PROP).toString();
+    }
     return new Club(
         entity.getProperty(Constants.CLUB_NAME_PROP).toString(),
         ImmutableList.copyOf((List<String>) entity.getProperty(Constants.MEMBER_PROP)),
         ImmutableList.copyOf((List<String>) entity.getProperty(Constants.OFFICER_PROP)),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
-        entity.getProperty(Constants.WEBSITE_PROP).toString());
+        entity.getProperty(Constants.WEBSITE_PROP).toString(),
+        key);
   }
 }
