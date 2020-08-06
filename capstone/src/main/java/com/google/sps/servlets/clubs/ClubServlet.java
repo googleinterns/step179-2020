@@ -44,8 +44,9 @@ public class ClubServlet extends HttpServlet {
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
+      String logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website, "");
+      Club club = new Club(name, members, officers, description, website, logoKey);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -83,6 +84,10 @@ public class ClubServlet extends HttpServlet {
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
+      String blobKey = "";
+      if (key != null) {
+        blobKey = key.getKeyString();
+      }
 
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
@@ -90,7 +95,7 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.LOGO_PROP, key.getKeyString());
+      clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
       datastore.put(clubEntity);
     }
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
