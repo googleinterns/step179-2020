@@ -256,9 +256,12 @@ public final class StudentServletTest {
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGHA_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+    Assert.assertFalse(clubList.isEmpty());
     String club = clubList.get(0);
 
     Assert.assertEquals(1, clubList.size());
@@ -278,7 +281,9 @@ public final class StudentServletTest {
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
@@ -294,7 +299,9 @@ public final class StudentServletTest {
                 new FilterPredicate(
                     Constants.CONTENT_PROP, FilterOperator.EQUAL, announcementContent));
     PreparedQuery results = datastore.prepare(query);
-    Entity announcement = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> announcements = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(announcements.isEmpty());
+    Entity announcement = announcements.get(0);
 
     // Format current time to match pattern in Datastore
     TimeZone timePST = TimeZone.getTimeZone("PST");
@@ -327,7 +334,9 @@ public final class StudentServletTest {
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
@@ -349,7 +358,9 @@ public final class StudentServletTest {
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
 
     Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
     Mockito.verify(response).sendRedirect("/profile.html");
