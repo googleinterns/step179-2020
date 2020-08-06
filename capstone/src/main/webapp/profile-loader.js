@@ -3,13 +3,14 @@ showOrHideProfile();
 /** Fetch login status and show or hide profile accordingly */
 function showOrHideProfile() {
   fetch('/auth').then(response => response.text()).then((loginStatus) => {
-    var authContent = document.getElementById('profile-content');
-    if (loginStatus.includes('Logout')) {
-      authContent.innerHTML += loginStatus;
+    if (loginStatus.includes('logout')) {
+      var authContent = document.getElementById('top-navigation');
+      authContent.innerHTML = '<a id="logout-url" href="">Logout</a>' + authContent.innerHTML;
+      document.getElementById('logout-url').href = loginStatus;
       getStudentInfo();
     }
     else {
-      authContent.innerHTML = loginStatus;
+      document.getElementById('profile-content').innerHTML = loginStatus;
     }
   })
 }
@@ -18,69 +19,56 @@ function showOrHideProfile() {
 function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
     var studentInfo = info['student'];
-    var announcements = info['announcements'];
-    // Update profile name
-    var profileTitle = document.getElementById('heading');
-    profileTitle.innerHTML += studentInfo['name'];
+    // Display profile name
+    document.getElementById('edit-name').innerHTML += studentInfo['name'];
 
-    // Update profile club list
-    var clubList = document.getElementById('club-content');
-    const clubs = studentInfo['clubs'];
-    for(const club of clubs) {
-      clubList.appendChild(createClubElement(club));
-    }
+    // Display profile club list
+    getClubElements(studentInfo['clubs']);
+
+    // Add additional student information
+    document.getElementById('email').innerHTML += studentInfo['email'];
+    document.getElementById('edit-year').innerHTML += studentInfo['gradYear'];
+    document.getElementById('edit-major').innerHTML += studentInfo['major'];
 
     // Add announcements to student's inbox
-    var inbox = document.getElementById('inbox');
-    inbox.appendChild(addAnnoucements(announcements));
-
-    // Add additional student information and allow year and major to be editable
-    var personalInfo = document.getElementById('student-info');
-    const newLine = '<br>';
-    // Create variables for start of div tag
-    const startOfDivYear = '<div id="edit-year"';
-    const startOfDivMajor = '<div id="edit-major"';
-    const editableDiv = 'class="edit-profile" contenteditable="true">';
-    const endDiv = '</div>';
-
-    personalInfo.innerHTML += 'Email: ' + studentInfo['email'] + newLine;
-    personalInfo.innerHTML += 'Grad Year: ' + startOfDivYear + editableDiv + studentInfo['gradYear'] + endDiv + newLine;
-    personalInfo.innerHTML += 'Major: ' + startOfDivMajor + editableDiv + studentInfo['major'] + endDiv + newLine;
+    addAnnoucements(info['announcements']);
   });
 }
 
-/** Create ul and li elements for each club's announcements */
+/** Fill in inbox template with each club's announcements */
 function addAnnoucements(announcements) {
-  var inboxList = document.createElement('ul');
+  const template = document.querySelector('#inbox-list');
   for(const announcement of announcements){
-    var liElement = document.createElement('li');
-    liElement.innerText = announcement;
-    inboxList.appendChild(liElement);
+    template.content.querySelector('li').innerHTML = announcement;
+    var clone = document.importNode(template.content, true);
+    document.getElementById('inbox').appendChild(clone);
   }
-  return inboxList;
 }
 
-/** Create an <li> element containing club name and leave button */
-function createClubElement(text) {
-  var liElement = document.createElement('li');
+/** Fill in club list template with all club names and leave buttons */
+function getClubElements(clubs) {
+  const template = document.querySelector('#club-list');
+  for(const club of clubs){
+    template.content.querySelector('li').innerHTML = getClubContent(club);
+    var clone = document.importNode(template.content, true);
+    document.getElementById('club-content').appendChild(clone);
+  }
+}
 
-  // Create leave button and set value to its respective club
-  liElement.innerHTML += text
-    + '  <button name="leave" value="'
-    + text
-    + '" formmethod="POST">Leave</button>';
-  return liElement;
+function getClubContent(club) {
+  const content = club + '  <button name="leave" value="' + club + '" formmethod="POST">Leave</button>';
+  return content;
 }
 
 /** Store edited content from profile page */
 function saveProfileChanges() {
   const newYear = document.getElementById("edit-year").innerHTML;
   const newMajor = document.getElementById("edit-major").innerHTML;
+  const newName = document.getElementById("edit-name").innerHTML;
 
-  var updateProfile = document.getElementById("update-profile");
-
-  updateProfile.innerHTML = '<input type="hidden" name="new-year" value="' + newYear + '">';
-  updateProfile.innerHTML += '<input type="hidden" name="new-major" value="' + newMajor + '">';
+  document.getElementsByName('new-year')[0].value = newYear;
+  document.getElementsByName('new-major')[0].value = newMajor;
+  document.getElementsByName('new-name')[0].value = newName;
 
   document.forms['edit-profile'].submit();
 }
