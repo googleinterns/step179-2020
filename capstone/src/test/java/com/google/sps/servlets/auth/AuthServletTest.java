@@ -54,8 +54,8 @@ public final class AuthServletTest {
 
     String response = getAuthServletResponse();
 
-    Assert.assertTrue(response.contains("Logout"));
-    Assert.assertTrue(!response.contains("Login"));
+    Assert.assertTrue(response.contains("logout"));
+    Assert.assertTrue(!response.contains("login"));
   }
 
   @Test
@@ -64,7 +64,7 @@ public final class AuthServletTest {
 
     String response = getAuthServletResponse();
 
-    Assert.assertTrue(response.contains("Login"));
-    Assert.assertTrue(!response.contains("Logout"));
+    Assert.assertTrue(response.contains("login"));
+    Assert.assertTrue(!response.contains("logout"));
   }
 }

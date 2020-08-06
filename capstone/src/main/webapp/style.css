@@ -204,3 +204,7 @@ button {
   background: #efefef;
   outline: 2px solid #0000FF;
 }
+
+.pencil-edit {
+  font-size: 2em;
+}
