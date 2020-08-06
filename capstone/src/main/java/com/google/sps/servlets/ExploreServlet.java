@@ -44,7 +44,7 @@ public class ExploreServlet extends HttpServlet {
       key = entity.getProperty(Constants.LOGO_PROP).toString();
     }
     return new Club(
-        entity.getProperty(Constants.CLUB_NAME_PROP).toString(),
+        entity.getProperty(Constants.PROPERTY_NAME).toString(),
         ImmutableList.copyOf((List<String>) entity.getProperty(Constants.MEMBER_PROP)),
         ImmutableList.copyOf((List<String>) entity.getProperty(Constants.OFFICER_PROP)),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),

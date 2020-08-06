@@ -14,9 +14,9 @@
 
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -25,8 +25,10 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,6 +36,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +50,7 @@ import org.mockito.MockitoAnnotations;
  */
 @RunWith(JUnit4.class)
 public final class ExploreServletTest {
+
   private ExploreServlet servlet;
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -88,35 +92,27 @@ public final class ExploreServletTest {
     String DESCRIPTION_1 = "Helping people.";
     String DESCRIPTION_2 = "Not helping people.";
 
-    BlobKey BLOB_1 = new BlobKey("test-blobkey");
-    BlobKey BLOB_2 = new BlobKey("another blob");
-    // ImmutableList<BlobKey> keys = ImmutableList.of(BLOB_1);
-    // ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
-    // when(blobstore.getUploads(request)).thenReturn(blobMap);
-
-    // BlobKey BLOB_2 = new BlobKey("another blob");
-    // ImmutableList<BlobKey> keys = ImmutableList.of(BLOB_2);
-    // ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
-    // when(blobstore.getUploads(request)).thenReturn(blobMap);
+    String BLOB_KEY_1 = "fake blob key";
+    String BLOB_KEY_2 = "another fake blob key";
 
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.CLUB_NAME_PROP)).thenReturn(CLUB_2);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_2);
 
     Entity club1 = new Entity(Constants.CLUB_ENTITY_PROP);
-    club1.setProperty(Constants.CLUB_NAME_PROP, CLUB_1);
+    club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
     club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA, MEGAN, KEVIN));
     club1.setProperty(Constants.OFFICER_PROP, ImmutableList.of(MEGHA));
     club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
     club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
-    club1.setProperty(Constants.LOGO_PROP, BLOB_1);
+    club1.setProperty(Constants.LOGO_PROP, BLOB_KEY_1);
 
     Entity club2 = new Entity(Constants.CLUB_ENTITY_PROP);
-    club2.setProperty(Constants.CLUB_NAME_PROP, CLUB_2);
+    club2.setProperty(Constants.PROPERTY_NAME, CLUB_2);
     club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(KEVIN));
     club2.setProperty(Constants.OFFICER_PROP, ImmutableList.of(KEVIN));
     club2.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_2);
     club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
-    club2.setProperty(Constants.LOGO_PROP, BLOB_2);
+    club2.setProperty(Constants.LOGO_PROP, BLOB_KEY_2);
 
     this.datastore.put(club1);
     this.datastore.put(club2);
@@ -124,44 +120,48 @@ public final class ExploreServletTest {
     JsonArray response = getServletResponse(servlet);
 
     int expectedSize = 2;
-    //     Assert.assertEquals(expectedSize, response.size());
+    Assert.assertEquals(expectedSize, response.size());
 
-    //     JsonElement element0 = response.get(0);
-    //     Assert.assertTrue(element0.isJsonObject());
-    //     JsonObject object0 = (JsonObject) element0;
-    //     Assert.assertEquals(object0.get(Constants.CLUB_NAME_PROP).getAsString(), CLUB_1);
-    //     // Remove additional quotation marks from JSON Array and convert to ImmutableList
-    //     ImmutableList members0 =
-    //         Streams.stream(object0.get(Constants.MEMBER_PROP).getAsJsonArray())
-    //             .map(member -> member.toString().replaceAll("\"", ""))
-    //             .collect(toImmutableList());
-    //     ImmutableList officers0 =
-    //         Streams.stream(object0.get(Constants.OFFICER_PROP).getAsJsonArray())
-    //             .map(officer -> officer.toString().replaceAll("\"", ""))
-    //             .collect(toImmutableList());
-    //     Assert.assertEquals(members0, ImmutableList.of(MEGHA, MEGAN, KEVIN));
-    //     Assert.assertEquals(officers0, ImmutableList.of(MEGHA));
-    //     Assert.assertEquals(object0.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_1);
-    //     Assert.assertEquals(object0.get(Constants.WEBSITE_PROP).getAsString(), SITE_1);
+    JsonElement element0 = response.get(0);
+    Assert.assertTrue(element0.isJsonObject());
+    JsonObject object0 = (JsonObject) element0;
+    Assert.assertEquals(object0.get(Constants.PROPERTY_NAME).getAsString(), CLUB_1);
+    // Remove additional quotation marks from JSON Array and convert to ImmutableList
+    ImmutableList members0 =
+        Streams.stream(object0.get(Constants.MEMBER_PROP).getAsJsonArray())
+            .map(member -> member.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+    ImmutableList officers0 =
+        Streams.stream(object0.get(Constants.OFFICER_PROP).getAsJsonArray())
+            .map(officer -> officer.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+    System.out.println(object0.get(Constants.LOGO_PROP));
 
-    //     JsonElement element1 = response.get(1);
-    //     Assert.assertTrue(element1.isJsonObject());
-    //     JsonObject object1 = (JsonObject) element1;
-    //     Assert.assertEquals(object1.get(Constants.CLUB_NAME_PROP).getAsString(), CLUB_2);
-    //     // Remove additional quotation marks from JSON Array and convert to ImmutableList
-    //     ImmutableList members1 =
-    //         Streams.stream(object1.get(Constants.MEMBER_PROP).getAsJsonArray())
-    //             .map(member -> member.toString().replaceAll("\"", ""))
-    //             .collect(toImmutableList());
-    //     ImmutableList officers1 =
-    //         Streams.stream(object1.get(Constants.OFFICER_PROP).getAsJsonArray())
-    //             .map(officer -> officer.toString().replaceAll("\"", ""))
-    //             .collect(toImmutableList());
-    //     Assert.assertEquals(members1, ImmutableList.of(KEVIN));
-    //     Assert.assertEquals(officers1, ImmutableList.of(KEVIN));
-    //     Assert.assertEquals(object1.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_2);
-    //     Assert.assertEquals(object1.get(Constants.WEBSITE_PROP).getAsString(), SITE_2);
-    //   }
+    Assert.assertEquals(members0, ImmutableList.of(MEGHA, MEGAN, KEVIN));
+    Assert.assertEquals(officers0, ImmutableList.of(MEGHA));
+    Assert.assertEquals(object0.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_1);
+    Assert.assertEquals(object0.get(Constants.WEBSITE_PROP).getAsString(), SITE_1);
+    Assert.assertEquals(object0.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_1);
+
+    JsonElement element1 = response.get(1);
+    Assert.assertTrue(element1.isJsonObject());
+    JsonObject object1 = (JsonObject) element1;
+    System.out.println(object1.get(Constants.LOGO_PROP));
+    Assert.assertEquals(object1.get(Constants.PROPERTY_NAME).getAsString(), CLUB_2);
+    // Remove additional quotation marks from JSON Array and convert to ImmutableList
+    ImmutableList members1 =
+        Streams.stream(object1.get(Constants.MEMBER_PROP).getAsJsonArray())
+            .map(member -> member.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+    ImmutableList officers1 =
+        Streams.stream(object1.get(Constants.OFFICER_PROP).getAsJsonArray())
+            .map(officer -> officer.toString().replaceAll("\"", ""))
+            .collect(toImmutableList());
+    Assert.assertEquals(members1, ImmutableList.of(KEVIN));
+    Assert.assertEquals(officers1, ImmutableList.of(KEVIN));
+    Assert.assertEquals(object1.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_2);
+    Assert.assertEquals(object1.get(Constants.WEBSITE_PROP).getAsString(), SITE_2);
+    Assert.assertEquals(object1.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_2);
   }
 
   private JsonArray getServletResponse(ExploreServlet servlet) throws IOException {

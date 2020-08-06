@@ -85,7 +85,7 @@ public class ClubServlet extends HttpServlet {
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
 
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
-      clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
+      clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
