@@ -15,6 +15,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class ClubServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
 
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
     if (clubEntity != null) {
@@ -41,11 +44,12 @@ public class ClubServlet extends HttpServlet {
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
-      ImmutableList<String> announcements =
-          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.ANNOUNCE_PROP));
-      Club club = new Club(name, members, officers, description, website, announcements);
+      boolean isOfficer = officers.contains(userEmail);
+      Club club = new Club(name, members, officers, description, website);
       Gson gson = new Gson();
-      String json = gson.toJson(club);
+      JsonElement jsonElement = gson.toJsonTree(club);
+      jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
+      String json = gson.toJson(jsonElement);
       response.setContentType("text/html;");
       response.getWriter().println(json);
     } else {
@@ -86,7 +90,6 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.ANNOUNCE_PROP, ImmutableList.of(""));
       clubEntity.setProperty(Constants.LOGO_PROP, key);
       datastore.put(clubEntity);
     }
