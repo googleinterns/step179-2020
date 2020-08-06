@@ -82,7 +82,7 @@ public class ClubServletTest {
     clubServlet.doPostHelper(request, response, blobstore, datastore);
 
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,
@@ -122,19 +122,18 @@ public class ClubServletTest {
 
   @Test
   public void doGet_clubExists() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    String officerEmail = "officer@example.com";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
-    ImmutableList<String> expectedMembers =
-        ImmutableList.of("student@example.com", "officer@example.com");
-    ImmutableList<String> expectedOfficers = ImmutableList.of("officer@example.com");
-    ImmutableList<String> expectedAnnouncements = ImmutableList.of("an announcement");
+    ImmutableList<String> expectedMembers = ImmutableList.of("student@example.com", officerEmail);
+    ImmutableList<String> expectedOfficers = ImmutableList.of(officerEmail);
 
-    Entity clubEntity = new Entity("Club");
+    Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
     clubEntity.setProperty(Constants.DESCRIP_PROP, "test description");
     clubEntity.setProperty(Constants.MEMBER_PROP, expectedMembers);
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
-    clubEntity.setProperty(Constants.ANNOUNCE_PROP, expectedAnnouncements);
     datastore.put(clubEntity);
 
     StringWriter stringWriter = new StringWriter();
@@ -148,19 +147,17 @@ public class ClubServletTest {
 
     ImmutableList<String> actualMembers = convertJsonList(response.get(Constants.MEMBER_PROP));
     ImmutableList<String> actualOfficers = convertJsonList(response.get(Constants.OFFICER_PROP));
-    ImmutableList<String> acutalAnnouncements =
-        convertJsonList(response.get(Constants.ANNOUNCE_PROP));
 
     Assert.assertEquals(SAMPLE_CLUB_NAME, response.get(Constants.PROPERTY_NAME).getAsString());
     Assert.assertEquals("test description", response.get(Constants.DESCRIP_PROP).getAsString());
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
-    Assert.assertEquals(expectedAnnouncements, acutalAnnouncements);
   }
 
   @Test
   public void doGet_clubDoesNotExist() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn("Imaginary Club");
     clubServlet.doGet(request, response);
     Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -9,24 +9,17 @@ public class Club {
   private ImmutableList<String> officers;
   private String description;
   private String website;
-  private ImmutableList<String> announcements;
 
   public Club(
       String name,
       ImmutableList<String> members,
       ImmutableList<String> officers,
       String description,
-      String website,
-      ImmutableList<String> announcements) {
+      String website) {
     this.name = name;
     this.members = members;
     this.officers = officers;
     this.description = description;
     this.website = website;
-    this.announcements = announcements;
-  }
-
-  public ImmutableList<String> getAnnouncements() {
-    return this.announcements;
   }
 }

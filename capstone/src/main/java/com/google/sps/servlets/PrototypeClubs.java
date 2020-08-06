@@ -19,22 +19,19 @@ class PrototypeClubs {
                   ImmutableList.of("Megan", "Megha", "Kevin", "Chris", "Linh"),
                   ImmutableList.of("Megan", "Megha", "Kevin"),
                   "This is our club. It is very cool. We do lots of things. We help people who are in need of help and those who have fallen down and can&rsquo;t get up.",
-                  "www.club1.com",
-                  ImmutableList.of("Please pay your dues", "Another announcement very important")),
+                  "www.club1.com"),
           CLUB_2,
               new Club(
                   CLUB_2,
                   ImmutableList.of("Megan", "Megha", "Kevin"),
                   ImmutableList.of("Megha"),
                   "We do cool club things",
-                  "www.club2atSchool.com",
-                  ImmutableList.of("Meeting tomorrow :)")),
+                  "www.club2atSchool.com"),
           CLUB_3,
               new Club(
                   CLUB_3,
                   ImmutableList.of("Kevin"),
                   ImmutableList.of("Kevin"),
                   "Lonely club :( please join",
-                  "www.please-join.com",
-                  ImmutableList.of("Hi my name is Kevin")));
+                  "www.please-join.com"));
 }
