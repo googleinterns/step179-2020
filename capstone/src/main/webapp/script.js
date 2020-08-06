@@ -60,7 +60,7 @@ async function showHidePostAnnouncement () {
   const query = '/officer?name=' + params.get('name');
   const response = await fetch(query);
   const text = await response.text();
-  if (Boolean(text)) {
+  if (JSON.parse(text)) {
     document.getElementById('post-announcement').removeAttribute('hidden');
   }
 }
