@@ -82,7 +82,7 @@ public class ClubServletTest {
     clubServlet.doPostHelper(request, response, blobstore, datastore);
 
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,
@@ -128,7 +128,7 @@ public class ClubServletTest {
     ImmutableList<String> expectedOfficers = ImmutableList.of("officer@example.com");
     ImmutableList<String> expectedAnnouncements = ImmutableList.of("an announcement");
 
-    Entity clubEntity = new Entity("Club");
+    Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
     clubEntity.setProperty(Constants.DESCRIP_PROP, "test description");
     clubEntity.setProperty(Constants.MEMBER_PROP, expectedMembers);

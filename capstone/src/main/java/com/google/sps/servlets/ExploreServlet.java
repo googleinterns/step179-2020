@@ -25,7 +25,7 @@ public class ExploreServlet extends HttpServlet {
     Gson gson = new Gson();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Query query = new Query(Constants.CLUB_PROP);
+    Query query = new Query(Constants.CLUB_ENTITY_PROP);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Club> clubs =
         Streams.stream(results.asIterable())

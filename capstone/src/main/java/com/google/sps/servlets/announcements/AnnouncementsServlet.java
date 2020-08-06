@@ -44,10 +44,10 @@ public class AnnouncementsServlet extends HttpServlet {
             .map(
                 entity ->
                     new Announcement(
-                        entity.getProperty("author").toString(),
-                        entity.getProperty("club").toString(),
-                        Long.parseLong(entity.getProperty("time").toString()),
-                        entity.getProperty("content").toString()))
+                        entity.getProperty(Constants.AUTHOR_PROP).toString(),
+                        entity.getProperty(Constants.CLUB_PROP).toString(),
+                        Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()),
+                        entity.getProperty(Constants.CONTENT_PROP).toString()))
             .collect(toImmutableList());
 
     Gson gson = new Gson();
