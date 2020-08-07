@@ -48,7 +48,10 @@ public class AnnouncementsServlet extends HttpServlet {
                         entity.getProperty(Constants.AUTHOR_PROP).toString(),
                         entity.getProperty(Constants.CLUB_PROP).toString(),
                         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()),
-                        entity.getProperty(Constants.CONTENT_PROP).toString()))
+                        entity.getProperty(Constants.CONTENT_PROP).toString(),
+                        userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
+                        Student.getNameByEmail(
+                            entity.getProperty(Constants.AUTHOR_PROP).toString())))
             .collect(toImmutableList());
 
     Gson gson = new Gson();

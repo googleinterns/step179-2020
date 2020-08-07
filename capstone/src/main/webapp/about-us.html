@@ -59,7 +59,13 @@
               </div>
               <div id="announcement-right">
                 <p id="announcement-time"></p>
-                <button class="delete-announcement fa fa-trash-o" style="font-size:24px"></button>
+                <form action="/delete-announcement" method="POST">
+                  <input type="hidden" id="club" name="club">
+                  <input type="hidden" id="author" name="author">
+                  <input type="hidden" id="time" name="time">
+                  <input type="hidden" id="content" name="content">
+                  <button type="submit" class="delete-announcement fa fa-trash-o" style="font-size:24px" style="display:none"></button>
+                </form>
               </div>
             </div>
           </template>
