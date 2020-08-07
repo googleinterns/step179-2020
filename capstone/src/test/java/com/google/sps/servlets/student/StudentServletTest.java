@@ -3,8 +3,6 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -12,11 +10,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +24,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -56,17 +51,13 @@ public final class StudentServletTest {
   public static final String MAJOR = "Computer Science";
   public static final String CLUB_1 = "Club 1";
   public static final String CLUB_2 = "Club 2";
-  private final BlobKey SAMPLE_BLOB = new BlobKey("test-blobkey");
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private StudentServlet studentServlet = new StudentServlet();
   private LocalServiceTestHelper localHelper =
-      new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig(), new LocalBlobstoreServiceTestConfig());
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private BlobstoreService blobstore;
-  private BlobstoreProfileServlet blobstoreProfileServlet;
   private Entity studentMegan;
   private Entity studentMegha;
   private Entity club1;
@@ -75,8 +66,6 @@ public final class StudentServletTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    blobstore = Mockito.mock(BlobstoreService.class);
-    blobstoreProfileServlet = new BlobstoreProfileServlet();
     localHelper.setUp();
 
     studentMegan = new Entity(MEGAN_EMAIL);
@@ -124,9 +113,6 @@ public final class StudentServletTest {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
-    ImmutableList<BlobKey> keys = ImmutableList.of(SAMPLE_BLOB);
-    ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.PROFILE_PIC_PROP, keys);
-    when(blobstore.getUploads(request)).thenReturn(blobMap);
 
     studentServlet.doPost(request, response);
     return stringWriter.toString();
