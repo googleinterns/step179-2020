@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
@@ -236,9 +238,10 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
-    Assert.assertTrue(response.isEmpty());
+    Assert.assertTrue(responseStr.isEmpty());
+    Mockito.verify(response).sendRedirect("/profile.html");
   }
 
   @Test
@@ -248,15 +251,22 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_2);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGHA_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+    Assert.assertFalse(clubList.isEmpty());
+    String club = clubList.get(0);
 
-    Assert.assertEquals(ImmutableList.of(CLUB_2).toString(), clubList);
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_2, club);
+    Mockito.verify(response).sendRedirect("/about-us.html?name=" + club);
   }
 
   @Test
@@ -266,15 +276,19 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);
 
-    String response = doPost_studentServletResponse();
+    String responseStr = doPost_studentServletResponse();
 
     // Access local Datastore to get student's new club list
     Query query = new Query(MEGAN_EMAIL);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-    String clubList = student.getProperty(Constants.PROPERTY_CLUBS).toString();
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
 
-    Assert.assertEquals(ImmutableList.of(CLUB_1).toString(), clubList);
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_1, clubList.get(0));
   }
 
   private String getAnnouncement(String announcementContent) {
@@ -285,7 +299,9 @@ public final class StudentServletTest {
                 new FilterPredicate(
                     Constants.CONTENT_PROP, FilterOperator.EQUAL, announcementContent));
     PreparedQuery results = datastore.prepare(query);
-    Entity announcement = ImmutableList.copyOf(results.asIterable()).get(0);
+    ImmutableList<Entity> announcements = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(announcements.isEmpty());
+    Entity announcement = announcements.get(0);
 
     // Format current time to match pattern in Datastore
     TimeZone timePST = TimeZone.getTimeZone("PST");
@@ -303,5 +319,76 @@ public final class StudentServletTest {
             announcement.getProperty(Constants.CLUB_PROP),
             time);
     return fullAnnouncement;
+  }
+
+  @Test
+  public void doPost_studentClicksLeaveButton() throws ServletException, IOException {
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1, CLUB_2));
+    datastore.put(studentMegan);
+    datastore.put(club1);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+
+    String responseStr = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+    ImmutableList<String> clubList =
+        ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
+
+    Assert.assertEquals(1, clubList.size());
+    Assert.assertEquals(CLUB_2, clubList.get(0));
+    Mockito.verify(response).sendRedirect("/profile.html");
+  }
+
+  @Test
+  public void doPost_studentClicksLeaveButtonWithOnlyOneClub()
+      throws ServletException, IOException {
+    datastore.put(studentMegan);
+    datastore.put(club1);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+
+    String responseStr = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's new club list
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+
+    Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
+    Mockito.verify(response).sendRedirect("/profile.html");
+  }
+
+  @Test
+  public void doPost_studentChangesProfileContent() throws ServletException, IOException {
+    String newName = "Megan";
+    String newYear = "2023";
+    String newMajor = "Testing";
+    datastore.put(studentMegan);
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getParameter("new-name")).thenReturn(newName);
+    when(request.getParameter("new-year")).thenReturn(newYear);
+    when(request.getParameter("new-major")).thenReturn(newMajor);
+
+    String responseStr = doPost_studentServletResponse();
+
+    // Access local Datastore to get student's edited name
+    Query query = new Query(MEGAN_EMAIL);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    Assert.assertFalse(students.isEmpty());
+    Entity student = students.get(0);
+
+    Assert.assertEquals(newName, student.getProperty(Constants.PROPERTY_NAME));
+    Assert.assertEquals(newYear, student.getProperty(Constants.PROPERTY_GRADYEAR));
+    Assert.assertEquals(newMajor, student.getProperty(Constants.PROPERTY_MAJOR));
+    Mockito.verify(response).sendRedirect("/profile.html");
   }
 }

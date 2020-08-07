@@ -19,12 +19,7 @@ public class AuthServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String logoutUrl = userService.createLogoutURL(redirectURL);
-      response
-          .getWriter()
-          .println(
-              "<button class='auth-button' onclick='window.location.href=\""
-                  + logoutUrl
-                  + "\"'>Logout Here</button>");
+      response.getWriter().println(logoutUrl);
     } else {
       String loginUrl = userService.createLoginURL(redirectURL);
       response.getWriter().println(getLoginInfo(loginUrl));
@@ -35,7 +30,7 @@ public class AuthServlet extends HttpServlet {
     String loginIntro =
         "<h1 class='login-intro'>Welcome to the ClubHub Profile page! Please login below to view your profile</h1>";
     String loginButton =
-        "<button class='auth-button login-button' onclick='window.location.href=\""
+        "<button class='login-button' onclick='window.location.href=\""
             + loginUrl
             + "\"'>Login Here</button>";
     return loginIntro + loginButton;

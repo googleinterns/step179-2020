@@ -14,7 +14,7 @@
 
 /** Add top navigation bar to the HTML */
 const topNavBar = 
-    '<div class="top-navigation">'
+    '<div id="top-navigation">'
     + '<a href="profile.html">My Profile</a>'
     + '<a href="index.html">Explore</a>'
     + '</div>';

@@ -4,32 +4,55 @@
     <meta charset="UTF-8">
     <title>My Profile</title>
     <link rel="stylesheet" href="style.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <script src="script.js"></script>
     <script src="profile-loader.js"></script>
   </head>
   <body>
     <div id="top-navigation"></div>
+    <div id="heading">
+      <span id="edit-name" class="edit-name" contenteditable="true"></span>
+    </div>
     <div id="profile-content">
-      <h1 id="heading"></h1>
-      <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
-      <br><br>
       <div class="split-profile left-profile">
         <h1><u>Profile</u></h1>
         <h2>My Clubs:</h2>
         <form name="leave" action="/student-data" method="GET">
-          <ul id="club-content"></ul>
+          <ul id="club-content">
+            <template id="club-list">
+              <li></li>
+            </template>
+          </ul>
         </form>
         <br>
         <form name="edit-profile" action="/student-data" method="POST">
-          <div id="student-info"></div><br>
-          <button name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
-          <div id="update-profile"></div>
+          <div id="student-info">
+            <div id="email">Email: </div>
+            Grad Year: 
+            <div id="edit-year" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i><br>
+            Major: 
+            <div id="edit-major" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i>
+          </div><br>
+          <button class="save-button" name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
+          <div id="update-profile">
+            <input type="hidden" name="new-year" value="">
+            <input type="hidden" name="new-major" value="">
+            <input type="hidden" name="new-name" value="">
+          </div>
         </form>
       </div>
       <div class="split-profile right-profile">
         <h1><u>Inbox</u></h1>
         <br>
-        <div id="inbox"></div>
+        <ul id="inbox">
+          <template id="inbox-list">
+            <li></li>
+          </template>
+        </ul>
+      </div>
+      <div class="split profile middle-profile">
+        <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
+        <br><br>
       </div>
     </div>
   </body>
