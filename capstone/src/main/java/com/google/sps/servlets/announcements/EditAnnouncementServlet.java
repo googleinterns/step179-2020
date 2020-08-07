@@ -48,6 +48,10 @@ public class EditAnnouncementServlet extends HttpServlet {
             .collect(toImmutableList());
 
     Entity entity = entities.get(0);
+    if (!entity.getProperty(Constants.AUTHOR_PROP).equals(userEmail)) {
+      return; //Not authorized to edit this announcement!
+    }
+
     entity.setProperty(Constants.CONTENT_PROP, content);
     datastore.put(entity);
 
