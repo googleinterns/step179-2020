@@ -74,8 +74,6 @@ public class StudentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: Update student information with edited content
-
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
@@ -109,6 +107,22 @@ public class StudentServlet extends HttpServlet {
       response.sendRedirect("/profile.html");
     } else {
       response.sendRedirect("/profile.html");
+    }
+
+    // Update student information with edited content
+    String newGradYear = request.getParameter(Constants.NEW_YEAR_PROP);
+    String newMajor = request.getParameter(Constants.NEW_MAJOR_PROP);
+    String newName = request.getParameter(Constants.NEW_NAME_PROP);
+    updateStudentInDatastore(student, newGradYear, Constants.PROPERTY_GRADYEAR, datastore);
+    updateStudentInDatastore(student, newMajor, Constants.PROPERTY_MAJOR, datastore);
+    updateStudentInDatastore(student, newName, Constants.PROPERTY_NAME, datastore);
+  }
+
+  private static void updateStudentInDatastore(
+      Entity student, String newItem, String property, DatastoreService datastore) {
+    if (newItem != null && !newItem.isEmpty()) {
+      student.setProperty(property, newItem);
+      datastore.put(student);
     }
   }
 
