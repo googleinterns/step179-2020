@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Club Info</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
     <script src="script.js"></script>
   </head>
   <body onload="displayTab()">
@@ -56,7 +57,10 @@
                 <b id="announcement-author"></b>:
                 <p id="announcement-content"></p>
               </div>
-              <p id="announcement-time"></p>
+              <div id="announcement-right">
+                <p id="announcement-time"></p>
+                <button class="delete-announcement fa fa-trash-o" style="font-size:24px"></button>
+              </div>
             </div>
           </template>
         </ul>
