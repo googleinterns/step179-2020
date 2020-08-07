@@ -135,7 +135,6 @@ public final class ExploreServletTest {
         Streams.stream(object0.get(Constants.OFFICER_PROP).getAsJsonArray())
             .map(officer -> officer.toString().replaceAll("\"", ""))
             .collect(toImmutableList());
-    System.out.println(object0.get(Constants.LOGO_PROP));
 
     Assert.assertEquals(members0, ImmutableList.of(MEGHA, MEGAN, KEVIN));
     Assert.assertEquals(officers0, ImmutableList.of(MEGHA));
@@ -146,8 +145,8 @@ public final class ExploreServletTest {
     JsonElement element1 = response.get(1);
     Assert.assertTrue(element1.isJsonObject());
     JsonObject object1 = (JsonObject) element1;
-    System.out.println(object1.get(Constants.LOGO_PROP));
     Assert.assertEquals(object1.get(Constants.PROPERTY_NAME).getAsString(), CLUB_2);
+
     // Remove additional quotation marks from JSON Array and convert to ImmutableList
     ImmutableList members1 =
         Streams.stream(object1.get(Constants.MEMBER_PROP).getAsJsonArray())

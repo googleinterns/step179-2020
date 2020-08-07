@@ -154,7 +154,6 @@ public class ClubServletTest {
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
-    // TODO: check blob
   }
 
   @Test
