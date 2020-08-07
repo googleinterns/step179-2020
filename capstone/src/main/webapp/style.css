@@ -250,3 +250,14 @@ button {
 #announcement-time {
     display:inline-block;
 }
+
+.save-announcement,
+.delete-announcement {
+    display: none;
+}
+
+#calendar-element {
+    border: 0;
+    width: 800px;
+    height: 600px;
+}
