@@ -254,3 +254,7 @@ button {
 #row {
   display: flex;
 }
+
+#club-logo-small {
+  height: 50px;
+}

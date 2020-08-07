@@ -36,7 +36,7 @@ async function getClubInfo() {
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
     }
-    document.getElementById('club-logo').src = imageUrl;
+    document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
     var officerList = document.getElementById('officers-list');
@@ -83,7 +83,7 @@ async function loadAnnouncements () {
   const color2 = "#BBB";
   var evenOdd = true;
   for (var announcement in json) {
-    template.content.querySelector('img').src = 'images/logo.png';
+    template.content.querySelector('img').src = 'images/profile.jpeg';
     template.content.querySelector('#announcement-author').innerHTML = json[announcement].authorName;
     template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
 

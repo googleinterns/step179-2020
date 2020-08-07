@@ -31,10 +31,3 @@ function getJoinButton(clubName) {
     + '" formmethod="POST">Join Club</button>';
   return joinButton;
 }
-
-async function getImageUrl(logoKey) {
-    return await fetch('/get-image?blobKey=' + logoKey)
-        .then((pic) => {
-          return pic.url;
-        });
-}
