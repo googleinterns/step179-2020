@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns a student's profile content */
+/** Servlet that updates a user's profile picture in Datastore */
 @WebServlet("/profile-image")
 public class ProfileImageServlet extends HttpServlet {
 
