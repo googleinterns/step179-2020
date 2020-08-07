@@ -20,7 +20,6 @@ public class ServeImageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     BlobKey blobKey = new BlobKey(request.getParameter("blobKey"));
-    System.out.println("here: " + blobKey);
     blobstoreService.serve(blobKey, response);
   }
 }

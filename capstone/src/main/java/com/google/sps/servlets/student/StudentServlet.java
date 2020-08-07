@@ -157,7 +157,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, 0);
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
-    studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "images/profile.jpeg");
+    studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "");
     return studentEntity;
   }
 

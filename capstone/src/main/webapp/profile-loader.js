@@ -35,12 +35,12 @@ function getStudentInfo() {
     // Add announcements to student's inbox
     addAnnoucements(info['announcements']);
 
-    imageUrl = 'images/profile.jpeg';
-    console.log("here: " + studentInfo['upload-profile']);
-    // if (studentInfo['upload-profile'] != null) {
-    //   imageUrl = getImageUrl(studentInfo['upload-profile']);
-    // }
-    document.getElementsByClassName('profile-pic')[0].src = imageUrl;
+    // Upload profile picture
+    if (studentInfo['profilePicture'] != '') {
+      getImageUrl(studentInfo['profilePicture']);
+    } else {
+      document.getElementsByClassName('profile-pic')[0].src = 'images/profile.jpeg';
+    }
   });
 }
 
@@ -82,9 +82,10 @@ function saveProfileChanges() {
   document.forms['edit-profile'].submit();
 }
 
+/** Get image URL with given key */
 function getImageUrl(pictureKey) {
   fetch('/get-image?blobKey=' + pictureKey).then((pic) => {
-    return pic.url;
+    document.getElementsByClassName('profile-pic')[0].src = pic.url;
   });
 }
 

@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/profile-image")
 public class ProfileImageServlet extends HttpServlet {
 
-  // TODO: Change Student class to inco
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
@@ -40,12 +39,13 @@ public class ProfileImageServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
     BlobKey key = getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
+    String blobKey = key != null ? key.getKeyString() : "";
 
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
     Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
 
-    student.setProperty(Constants.PROFILE_PIC_PROP, key);
+    student.setProperty(Constants.PROFILE_PIC_PROP, blobKey);
     datastore.put(student);
     response.sendRedirect("/profile.html");
   }
