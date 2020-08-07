@@ -250,3 +250,7 @@ button {
 #announcement-time {
     display:inline-block;
 }
+
+#row {
+  display: flex;
+}

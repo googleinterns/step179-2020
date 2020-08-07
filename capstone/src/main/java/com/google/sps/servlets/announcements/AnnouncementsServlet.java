@@ -95,11 +95,17 @@ public class AnnouncementsServlet extends HttpServlet {
     if (entity == null) {
       return null;
     }
+    String key = "";
+    if (entity.getProperty(Constants.LOGO_PROP) != null) {
+      key = entity.getProperty(Constants.LOGO_PROP).toString();
+    }
+
     return new Club(
-        entity.getProperty(Constants.CLUB_NAME_PROP).toString(),
+        entity.getProperty(Constants.PROPERTY_NAME).toString(),
         ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.MEMBER_PROP)),
         ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
-        entity.getProperty(Constants.WEBSITE_PROP).toString());
+        entity.getProperty(Constants.WEBSITE_PROP).toString(),
+        key);
   }
 }
