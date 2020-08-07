@@ -99,6 +99,11 @@ async function loadAnnouncements () {
       template.content.querySelector('.edit-announcement').style = "display: inline-block;";
       template.content.querySelector('.edit-announcement').id = id + '-edit';
       template.content.querySelector('.save-announcement').id = id + '-save';
+      template.content.querySelector('.announcement-new-content').id = id + '-new';
+      template.content.querySelector('.announcement-id').value = id;
+      template.content.querySelector('.club').value = announcement.club;
+      template.content.querySelector('.change-form').id = id + '-form';
+      
 
       template.content.querySelector('#club').value = announcement.club;
       template.content.querySelector('#author').value = announcement.author;
@@ -131,7 +136,10 @@ function allowEditAnnouncement (id) {
 }
 
 function saveAnnouncement (id) {
-    console.log("Saving announcement " + id);
+  const newContent = document.getElementById(id).innerHTML;
+  document.getElementById(id + '-new').value = newContent;
+  document.getElementById(id + '-form').submit();
+
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
