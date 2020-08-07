@@ -52,7 +52,7 @@ public class OfficerServletTest {
   }
 
   @Test
-  public void userIsAnOfficer() throws IOException {
+  public void isUserOfficer_validOfficer() throws IOException {
     String officer = "kshao@google.com";
     String clubName = "Club 1";
     Entity club = new Entity(Constants.CLUB_ENTITY_PROP);
@@ -71,7 +71,7 @@ public class OfficerServletTest {
   }
 
   @Test
-  public void userIsNotAnOfficer() throws IOException {
+  public void isUserOfficer_invalidOfficer() throws IOException {
     String officer = "megan.shi@google.com";
     String member = "kshao@google.com";
     String clubName = "Club 2";

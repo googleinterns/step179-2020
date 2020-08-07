@@ -8,7 +8,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
@@ -40,13 +39,6 @@ public class OfficerServlet extends HttpServlet {
     if (entity == null) {
       return false;
     }
-    Club club =
-        new Club(
-            entity.getProperty(Constants.CLUB_NAME_PROP).toString(),
-            ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.MEMBER_PROP)),
-            ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
-            entity.getProperty(Constants.DESCRIP_PROP).toString(),
-            entity.getProperty(Constants.WEBSITE_PROP).toString());
-    return club.hasOfficer(user);
+    return ((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)).contains(user);
   }
 }
