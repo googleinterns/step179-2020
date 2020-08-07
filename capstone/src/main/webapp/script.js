@@ -78,7 +78,6 @@ async function loadAnnouncements () {
   const color2 = "#BBB";
   var evenOdd = true;
   for (var announcement in json) {
-    console.log(json[announcement]);
     template.content.querySelector('img').src = 'images/logo.png';
     template.content.querySelector('#announcement-author').innerHTML = json[announcement].authorName;
     template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
@@ -91,8 +90,6 @@ async function loadAnnouncements () {
     template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
     evenOdd = !evenOdd;
 
-    console.log(json[announcement].isAuthor);
-    console.log(JSON.parse(json[announcement].isAuthor));
     if (JSON.parse(json[announcement].isAuthor)) {
       template.content.querySelector('.delete-announcement').style = "display: inline-block;";
       template.content.querySelector('#club').value = json[announcement].club;
