@@ -25,4 +25,8 @@ public class Club {
     this.website = website;
     this.logo = logo;
   }
+
+  public boolean hasOfficer(String officer) {
+    return officers.contains(officer);
+  }
 }
