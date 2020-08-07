@@ -54,11 +54,11 @@
             <div id="announcement-container">
               <img id="announcement-profile-picture">
               <div id="announcement-body">
-                <b id="announcement-author"></b>:
-                <p id="announcement-content"></p>
+                <b class="announcement-author"></b>:
+                <p class="announcement-content"></p>
               </div>
               <div id="announcement-right">
-                <p id="announcement-time"></p>
+                <p class="announcement-time"></p>
                 <form action="/delete-announcement" method="POST">
                   <input type="hidden" id="club" name="club">
                   <input type="hidden" id="author" name="author">
@@ -66,6 +66,9 @@
                   <input type="hidden" id="content" name="content">
                   <button type="submit" class="delete-announcement fa fa-trash-o" style="font-size:24px" style="display:none"></button>
                 </form>
+                <button class="fa fa-edit edit-announcement" style="display:none;"></button>
+                <button class="save-announcement" style="display:none;">Save</button>
+                
               </div>
             </div>
           </template>

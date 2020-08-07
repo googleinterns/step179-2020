@@ -77,32 +77,61 @@ async function loadAnnouncements () {
   const color1 = "#AAA";
   const color2 = "#BBB";
   var evenOdd = true;
-  for (var announcement in json) {
-    template.content.querySelector('img').src = 'images/logo.png';
-    template.content.querySelector('#announcement-author').innerHTML = json[announcement].authorName;
-    template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
+  for (var announcement of json) {
+    const id = announcement.author + announcement.content + announcement.time; //Unique string to identiy this announcement.
 
-    const dateString = new Date(json[announcement].time).toLocaleDateString("en-US");
-    const timeString = new Date(json[announcement].time).toLocaleTimeString("en-US");
-    template.content.querySelector('#announcement-time').innerHTML = timeString + " on " + dateString;
+    template.content.querySelector('img').src = 'images/logo.png';
+    template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
+    template.content.querySelector('.announcement-content').innerHTML = announcement.content;
+    template.content.querySelector('.announcement-content').id = id;
+    
+
+    const dateString = new Date(announcement.time).toLocaleDateString("en-US");
+    const timeString = new Date(announcement.time).toLocaleTimeString("en-US");
+    template.content.querySelector('.announcement-time').innerHTML = timeString + " on " + dateString;
 
     backgroundColor = evenOdd ? color1 : color2; //In order to switch background colors every announcement
     template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
     evenOdd = !evenOdd;
 
-    if (JSON.parse(json[announcement].isAuthor)) {
+    if (JSON.parse(announcement.isAuthor)) {
       template.content.querySelector('.delete-announcement').style = "display: inline-block;";
-      template.content.querySelector('#club').value = json[announcement].club;
-      template.content.querySelector('#author').value = json[announcement].author;
-      template.content.querySelector('#content').value = json[announcement].content;
-      template.content.querySelector('#time').value = json[announcement].time;
+      template.content.querySelector('.edit-announcement').style = "display: inline-block;";
+      template.content.querySelector('.edit-announcement').id = id + '-edit';
+      template.content.querySelector('.save-announcement').id = id + '-save';
+
+      template.content.querySelector('#club').value = announcement.club;
+      template.content.querySelector('#author').value = announcement.author;
+      template.content.querySelector('#content').value = announcement.content;
+      template.content.querySelector('#time').value = announcement.time;
     } else {
       template.content.querySelector('.delete-announcement').style = "display: none;";
+      template.content.querySelector('.edit-announcement').style = "display: none;";
     }
 
     var clone = document.importNode(template.content, true);
     document.getElementById('announcements-display').appendChild(clone);
+
+    if (JSON.parse(announcement.isAuthor)) {
+      document.getElementById(id + '-edit').onclick = function () {
+        allowEditAnnouncement(id);
+      };
+      document.getElementById(id + '-save').onclick = function () {
+        saveAnnouncement(id);
+      };
+    }
+
   }
+}
+
+function allowEditAnnouncement (id) {
+  document.getElementById(id).contentEditable = 'true';
+  document.getElementById(id + '-edit').style = 'display: none;';
+  document.getElementById(id + '-save').style = 'display: inline-block;';
+}
+
+function saveAnnouncement (id) {
+    console.log("Saving announcement " + id);
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
