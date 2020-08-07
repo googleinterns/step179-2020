@@ -110,9 +110,9 @@ public class StudentServlet extends HttpServlet {
     }
 
     // Update student information with edited content
-    String newGradYear = request.getParameter("new-year");
-    String newMajor = request.getParameter("new-major");
-    String newName = request.getParameter("new-name");
+    String newGradYear = request.getParameter(Constants.NEW_YEAR_PROP);
+    String newMajor = request.getParameter(Constants.NEW_MAJOR_PROP);
+    String newName = request.getParameter(Constants.NEW_NAME_PROP);
     updateStudentInDatastore(student, newGradYear, Constants.PROPERTY_GRADYEAR, datastore);
     updateStudentInDatastore(student, newMajor, Constants.PROPERTY_MAJOR, datastore);
     updateStudentInDatastore(student, newName, Constants.PROPERTY_NAME, datastore);
