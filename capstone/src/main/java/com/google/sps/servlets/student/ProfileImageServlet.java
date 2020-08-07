@@ -12,8 +12,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +34,10 @@ public class ProfileImageServlet extends HttpServlet {
       BlobstoreService blobstore,
       DatastoreService datastore)
       throws IOException {
+    BlobstoreUtil blobstoreUtil = new BlobstoreUtil();
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    BlobKey key = getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
+    BlobKey key = blobstoreUtil.getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
     String blobKey = key != null ? key.getKeyString() : "";
 
     Query query = new Query(userEmail);
@@ -48,21 +47,5 @@ public class ProfileImageServlet extends HttpServlet {
     student.setProperty(Constants.PROFILE_PIC_PROP, blobKey);
     datastore.put(student);
     response.sendRedirect("/profile.html");
-  }
-
-  /* Return BlobKey for image uploaded through form. */
-  private BlobKey getBlobKey(
-      HttpServletRequest request, String formInputElementName, BlobstoreService blobstoreService) {
-    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-    List<BlobKey> blobKeys = blobs.get(formInputElementName);
-
-    // User submitted form without selecting a file, so we can't get a URL. (dev server)
-    if (blobKeys == null || blobKeys.isEmpty()) {
-      return null;
-    }
-
-    // Our form only contains a single file input, so get the first index.
-    BlobKey blobKey = blobKeys.get(0);
-    return blobKey;
   }
 }
