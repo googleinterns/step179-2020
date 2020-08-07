@@ -40,6 +40,11 @@ public class StudentServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity currentStudent = getStudent(userEmail, datastore);
 
+    String profilePictureKey = "";
+    if (currentStudent.getProperty(Constants.PROFILE_PIC_PROP) != null) {
+      profilePictureKey = currentStudent.getProperty(Constants.PROFILE_PIC_PROP).toString();
+    }
+
     // Get club list from entity and convert to an ImmutableList
     // Initally empty in case there is no club list
     ImmutableList<String> clubs = ImmutableList.of();
@@ -56,7 +61,8 @@ public class StudentServlet extends HttpServlet {
             Integer.parseInt(currentStudent.getProperty(Constants.PROPERTY_GRADYEAR).toString()),
             currentStudent.getProperty(Constants.PROPERTY_MAJOR).toString(),
             currentStudent.getProperty(Constants.PROPERTY_EMAIL).toString(),
-            clubs);
+            clubs,
+            profilePictureKey);
 
     ImmutableList<String> announcements = getAllAnnouncements(student.getClubList(), datastore);
     StudentInfo allInfo = new StudentInfo(student, announcements);
@@ -151,6 +157,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_GRADYEAR, 0);
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "images/profile.jpeg");
     return studentEntity;
   }
 

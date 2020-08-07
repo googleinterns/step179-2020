@@ -9,14 +9,21 @@ public class Student {
   private String major;
   private String email;
   private ImmutableList<String> clubs;
+  private String profilePicture;
 
   public Student(
-      String name, int gradYear, String major, String email, ImmutableList<String> clubs) {
+      String name,
+      int gradYear,
+      String major,
+      String email,
+      ImmutableList<String> clubs,
+      String profilePicture) {
     this.name = name;
     this.gradYear = gradYear;
     this.major = major;
     this.email = email;
     this.clubs = clubs;
+    this.profilePicture = profilePicture;
   }
 
   public String getName() {

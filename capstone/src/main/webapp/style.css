@@ -21,12 +21,17 @@ button {
   background-color: #e0ffff;
 }
 
+.upload-profile-pic,
 .login-button,
 .save-button {
   position: absolute;
-  margin: 0;
   left: 50%;
   transform: translateX(-50%);
+  margin: 0;
+}
+
+.login-button,
+.save-button {
   margin-top: 10px;
   background-color:#000080;
   border: none;
@@ -83,9 +88,9 @@ button {
 
 .profile-pic {
   display: block;
-  margin-left: 48%;
   margin-right: auto;
   width: 5%;
+  margin-left: 48%;
 }
 
 .full-screen-panel {
