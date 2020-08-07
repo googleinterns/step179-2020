@@ -17,7 +17,13 @@ public class BlobstoreProfileServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    String uploadUrl = blobstoreService.createUploadUrl("/profile-image");
+    doGetHelper(request, response, blobstoreService);
+  }
+
+  public void doGetHelper(
+      HttpServletRequest request, HttpServletResponse response, BlobstoreService blobstore)
+      throws IOException {
+    String uploadUrl = blobstore.createUploadUrl("/profile-image");
 
     response.setContentType("text/html");
     response.getWriter().println(uploadUrl);
