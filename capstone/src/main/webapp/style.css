@@ -250,3 +250,8 @@ button {
 #announcement-time {
     display:inline-block;
 }
+
+.save-announcement,
+.delete-announcement {
+    display: none;
+}

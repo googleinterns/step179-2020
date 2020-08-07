@@ -95,8 +95,8 @@ async function loadAnnouncements () {
     evenOdd = !evenOdd;
 
     if (JSON.parse(announcement.isAuthor)) {
-      template.content.querySelector('.delete-announcement').style = "display: inline-block;";
-      template.content.querySelector('.edit-announcement').style = "display: inline-block;";
+      template.content.querySelector('.delete-announcement').style.display = 'inline-block';
+      template.content.querySelector('.edit-announcement').style.display = 'inline-block';
       template.content.querySelector('.edit-announcement').id = id + '-edit';
       template.content.querySelector('.save-announcement').id = id + '-save';
       template.content.querySelector('.announcement-new-content').id = id + '-new';
@@ -132,7 +132,7 @@ async function loadAnnouncements () {
 function allowEditAnnouncement (id) {
   document.getElementById(id).contentEditable = 'true';
   document.getElementById(id + '-edit').style = 'display: none;';
-  document.getElementById(id + '-save').style = 'display: inline-block;';
+  document.getElementById(id + '-save').style.display = 'inline-block';
 }
 
 function saveAnnouncement (id) {
