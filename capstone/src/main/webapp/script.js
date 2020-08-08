@@ -113,7 +113,6 @@ async function loadCalendar () {
   const response = await fetch('/clubs?name=' + params.get('name'));
   const json = await response.json();
   const firstOfficer = json['officers'][0];
-  console.log(firstOfficer);
   document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
  
 }

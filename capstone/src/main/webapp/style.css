@@ -248,16 +248,16 @@ button {
 #announcement-content,
 #announcement-author,
 #announcement-time {
-    display:inline-block;
+  display:inline-block;
 }
 
 .save-announcement,
 .delete-announcement {
-    display: none;
+  display: none;
 }
 
 #calendar-element {
-    border: 0;
-    width: 800px;
-    height: 600px;
+  border: 0;
+  width: 800px;
+  height: 600px;
 }
