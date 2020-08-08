@@ -22,7 +22,7 @@ function getStudentInfo() {
     // Display profile name with edit icon
     const pencilIcon = '<i class="far fa-edit pencil-edit"></i>';
     document.getElementById('edit-name').innerHTML = studentInfo['name'];
-    document.getElementById('heading').innerHTML += pencilIcon;
+    document.getElementById('profile-heading').innerHTML += pencilIcon;
 
     // Display profile club list
     getClubElements(studentInfo['clubs']);
@@ -65,7 +65,7 @@ function getClubElements(clubs) {
 }
 
 function getClubContent(club) {
-  const content = club + '  <button name="leave" value="' + club + '" formmethod="POST">Leave</button>';
+  const content = club + '  <button id="leave" name="leave" value="' + club + '" formmethod="POST">Leave</button>';
   return content;
 }
 
