@@ -42,7 +42,7 @@ public class ProfileImageServlet extends HttpServlet {
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
-    if (!students.isEmpty()) {
+    if (!students.isEmpty() && students.size() == 1) {
       Entity student = students.get(0);
       student.setProperty(Constants.PROFILE_PIC_PROP, blobKey);
       datastore.put(student);

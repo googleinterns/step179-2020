@@ -146,8 +146,7 @@ public class StudentServlet extends HttpServlet {
       students = ImmutableList.copyOf(results.asIterable());
     }
     // A user can only be logged in with one email address at a time
-    Entity currentStudent = students.get(0);
-    return currentStudent;
+    return students.get(0);
   }
 
   private Entity createStudentEntity(String userEmail) {

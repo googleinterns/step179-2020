@@ -72,6 +72,7 @@ public class ProfileImageServletTest {
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
     Assert.assertFalse(students.isEmpty());
+    Assert.assertTrue(students.size() == 1);
     Entity student = students.get(0);
 
     Assert.assertEquals(SAMPLE_BLOB, student.getProperty(Constants.PROFILE_PIC_PROP));
