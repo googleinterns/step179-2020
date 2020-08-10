@@ -9,7 +9,6 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,6 @@ public class OfficerServlet extends HttpServlet {
     if (entity == null) {
       return false;
     }
-    return ((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)).contains(user);
+    return ServletUtil.getPropertyList(entity, Constants.OFFICER_PROP).contains(user);
   }
 }

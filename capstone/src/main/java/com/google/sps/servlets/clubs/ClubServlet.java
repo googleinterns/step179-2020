@@ -17,7 +17,6 @@ import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +36,9 @@ public class ClubServlet extends HttpServlet {
     if (clubEntity != null) {
       String name = clubEntity.getProperty(Constants.PROPERTY_NAME).toString();
       ImmutableList<String> members =
-          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+          ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
       ImmutableList<String> officers =
-          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+          ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
       String logoKey = "";
@@ -73,7 +72,13 @@ public class ClubServlet extends HttpServlet {
       DatastoreService datastore)
       throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    String founderEmail = userService.getCurrentUser().getEmail();
+    String founderEmail;
+    if (userService.getCurrentUser() != null) {
+      founderEmail = userService.getCurrentUser().getEmail();
+    } else {
+      response.sendRedirect("/profile.html");
+      return;
+    }
 
     // Check if club name is valid
 
@@ -84,7 +89,7 @@ public class ClubServlet extends HttpServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
-      BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
+      BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.LOGO_PROP, blobstore);
       String blobKey = "";
       if (key != null) {
         blobKey = key.getKeyString();
@@ -98,6 +103,12 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
       datastore.put(clubEntity);
+
+      // Update founder's club list with registered club
+      StudentServlet studentServlet = new StudentServlet();
+      Entity student = studentServlet.getStudent(founderEmail, datastore);
+      studentServlet.addOrRemoveItemToEntity(
+          student, datastore, clubName, Constants.PROPERTY_CLUBS, true);
     }
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
   }

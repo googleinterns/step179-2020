@@ -107,6 +107,7 @@ public class StudentServlet extends HttpServlet {
         return;
       }
       addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, false);
+      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.OFFICER_PROP, false);
 
       // Remove club from student's club list and update Datastore
       addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
@@ -132,7 +133,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  private Entity getStudent(String userEmail, DatastoreService datastore) {
+  public Entity getStudent(String userEmail, DatastoreService datastore) {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -149,7 +150,7 @@ public class StudentServlet extends HttpServlet {
     return students.get(0);
   }
 
-  private Entity createStudentEntity(String userEmail) {
+  public Entity createStudentEntity(String userEmail) {
     Entity studentEntity = new Entity(userEmail);
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
@@ -222,17 +223,14 @@ public class StudentServlet extends HttpServlet {
     return clubs.get(0);
   }
 
-  private static void addOrRemoveItemToEntity(
+  public static void addOrRemoveItemToEntity(
       Entity entity,
       DatastoreService datastore,
       String itemToAddOrRemove,
       String property,
       Boolean addItem) {
     // Create empty List if property does not exist yet
-    List<String> generalList = new ArrayList<String>();
-    if (entity.getProperty(property) != null) {
-      generalList = ((ArrayList<String>) entity.getProperty(property));
-    }
+    List<String> generalList = new ArrayList(ServletUtil.getPropertyList(entity, property));
     if (addItem && !generalList.contains(itemToAddOrRemove)) {
       generalList.add(itemToAddOrRemove);
     }
