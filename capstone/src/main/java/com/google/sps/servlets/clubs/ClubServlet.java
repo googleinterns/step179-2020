@@ -106,16 +106,17 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
       datastore.put(clubEntity);
 
-      addFounderToClub(datastore, founderEmail, clubName);
+      addClubToFoundersClubList(datastore, founderEmail, clubName);
     }
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
   }
 
-  private void addFounderToClub(DatastoreService datastore, String founderEmail, String clubName) {
+  private void addClubToFoundersClubList(
+      DatastoreService datastore, String founderEmail, String clubName) {
     Query query = new Query(founderEmail);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
-    
+
     // Update founder's club list with registered club
     if (!students.isEmpty() && students.size() == 1) {
       Entity student = students.get(0);

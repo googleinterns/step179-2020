@@ -133,7 +133,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  public Entity getStudent(String userEmail, DatastoreService datastore) {
+  private Entity getStudent(String userEmail, DatastoreService datastore) {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -150,7 +150,7 @@ public class StudentServlet extends HttpServlet {
     return students.get(0);
   }
 
-  public Entity createStudentEntity(String userEmail) {
+  private Entity createStudentEntity(String userEmail) {
     Entity studentEntity = new Entity(userEmail);
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
@@ -223,7 +223,7 @@ public class StudentServlet extends HttpServlet {
     return clubs.get(0);
   }
 
-  public static void addOrRemoveItemToEntity(
+  private static void addOrRemoveItemToEntity(
       Entity entity,
       DatastoreService datastore,
       String itemToAddOrRemove,
