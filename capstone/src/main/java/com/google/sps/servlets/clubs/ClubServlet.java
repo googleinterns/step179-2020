@@ -46,6 +46,7 @@ public class ClubServlet extends HttpServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       boolean isOfficer = officers.contains(userEmail);
+      System.out.println("officer: " + isOfficer);
       Club club = new Club(name, members, officers, description, website, logoKey);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
