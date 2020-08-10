@@ -32,6 +32,11 @@ async function getClubInfo() {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
     const clubInfo = await response.json();
+    imageUrl = 'images/logo.png';
+    if (clubInfo['logo'] != '') {
+      imageUrl = await getImageUrl(clubInfo['logo']);
+    }
+    document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
     var officerList = document.getElementById('officers-list');
@@ -80,11 +85,10 @@ async function loadAnnouncements () {
   for (var announcement of json) {
     const id = announcement.author + announcement.content + announcement.time; // Unique string to identiy this announcement.
 
-    template.content.querySelector('img').src = 'images/logo.png';
+    template.content.querySelector('img').src = 'images/profile.jpeg';
     template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
     template.content.querySelector('.announcement-content').innerHTML = announcement.content;
     template.content.querySelector('.announcement-content').id = id;
-    
 
     const dateString = new Date(announcement.time).toLocaleDateString("en-US");
     const timeString = new Date(announcement.time).toLocaleTimeString("en-US");
@@ -139,7 +143,17 @@ function saveAnnouncement (id) {
   const newContent = document.getElementById(id).innerHTML;
   document.getElementById(id + '-new').value = newContent;
   document.getElementById(id + '-form').submit();
+}
 
+async function loadCalendar () {
+  var params = new URLSearchParams(window.location.search);
+  const response = await fetch('/clubs?name=' + params.get('name'));
+  const json = await response.json();
+  if (json['officers'].length == 0) {
+    return; //Should never get here, as all clubs must have at least one officer. 
+  }
+  const firstOfficer = json['officers'][0];
+  document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
@@ -179,6 +193,8 @@ function showTab(tabName) {
     getClubInfo();
     loadAnnouncements();
     showHidePostAnnouncement();
+  } else if (tabName === '#calendar') {
+    loadCalendar();
   }
 }
 
@@ -237,3 +253,9 @@ function saveClubChanges() {
   alert('Changes submitted!');
 }
 
+async function getImageUrl(logoKey) {
+    return await fetch('/get-image?blobKey=' + logoKey)
+        .then((pic) => {
+          return pic.url;
+        });
+}

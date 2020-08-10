@@ -18,8 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +42,12 @@ public class ClubServlet extends HttpServlet {
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
+      String logoKey = "";
+      if (clubEntity.getProperty(Constants.LOGO_PROP) != null) {
+        logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
+      }
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website);
+      Club club = new Club(name, members, officers, description, website, logoKey);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -83,34 +85,21 @@ public class ClubServlet extends HttpServlet {
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
       BlobKey key = getBlobKey(request, Constants.LOGO_PROP, blobstore);
+      String blobKey = "";
+      if (key != null) {
+        blobKey = key.getKeyString();
+      }
 
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
-      clubEntity.setProperty(Constants.CLUB_NAME_PROP, clubName);
+      clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.LOGO_PROP, key);
+      clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
       datastore.put(clubEntity);
     }
-
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
-  }
-
-  /* Return BlobKey for image uploaded through form. */
-  private BlobKey getBlobKey(
-      HttpServletRequest request, String formInputElementName, BlobstoreService blobstoreService) {
-    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-    List<BlobKey> blobKeys = blobs.get(formInputElementName);
-
-    // User submitted form without selecting a file, so we can't get a URL. (dev server)
-    if (blobKeys == null || blobKeys.isEmpty()) {
-      return null;
-    }
-
-    // Our form only contains a single file input, so get the first index.
-    BlobKey blobKey = blobKeys.get(0);
-    return blobKey;
   }
 
   private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {

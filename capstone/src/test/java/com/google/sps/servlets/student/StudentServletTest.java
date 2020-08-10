@@ -283,6 +283,7 @@ public final class StudentServletTest {
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
     Assert.assertFalse(students.isEmpty());
+    Assert.assertTrue(students.size() == 1);
     Entity student = students.get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
@@ -336,6 +337,7 @@ public final class StudentServletTest {
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
     Assert.assertFalse(students.isEmpty());
+    Assert.assertTrue(students.size() == 1);
     Entity student = students.get(0);
     ImmutableList<String> clubList =
         ImmutableList.copyOf((ArrayList<String>) student.getProperty(Constants.PROPERTY_CLUBS));
@@ -360,6 +362,7 @@ public final class StudentServletTest {
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
     Assert.assertFalse(students.isEmpty());
+    Assert.assertTrue(students.size() == 1);
     Entity student = students.get(0);
 
     Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
@@ -384,6 +387,7 @@ public final class StudentServletTest {
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
     Assert.assertFalse(students.isEmpty());
+    Assert.assertTrue(students.size() == 1);
     Entity student = students.get(0);
 
     Assert.assertEquals(newName, student.getProperty(Constants.PROPERTY_NAME));

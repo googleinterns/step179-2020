@@ -10,7 +10,10 @@
   <body onload="displayTab()">
     <div id="top-navigation"></div>
     <div id="club-header">
-      <h1 id="club-name"></h1>
+      <div id="row">
+        <img src="" id="club-logo-small" alt="Club logo">
+        <h1 id="club-name"></h1>
+      </div>
       <ul class="club-navbar">
         <li class="club-navbar-element" onclick="showTab('#about-us')"><a>About Us</a></li>
         <li class="club-navbar-element" onclick="showTab('#announcements')"><a>Announcements</a></li>
@@ -80,7 +83,7 @@
       </div>
     </template>
     <template id="calendar">
-      <p>Calendar goes here</p>
+      <iframe id="calendar-element"></iframe>
     </template>
   </body>
 </html>
