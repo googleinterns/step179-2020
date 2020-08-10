@@ -22,7 +22,7 @@ function getStudentInfo() {
     // Display profile name with edit icon
     const pencilIcon = '<i class="far fa-edit pencil-edit"></i>';
     document.getElementById('edit-name').innerHTML = studentInfo['name'];
-    document.getElementById('heading').innerHTML += pencilIcon;
+    document.getElementById('profile-heading').innerHTML += pencilIcon;
 
     // Display profile club list
     getClubElements(studentInfo['clubs']);
@@ -34,6 +34,13 @@ function getStudentInfo() {
 
     // Add announcements to student's inbox
     addAnnoucements(info['announcements']);
+
+    // Upload profile picture
+    if (studentInfo['profilePicture'] != '') {
+      getImageUrl(studentInfo['profilePicture']);
+    } else {
+      document.getElementsByClassName('profile-pic')[0].src = 'images/profile.jpeg';
+    }
   });
 }
 
@@ -58,7 +65,7 @@ function getClubElements(clubs) {
 }
 
 function getClubContent(club) {
-  const content = club + '  <button name="leave" value="' + club + '" formmethod="POST">Leave</button>';
+  const content = club + '  <button id="leave" name="leave" value="' + club + '" formmethod="POST">Leave</button>';
   return content;
 }
 
@@ -73,4 +80,19 @@ function saveProfileChanges() {
   document.getElementsByName('new-name')[0].value = newName;
 
   document.forms['edit-profile'].submit();
+}
+
+/** Get image URL with given key */
+function getImageUrl(pictureKey) {
+  fetch('/get-image?blobKey=' + pictureKey).then((pic) => {
+    document.getElementsByClassName('profile-pic')[0].src = pic.url;
+  });
+}
+
+/** Fetches blobstore image upload url. */
+function fetchBlobstoreProfileUrl() {
+  fetch('/blobstore-profile-url').then(response => response.text()).then((imageUploadUrl) => {  
+    const messageForm = document.getElementById('profile-form');
+    messageForm.action = imageUploadUrl;
+  });
 }

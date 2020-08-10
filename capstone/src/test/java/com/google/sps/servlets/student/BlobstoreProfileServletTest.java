@@ -22,11 +22,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
-public class BlobstoreServletTest {
+public class BlobstoreProfileServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private BlobstoreService blobstore;
-  private BlobstoreServlet blobstoreServlet;
+  private BlobstoreProfileServlet blobstoreServlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalBlobstoreServiceTestConfig());
@@ -35,7 +35,7 @@ public class BlobstoreServletTest {
   public void setUp() throws IOException {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
-    blobstoreServlet = new BlobstoreServlet();
+    blobstoreServlet = new BlobstoreProfileServlet();
     blobstore = Mockito.mock(BlobstoreService.class);
   }
 
@@ -46,13 +46,15 @@ public class BlobstoreServletTest {
 
   @Test
   public void doGet_getBlobstoreUploadLink() throws ServletException, IOException {
-    when(blobstore.createUploadUrl("/clubs")).thenReturn("sample-url");
+    String sampleUrl = "sample-url";
+    when(blobstore.createUploadUrl("/profile-image")).thenReturn(sampleUrl);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
-
+    // Call doGetHelper instead of doGet to ensure use of local Blobstore
     blobstoreServlet.doGetHelper(request, response, blobstore);
-    Assert.assertEquals("sample-url", stringWriter.toString().trim());
+
+    Assert.assertEquals(sampleUrl, stringWriter.toString().trim());
   }
 }
