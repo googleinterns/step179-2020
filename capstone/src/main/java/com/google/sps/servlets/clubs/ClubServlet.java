@@ -44,7 +44,10 @@ public class ClubServlet extends HttpServlet {
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
-      String logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
+      String logoKey = "";
+      if (clubEntity.getProperty(Constants.LOGO_PROP) != null) {
+        logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
+      }
       boolean isOfficer = officers.contains(userEmail);
       Club club = new Club(name, members, officers, description, website, logoKey);
       Gson gson = new Gson();

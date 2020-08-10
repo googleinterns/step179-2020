@@ -40,6 +40,11 @@ public class EditClubServlet extends HttpServlet {
 
     // Only accepts officers that are listed as members of the club
     if (clubEntity != null) {
+      ImmutableList<String> currentOfficers =
+          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+      if (!currentOfficers.contains(founderEmail)) {
+        return; // Not authenticated to post
+      }
       ImmutableList<String> members =
           ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
 

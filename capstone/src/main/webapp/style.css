@@ -250,3 +250,11 @@ button {
 #announcement-time {
     display:inline-block;
 }
+
+#row {
+  display: flex;
+}
+
+#club-logo-small {
+  height: 50px;
+}

@@ -21,7 +21,7 @@ public class OfficerServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String club = request.getParameter(Constants.CLUB_NAME_PROP);
+    String club = request.getParameter(Constants.PROPERTY_NAME);
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
     boolean isOfficer = isUserOfficer(userEmail, club);
