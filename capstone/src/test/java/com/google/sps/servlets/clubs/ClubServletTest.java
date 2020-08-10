@@ -44,7 +44,7 @@ public class ClubServletTest {
   private final String SAMPLE_CLUB_NAME = "Club 1";
   private final String SAMPLE_CLUB_DESC_1 = "Test club description";
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
-  private final BlobKey SAMPLE_BLOB = new BlobKey("test-blobkey");
+  private final String SAMPLE_BLOB = "test-blobkey";
   private final String TEST_EMAIL = "test-email@gmail.com";
   private final ImmutableList<String> STUDENT_LIST = ImmutableList.of(TEST_EMAIL);
 
@@ -134,6 +134,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.MEMBER_PROP, expectedMembers);
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
+    clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
     datastore.put(clubEntity);
 
     StringWriter stringWriter = new StringWriter();
@@ -177,7 +178,7 @@ public class ClubServletTest {
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
 
-    ImmutableList<BlobKey> keys = ImmutableList.of(SAMPLE_BLOB);
+    ImmutableList<BlobKey> keys = ImmutableList.of(new BlobKey(SAMPLE_BLOB));
     ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
     when(blobstore.getUploads(request)).thenReturn(blobMap);
   }

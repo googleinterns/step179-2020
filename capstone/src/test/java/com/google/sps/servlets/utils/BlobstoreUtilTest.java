@@ -2,12 +2,15 @@ package com.google.sps.servlets;
 
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,20 +25,21 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @RunWith(JUnit4.class)
-public class BlobstoreServletTest {
+public class BlobstoreUtilTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private BlobstoreService blobstore;
-  private BlobstoreServlet blobstoreServlet;
+  private BlobstoreUtil blobstoreUtil;
 
   private LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(new LocalBlobstoreServiceTestConfig());
+      new LocalServiceTestHelper(
+          new LocalBlobstoreServiceTestConfig(), new LocalBlobstoreServiceTestConfig());
 
   @Before
   public void setUp() throws IOException {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
-    blobstoreServlet = new BlobstoreServlet();
+    blobstoreUtil = new BlobstoreUtil();
     blobstore = Mockito.mock(BlobstoreService.class);
   }
 
@@ -45,14 +49,18 @@ public class BlobstoreServletTest {
   }
 
   @Test
-  public void doGet_getBlobstoreUploadLink() throws ServletException, IOException {
-    when(blobstore.createUploadUrl("/clubs")).thenReturn("sample-url");
+  public void getBlobKey_studentUploadsProfilePicture() throws ServletException, IOException {
+    String sampleBlobKey = "1234ABCD";
+    Map<String, List<BlobKey>> blobs = new HashMap<String, List<BlobKey>>();
+    List<BlobKey> keys = new ArrayList<BlobKey>();
+    keys.add(new BlobKey(sampleBlobKey));
+    blobs.put(Constants.PROFILE_PIC_PROP, keys);
+    when(blobstore.getUploads(request)).thenReturn(blobs);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(printWriter);
+    BlobKey actualBlobKey =
+        BlobstoreUtil.getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
 
-    blobstoreServlet.doGetHelper(request, response, blobstore);
-    Assert.assertEquals("sample-url", stringWriter.toString().trim());
+    Assert.assertTrue(actualBlobKey != null);
+    Assert.assertEquals(sampleBlobKey, actualBlobKey.getKeyString());
   }
 }

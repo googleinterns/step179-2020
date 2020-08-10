@@ -7,10 +7,14 @@ async function getListings () {
   loadListings(json);
 }
 
-function loadListings (json) {
+async function loadListings (json) {
   const template = document.querySelector('#club-listing');
   for (var club of json) {
-    template.content.querySelector('#club-logo').src = 'images/logo.png';
+    imageUrl = 'images/logo.png';
+    if (club.logo != '') {
+      imageUrl = await getImageUrl(club.logo);
+    }
+    template.content.querySelector('#club-logo').src = imageUrl;
     template.content.querySelector('#club-name').innerHTML = club.name;
     template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;

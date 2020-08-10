@@ -8,9 +8,9 @@
     <script src="script.js"></script>
     <script src="profile-loader.js"></script>
   </head>
-  <body>
+  <body onload="fetchBlobstoreProfileUrl()">
     <div id="top-navigation"></div>
-    <div id="heading">
+    <div id="profile-heading">
       <span id="edit-name" class="edit-name" contenteditable="true"></span>
     </div>
     <div id="profile-content">
@@ -51,7 +51,11 @@
         </ul>
       </div>
       <div class="split profile middle-profile">
-        <img src="images/profile.jpeg" class="profile-pic" alt="Profile picture">
+        <img src="" class="profile-pic" alt="Profile picture">
+        <form class="upload-profile-pic" id="profile-form" method="POST" enctype="multipart/form-data">
+          <input type="file" name="upload-profile">
+          <input type="submit" name="new-pic" value="Upload Profile Picture">
+        </form>
         <br><br>
       </div>
     </div>
