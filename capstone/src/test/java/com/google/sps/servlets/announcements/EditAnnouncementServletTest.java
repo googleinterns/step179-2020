@@ -14,7 +14,6 @@
 
 package com.google.sps.servlets;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -27,7 +26,6 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Streams;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +67,7 @@ public final class EditAnnouncementServletTest {
     MockitoAnnotations.initMocks(this);
     this.servlet = new EditAnnouncementServlet();
     datastore = DatastoreServiceFactory.getDatastoreService();
+    prepare();
   }
 
   @After
@@ -78,7 +77,6 @@ public final class EditAnnouncementServletTest {
 
   @Test
   public void doPost_authorizedEdit() throws ServletException, IOException {
-    prepare();
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
 
     String id = TEST_EMAIL + SAMPLE_CONTENT + SAMPLE_TIME;
@@ -90,18 +88,10 @@ public final class EditAnnouncementServletTest {
     Query query = new Query(Constants.ANNOUNCEMENT_PROP);
     PreparedQuery results = datastore.prepare(query);
 
-    String newId = TEST_EMAIL + SAMPLE_NEW_CONTENT + SAMPLE_TIME;
-    ImmutableList<Entity> entities =
-        Streams.stream(results.asIterable())
-            .filter(
-                entity ->
-                    SAMPLE_CLUB_NAME.equals(entity.getProperty(Constants.CLUB_PROP))
-                        && newId.equals(
-                            entity.getProperty(Constants.AUTHOR_PROP).toString()
-                                + entity.getProperty(Constants.CONTENT_PROP).toString()
-                                + entity.getProperty(Constants.TIME_PROP).toString()))
-            .collect(toImmutableList());
+    String NEW_ID = TEST_EMAIL + SAMPLE_NEW_CONTENT + SAMPLE_TIME;
+    ImmutableList<Entity> entities = servlet.doPostHelper(results, SAMPLE_CLUB_NAME, NEW_ID);
 
+    Assert.assertFalse(entities.isEmpty());
     Entity entity = entities.get(0);
 
     Assert.assertNotNull(entity);
@@ -110,32 +100,23 @@ public final class EditAnnouncementServletTest {
 
   @Test
   public void doPost_unauthorizedEdit() throws ServletException, IOException {
-    prepare();
     helper
         .setEnvEmail("anotherEmail@google.com")
         .setEnvAuthDomain("google.com")
         .setEnvIsLoggedIn(true);
 
-    String id = TEST_EMAIL + SAMPLE_CONTENT + SAMPLE_TIME;
+    String SAMPLE_ID = TEST_EMAIL + SAMPLE_CONTENT + SAMPLE_TIME;
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
     when(request.getParameter(Constants.CLUB_PROP)).thenReturn(SAMPLE_CLUB_NAME);
-    when(request.getParameter(ID_PROP)).thenReturn(id);
+    when(request.getParameter(ID_PROP)).thenReturn(SAMPLE_ID);
     servlet.doPost(request, response);
 
     Query query = new Query(Constants.ANNOUNCEMENT_PROP);
     PreparedQuery results = datastore.prepare(query);
 
-    ImmutableList<Entity> entities =
-        Streams.stream(results.asIterable())
-            .filter(
-                entity ->
-                    SAMPLE_CLUB_NAME.equals(entity.getProperty(Constants.CLUB_PROP))
-                        && id.equals(
-                            entity.getProperty(Constants.AUTHOR_PROP).toString()
-                                + entity.getProperty(Constants.CONTENT_PROP).toString()
-                                + entity.getProperty(Constants.TIME_PROP).toString()))
-            .collect(toImmutableList());
+    ImmutableList<Entity> entities = servlet.doPostHelper(results, SAMPLE_CLUB_NAME, SAMPLE_ID);
 
+    Assert.assertFalse(entities.isEmpty());
     Entity entity = entities.get(0);
 
     Assert.assertNotNull(entity);

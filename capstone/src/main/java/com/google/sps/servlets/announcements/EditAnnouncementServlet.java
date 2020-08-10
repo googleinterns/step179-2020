@@ -47,14 +47,31 @@ public class EditAnnouncementServlet extends HttpServlet {
                                 + entity.getProperty(Constants.TIME_PROP).toString()))
             .collect(toImmutableList());
 
+    if (entities.isEmpty()) {
+      return; // No such announcement matches parameters.
+    }
     Entity entity = entities.get(0);
     if (!entity.getProperty(Constants.AUTHOR_PROP).equals(userEmail)) {
-      return; //Not authorized to edit this announcement!
+      return; // Not authorized to edit this announcement!
     }
 
     entity.setProperty(Constants.CONTENT_PROP, content);
     datastore.put(entity);
 
     response.sendRedirect("/about-us.html?name=" + club + "&tab=announcements");
+  }
+
+  ImmutableList<Entity> doPostHelper(PreparedQuery results, String clubName, String id) {
+    ImmutableList<Entity> entities =
+        Streams.stream(results.asIterable())
+            .filter(
+                entity ->
+                    clubName.equals(entity.getProperty(Constants.CLUB_PROP))
+                        && id.equals(
+                            entity.getProperty(Constants.AUTHOR_PROP).toString()
+                                + entity.getProperty(Constants.CONTENT_PROP).toString()
+                                + entity.getProperty(Constants.TIME_PROP).toString()))
+            .collect(toImmutableList());
+    return entities;
   }
 }
