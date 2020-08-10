@@ -26,7 +26,7 @@ public class BlobstoreServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private BlobstoreService blobstore;
-  private BlobstoreUtil blobstoreUtil;
+  private BlobstoreServlet blobstoreServlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalBlobstoreServiceTestConfig());
@@ -35,7 +35,7 @@ public class BlobstoreServletTest {
   public void setUp() throws IOException {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
-    blobstoreUtil = new BlobstoreUtil();
+    blobstoreServlet = new BlobstoreServlet();
     blobstore = Mockito.mock(BlobstoreService.class);
   }
 
@@ -52,7 +52,7 @@ public class BlobstoreServletTest {
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
 
-    blobstoreUtil.doGetHelper(request, response, blobstore, "/clubs");
+    blobstoreServlet.doGetHelper(request, response, blobstore);
     Assert.assertEquals("sample-url", stringWriter.toString().trim());
   }
 }

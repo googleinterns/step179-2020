@@ -26,7 +26,7 @@ public class BlobstoreProfileServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   private BlobstoreService blobstore;
-  private BlobstoreUtil blobstoreUtil;
+  private BlobstoreProfileServlet blobstoreServlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalBlobstoreServiceTestConfig());
@@ -35,7 +35,7 @@ public class BlobstoreProfileServletTest {
   public void setUp() throws IOException {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
-    blobstoreUtil = new BlobstoreUtil();
+    blobstoreServlet = new BlobstoreProfileServlet();
     blobstore = Mockito.mock(BlobstoreService.class);
   }
 
@@ -53,7 +53,7 @@ public class BlobstoreProfileServletTest {
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
     // Call doGetHelper instead of doGet to ensure use of local Blobstore
-    blobstoreUtil.doGetHelper(request, response, blobstore, "/profile-image");
+    blobstoreServlet.doGetHelper(request, response, blobstore);
 
     Assert.assertEquals(sampleUrl, stringWriter.toString().trim());
   }

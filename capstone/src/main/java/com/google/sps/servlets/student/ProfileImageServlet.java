@@ -34,18 +34,19 @@ public class ProfileImageServlet extends HttpServlet {
       BlobstoreService blobstore,
       DatastoreService datastore)
       throws IOException {
-    BlobstoreUtil blobstoreUtil = new BlobstoreUtil();
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    BlobKey key = blobstoreUtil.getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
+    BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);
     String blobKey = key != null ? key.getKeyString() : "";
 
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
-    Entity student = ImmutableList.copyOf(results.asIterable()).get(0);
-
-    student.setProperty(Constants.PROFILE_PIC_PROP, blobKey);
-    datastore.put(student);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    if (!students.isEmpty()) {
+      Entity student = students.get(0);
+      student.setProperty(Constants.PROFILE_PIC_PROP, blobKey);
+      datastore.put(student);
+    }
     response.sendRedirect("/profile.html");
   }
 }
