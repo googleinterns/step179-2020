@@ -35,17 +35,7 @@ public class EditAnnouncementServlet extends HttpServlet {
 
     Query query = new Query(Constants.ANNOUNCEMENT_PROP);
     PreparedQuery results = datastore.prepare(query);
-
-    ImmutableList<Entity> entities =
-        Streams.stream(results.asIterable())
-            .filter(
-                entity ->
-                    club.equals(entity.getProperty(Constants.CLUB_PROP))
-                        && id.equals(
-                            entity.getProperty(Constants.AUTHOR_PROP).toString()
-                                + entity.getProperty(Constants.CONTENT_PROP).toString()
-                                + entity.getProperty(Constants.TIME_PROP).toString()))
-            .collect(toImmutableList());
+    ImmutableList<Entity> entities = doPostHelper(results, club, id);
 
     if (entities.isEmpty()) {
       return; // No such announcement matches parameters.
