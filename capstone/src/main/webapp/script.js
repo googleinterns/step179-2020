@@ -110,6 +110,17 @@ async function loadAnnouncements () {
   }
 }
 
+async function loadCalendar () {
+  var params = new URLSearchParams(window.location.search);
+  const response = await fetch('/clubs?name=' + params.get('name'));
+  const json = await response.json();
+  if (json['officers'].length == 0) {
+    return; //Should never get here, as all clubs must have at least one officer. 
+  }
+  const firstOfficer = json['officers'][0];
+  document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
+}
+
 /** Displays a certain tab for a club, by first checking for a GET parameter 
     that specifies which tab to load, then if that doesn't exist, loads a default tab.
     This should be used at the initial load for the about-us.html page and to redirect
@@ -147,6 +158,8 @@ function showTab(tabName) {
     getClubInfo();
     loadAnnouncements();
     showHidePostAnnouncement();
+  } else if (tabName === '#calendar') {
+    loadCalendar();
   }
 }
 
