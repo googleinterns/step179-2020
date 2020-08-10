@@ -237,3 +237,38 @@ button:hover {
   margin-left: 100px;
   margin-right: 100px;
 }
+
+#announcement-profile-picture, 
+#announcement-body,
+#announcement-right {
+  display: inline-block;
+  padding: 5px;
+  vertical-align: middle;
+  margin: 10px;
+}
+
+#announcement-profile-picture {
+    width: 5%;
+}
+
+#announcement-body {
+  width: 65%;
+}
+
+#announcement-right {
+  width: 20%;
+}
+
+#announcement-content,
+#announcement-author,
+#announcement-time {
+    display:inline-block;
+}
+
+#row {
+  display: flex;
+}
+
+#club-logo-small {
+  height: 50px;
+}

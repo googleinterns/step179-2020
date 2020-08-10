@@ -32,6 +32,11 @@ async function getClubInfo() {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
     const clubInfo = await response.json();
+    imageUrl = 'images/logo.png';
+    if (clubInfo['logo'] != '') {
+      imageUrl = await getImageUrl(clubInfo['logo']);
+    }
+    document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
     var officerList = document.getElementById('officers-list');
@@ -54,6 +59,17 @@ async function getClubInfo() {
   }
 }
 
+/**Shows or hides the area to post announcements depending on if user is authorized. */
+async function showHidePostAnnouncement () {
+  var params = new URLSearchParams(window.location.search);
+  const query = '/officer?name=' + params.get('name');
+  const response = await fetch(query);
+  const text = await response.text();
+  if (JSON.parse(text)) {
+    document.getElementById('post-announcement').removeAttribute('hidden');
+  }
+}
+
 /** Accesses and displays club announcement data from servlet. */
 async function loadAnnouncements () {
   var params = new URLSearchParams(window.location.search);
@@ -61,8 +77,34 @@ async function loadAnnouncements () {
   const response = await fetch(query);
   const json = await response.json();
   const template = document.querySelector('#announcement-element');
+
+  var backgroundColor;
+  const color1 = "#AAA";
+  const color2 = "#BBB";
+  var evenOdd = true;
   for (var announcement in json) {
-    template.content.querySelector('li').innerHTML = json[announcement].content;
+    template.content.querySelector('img').src = 'images/profile.jpeg';
+    template.content.querySelector('#announcement-author').innerHTML = json[announcement].authorName;
+    template.content.querySelector('#announcement-content').innerHTML = json[announcement].content;
+
+    const dateString = new Date(json[announcement].time).toLocaleDateString("en-US");
+    const timeString = new Date(json[announcement].time).toLocaleTimeString("en-US");
+    template.content.querySelector('#announcement-time').innerHTML = timeString + " on " + dateString;
+
+    backgroundColor = evenOdd ? color1 : color2; //In order to switch background colors every announcement
+    template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
+    evenOdd = !evenOdd;
+
+    if (JSON.parse(json[announcement].isAuthor)) {
+      template.content.querySelector('.delete-announcement').style = "display: inline-block;";
+      template.content.querySelector('#club').value = json[announcement].club;
+      template.content.querySelector('#author').value = json[announcement].author;
+      template.content.querySelector('#content').value = json[announcement].content;
+      template.content.querySelector('#time').value = json[announcement].time;
+    } else {
+      template.content.querySelector('.delete-announcement').style = "display: none;";
+    }
+
     var clone = document.importNode(template.content, true);
     document.getElementById('announcements-display').appendChild(clone);
   }
@@ -102,7 +144,9 @@ function showTab(tabName) {
   if (tabName === '#about-us') {
     getClubInfo();
   } else if (tabName === '#announcements') {
+    getClubInfo();
     loadAnnouncements();
+    showHidePostAnnouncement();
   }
 }
 
@@ -161,3 +205,9 @@ function saveClubChanges() {
   alert('Changes submitted!');
 }
 
+async function getImageUrl(logoKey) {
+    return await fetch('/get-image?blobKey=' + logoKey)
+        .then((pic) => {
+          return pic.url;
+        });
+}

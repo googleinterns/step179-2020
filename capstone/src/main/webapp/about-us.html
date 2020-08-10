@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>Club Info</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
     <script src="script.js"></script>
   </head>
   <body onload="displayTab()">
     <div id="top-navigation"></div>
     <div id="club-header">
-      <h1 id="club-name"></h1>
+      <div id="row">
+        <img src="" id="club-logo-small" alt="Club logo">
+        <h1 id="club-name"></h1>
+      </div>
       <ul class="club-navbar">
         <li class="club-navbar-element" onclick="showTab('#about-us')"><a>About Us</a></li>
         <li class="club-navbar-element" onclick="showTab('#announcements')"><a>Announcements</a></li>
@@ -39,7 +43,7 @@
       </div>
     </template>
     <template id="announcements">
-      <div id="post-announcement" class="full-screen-panel">
+      <div id="post-announcement" class="full-screen-panel" hidden>
         <form action="/announcements" method="POST">
           <input type="text" name="content" placeholder="Add announcement...">
           <input type="submit" value="Post">
@@ -50,7 +54,23 @@
         <h1>Announcements</h1>
         <ul id="announcements-display">
           <template id="announcement-element">
-            <li></li>
+            <div id="announcement-container">
+              <img id="announcement-profile-picture">
+              <div id="announcement-body">
+                <b id="announcement-author"></b>:
+                <p id="announcement-content"></p>
+              </div>
+              <div id="announcement-right">
+                <p id="announcement-time"></p>
+                <form action="/delete-announcement" method="POST">
+                  <input type="hidden" id="club" name="club">
+                  <input type="hidden" id="author" name="author">
+                  <input type="hidden" id="time" name="time">
+                  <input type="hidden" id="content" name="content">
+                  <button type="submit" class="delete-announcement fa fa-trash-o" style="font-size:24px" style="display:none"></button>
+                </form>
+              </div>
+            </div>
           </template>
         </ul>
       </div>

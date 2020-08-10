@@ -5,7 +5,6 @@ class Constants {
   private Constants() {}
 
   static final String CLUB_PROP = "club";
-  static final String CLUB_NAME_PROP = "name";
   static final String PROPERTY_NAME = "name";
   static final String PROPERTY_EMAIL = "email";
   static final String PROPERTY_GRADYEAR = "gradYear";
@@ -23,6 +22,7 @@ class Constants {
   static final String TIME_PROP = "time";
   static final String CONTENT_PROP = "content";
   static final String JOIN_CLUB_PROP = "join";
+  static final String BLOB_KEY_PROP = "blobKey";
   static final String LEAVE_CLUB_PROP = "leave";
   static final String NEW_NAME_PROP = "new-name";
   static final String NEW_YEAR_PROP = "new-year";
