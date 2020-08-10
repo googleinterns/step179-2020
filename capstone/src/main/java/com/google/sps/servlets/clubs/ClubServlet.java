@@ -17,6 +17,8 @@ import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +48,6 @@ public class ClubServlet extends HttpServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       boolean isOfficer = officers.contains(userEmail);
-      System.out.println("officer: " + isOfficer);
       Club club = new Club(name, members, officers, description, website, logoKey);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
@@ -105,13 +106,27 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
       datastore.put(clubEntity);
 
-      // Update founder's club list with registered club
-      StudentServlet studentServlet = new StudentServlet();
-      Entity student = studentServlet.getStudent(founderEmail, datastore);
-      studentServlet.addOrRemoveItemToEntity(
-          student, datastore, clubName, Constants.PROPERTY_CLUBS, true);
+      addFounderToClub(datastore, founderEmail, clubName);
     }
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
+  }
+
+  private void addFounderToClub(DatastoreService datastore, String founderEmail, String clubName) {
+    Query query = new Query(founderEmail);
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
+    
+    // Update founder's club list with registered club
+    if (!students.isEmpty() && students.size() == 1) {
+      Entity student = students.get(0);
+      List<String> clubList =
+          new ArrayList(ServletUtil.getPropertyList(student, Constants.PROPERTY_CLUBS));
+      if (!clubList.contains(clubName)) {
+        clubList.add(clubName);
+      }
+      student.setProperty(Constants.PROPERTY_CLUBS, clubList);
+      datastore.put(student);
+    }
   }
 
   private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {
