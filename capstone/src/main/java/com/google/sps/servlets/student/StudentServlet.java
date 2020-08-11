@@ -230,7 +230,7 @@ public class StudentServlet extends HttpServlet {
       String property,
       Boolean addItem) {
     // Create empty List if property does not exist yet
-    List<String> generalList = new ArrayList(ServletUtil.getPropertyList(entity, property));
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
     if (addItem && !generalList.contains(itemToAddOrRemove)) {
       generalList.add(itemToAddOrRemove);
     }
