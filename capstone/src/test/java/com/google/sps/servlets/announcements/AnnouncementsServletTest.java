@@ -84,6 +84,7 @@ public final class AnnouncementsServletTest {
     announcement1.setProperty(Constants.CLUB_PROP, CLUB_1);
     announcement1.setProperty(Constants.CONTENT_PROP, CONTENT_1);
     announcement1.setProperty(Constants.TIME_PROP, TIME_10);
+    announcement1.setProperty(Constants.EDITED_PROP, false);
 
     this.datastore.put(announcement1);
   }
@@ -119,6 +120,7 @@ public final class AnnouncementsServletTest {
     Assert.assertEquals(CLUB_1, announcement.get(Constants.CLUB_PROP).getAsString());
     Assert.assertEquals(CONTENT_1, announcement.get(Constants.CONTENT_PROP).getAsString());
     Assert.assertEquals(TIME_10, announcement.get(Constants.TIME_PROP).getAsLong());
+    Assert.assertFalse(announcement.get(Constants.EDITED_PROP).getAsBoolean());
   }
 
   private JsonArray getServletResponse(AnnouncementsServlet servlet) throws IOException {
