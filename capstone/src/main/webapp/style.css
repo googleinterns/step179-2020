@@ -285,6 +285,9 @@ button:hover {
   height: 50px;
 }
 
-#edit-button {
+/* #edit-button {
   visibility: hidden;
+} */
+#edit-button { 
+  display: none; 
 }

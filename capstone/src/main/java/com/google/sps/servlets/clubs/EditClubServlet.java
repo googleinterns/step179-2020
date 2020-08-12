@@ -32,7 +32,6 @@ public class EditClubServlet extends HttpServlet {
     } else {
       officers = ImmutableList.of();
     }
-
     Query query =
         new Query("Club")
             .setFilter(
@@ -41,7 +40,6 @@ public class EditClubServlet extends HttpServlet {
                     FilterOperator.EQUAL,
                     request.getParameter(Constants.PROPERTY_NAME)));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
-
     // Only accepts officers that are listed as members of the club
     if (clubEntity != null) {
       ImmutableList<String> currentOfficers =
@@ -65,7 +63,6 @@ public class EditClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
       clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
       datastore.put(clubEntity);
-
       response.sendRedirect(
           "/about-us.html?name="
               + clubEntity.getProperty(Constants.PROPERTY_NAME)

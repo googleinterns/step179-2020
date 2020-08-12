@@ -24,7 +24,7 @@ public class BlobstoreServlet extends HttpServlet {
   public void doGetHelper(
       HttpServletRequest request, HttpServletResponse response, BlobstoreService blobstore)
       throws IOException {
-    String uploadUrl = blobstore.createUploadUrl("/clubs");
+    String uploadUrl = blobstore.createUploadUrl("/club-logo");
 
     response.setContentType("text/html");
     response.getWriter().println(uploadUrl);

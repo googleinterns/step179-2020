@@ -53,7 +53,7 @@ async function getClubInfo() {
     }
     document.getElementById('website').innerHTML = clubInfo['website'];
     if(clubInfo['isOfficer']) {
-      document.getElementById('edit-button').style.visibility = 'visible';
+      document.getElementById('edit-button').style.display = 'inline-block';
     }
   }
 }
@@ -204,7 +204,7 @@ async function fetchBlobstoreUrl() {
         return response.text();
       })
       .then((imageUploadUrl) => {
-        const messageForm = document.getElementById('club-form');
+        const messageForm = document.getElementById('logo-form');
         messageForm.action = imageUploadUrl;
       });
 }
@@ -228,8 +228,13 @@ function showEdit() {
   document.getElementById('description').contentEditable = 'true';
   document.getElementById('website').contentEditable = 'true';
   document.getElementById('officers-list').contentEditable = 'true';
-  document.getElementById('edit-button').hidden = 'true';
+//   document.getElementById('edit-button').style.visiblity = 'hidden';
+  document.getElementById('edit-button').style.display = 'none';
+  document.getElementById('edit-button').setAttribute('hidden', true);
   document.getElementById('edit-form').removeAttribute('hidden');
+  document.getElementById('logo-form').removeAttribute('hidden');
+  document.getElementById('logo-club-name').value = document.getElementById('club-name').innerHTML;
+  fetchBlobstoreUrl();
 }
 
 /** Store edited content from club page */
@@ -247,7 +252,7 @@ function saveClubChanges() {
   document.getElementById('new-desc').value = newDesc;
   document.getElementById('new-web').value = newWebsite;
   document.getElementById('new-officers').value = newOfficers;
-  document.getElementById('name').value = document.getElementById('club-name').innerHTML;
+  document.getElementById('new-name').value = document.getElementById('club-name').innerHTML;
   document.forms['edit-form'].submit();
   alert('Changes submitted!');
 }

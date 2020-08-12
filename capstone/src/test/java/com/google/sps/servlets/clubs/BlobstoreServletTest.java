@@ -46,7 +46,7 @@ public class BlobstoreServletTest {
 
   @Test
   public void doGet_getBlobstoreUploadLink() throws ServletException, IOException {
-    when(blobstore.createUploadUrl("/clubs")).thenReturn("sample-url");
+    when(blobstore.createUploadUrl("/club-logo")).thenReturn("sample-url");
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);

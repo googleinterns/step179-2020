@@ -1,6 +1,5 @@
 package com.google.sps.servlets;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -91,19 +90,13 @@ public class ClubServlet extends HttpServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
-      BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.LOGO_PROP, blobstore);
-      String blobKey = "";
-      if (key != null) {
-        blobKey = key.getKeyString();
-      }
-
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
+      clubEntity.setProperty(Constants.LOGO_PROP, "");
       datastore.put(clubEntity);
 
       addClubToFoundersClubList(datastore, founderEmail, clubName);
