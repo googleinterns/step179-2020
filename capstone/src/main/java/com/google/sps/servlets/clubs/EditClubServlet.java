@@ -12,7 +12,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +25,13 @@ public class EditClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
-    ImmutableList<String> officers =
-        ImmutableList.copyOf(request.getParameter(Constants.OFFICER_PROP).split(","));
+    ImmutableList<String> officers;
+    String newOfficerList = request.getParameter(Constants.OFFICER_PROP);
+    if (newOfficerList != null && !newOfficerList.isEmpty()) {
+      officers = ImmutableList.copyOf(newOfficerList.split(","));
+    } else {
+      officers = ImmutableList.of();
+    }
 
     Query query =
         new Query("Club")
@@ -41,12 +45,12 @@ public class EditClubServlet extends HttpServlet {
     // Only accepts officers that are listed as members of the club
     if (clubEntity != null) {
       ImmutableList<String> currentOfficers =
-          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+          ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
       if (!currentOfficers.contains(founderEmail)) {
         return; // Not authenticated to post
       }
       ImmutableList<String> members =
-          ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+          ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
 
       ImmutableList<String> intersect =
           members.stream().filter(officers::contains).collect(toImmutableList());
@@ -54,9 +58,7 @@ public class EditClubServlet extends HttpServlet {
       boolean isInvalid = intersect.isEmpty();
       // If all officers are invalid, officers list does not change
       if (intersect.isEmpty()) {
-        intersect =
-            ImmutableList.copyOf(
-                (ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+        intersect = ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
       }
 
       clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));

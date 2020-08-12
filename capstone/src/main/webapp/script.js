@@ -52,9 +52,8 @@ async function getClubInfo() {
       membersElement.innerHTML = 'There are ' + clubInfo['members'].length + ' members in this club.';
     }
     document.getElementById('website').innerHTML = clubInfo['website'];
-
     if(clubInfo['isOfficer']) {
-      document.getElementById('edit-button').removeAttribute('hidden');
+      document.getElementById('edit-button').style.visibility = 'visible';
     }
   }
 }

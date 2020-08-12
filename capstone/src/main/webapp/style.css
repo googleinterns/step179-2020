@@ -284,3 +284,7 @@ button:hover {
 #club-logo-small {
   height: 50px;
 }
+
+#edit-button {
+  visibility: hidden;
+}

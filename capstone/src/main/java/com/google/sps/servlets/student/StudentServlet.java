@@ -107,6 +107,7 @@ public class StudentServlet extends HttpServlet {
         return;
       }
       addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, false);
+      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.OFFICER_PROP, false);
 
       // Remove club from student's club list and update Datastore
       addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
@@ -229,10 +230,7 @@ public class StudentServlet extends HttpServlet {
       String property,
       Boolean addItem) {
     // Create empty List if property does not exist yet
-    List<String> generalList = new ArrayList<String>();
-    if (entity.getProperty(property) != null) {
-      generalList = ((ArrayList<String>) entity.getProperty(property));
-    }
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
     if (addItem && !generalList.contains(itemToAddOrRemove)) {
       generalList.add(itemToAddOrRemove);
     }
