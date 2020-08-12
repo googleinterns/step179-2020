@@ -29,4 +29,12 @@ public class Club {
   public boolean hasOfficer(String officer) {
     return officers.contains(officer);
   }
+
+  public String getName() {
+    return name;
+  }
+
+  public int getSize() {
+    return members.size();
+  }
 }

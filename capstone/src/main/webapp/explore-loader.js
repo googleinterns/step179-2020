@@ -1,13 +1,15 @@
-getListings();
 
 async function getListings () {
-  const query = '/explore';
+  const sortType = document.getElementById('sort-type').value;
+
+  const query = '/explore?sort=' + sortType;
   const response = await fetch(query);
   const json = await response.json();
   loadListings(json);
 }
 
 async function loadListings (json) {
+  document.getElementById('club-listings').innerHTML = ''; //Clear the listings div, for if we're refreshing the listings
   const template = document.querySelector('#club-listing');
   for (var club of json) {
     imageUrl = 'images/logo.png';
