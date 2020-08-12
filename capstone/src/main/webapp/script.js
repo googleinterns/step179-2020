@@ -78,8 +78,9 @@ async function loadAnnouncements () {
   const template = document.querySelector('#announcement-element');
 
   var backgroundColor;
-  const color1 = "#AAA";
-  const color2 = "#BBB";
+  const color1 = '#AAA';
+  const color2 = '#BBB';
+  const editedFlag = ' (edited)';
   var evenOdd = true;
   for (var announcement of json) {
     const id = announcement.author + announcement.content + announcement.time; // Unique string to identiy this announcement.
@@ -87,6 +88,9 @@ async function loadAnnouncements () {
     template.content.querySelector('img').src = 'images/profile.jpeg';
     template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
     template.content.querySelector('.announcement-content').innerHTML = announcement.content;
+    if (JSON.parse(announcement.edited)) {
+        template.content.querySelector('.announcement-author').innerHTML += editedFlag;
+    }
     template.content.querySelector('.announcement-content').id = id;
 
     const dateString = new Date(announcement.time).toLocaleDateString("en-US");
@@ -107,7 +111,6 @@ async function loadAnnouncements () {
       template.content.querySelector('.club').value = announcement.club;
       template.content.querySelector('.change-form').id = id + '-form';
       
-
       template.content.querySelector('#club').value = announcement.club;
       template.content.querySelector('#author').value = announcement.author;
       template.content.querySelector('#content').value = announcement.content;

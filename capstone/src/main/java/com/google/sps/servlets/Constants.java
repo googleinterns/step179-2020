@@ -20,6 +20,7 @@ class Constants {
   static final String ANNOUNCEMENT_PROP = "Announcement";
   static final String AUTHOR_PROP = "author";
   static final String TIME_PROP = "time";
+  static final String EDITED_PROP = "edited";
   static final String CONTENT_PROP = "content";
   static final String JOIN_CLUB_PROP = "join";
   static final String BLOB_KEY_PROP = "blobKey";

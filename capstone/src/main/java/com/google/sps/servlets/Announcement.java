@@ -7,14 +7,22 @@ public class Announcement {
   private String content;
   private boolean isAuthor;
   private String authorName;
+  private boolean edited;
 
   public Announcement(
-      String author, String club, long time, String content, boolean isAuthor, String authorName) {
+      String author,
+      String club,
+      long time,
+      String content,
+      boolean isAuthor,
+      String authorName,
+      boolean edited) {
     this.author = author;
     this.club = club;
     this.time = time;
     this.content = content;
     this.isAuthor = isAuthor;
     this.authorName = authorName;
+    this.edited = edited;
   }
 }
