@@ -96,7 +96,7 @@ public final class ExploreServletTest {
     String BLOB_KEY_2 = "another fake blob key";
 
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_2);
+    when(request.getParameter(Constants.SORT_PROP)).thenReturn(Constants.DEFAULT_SORT_PROP);
 
     Entity club1 = new Entity(Constants.CLUB_ENTITY_PROP);
     club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
