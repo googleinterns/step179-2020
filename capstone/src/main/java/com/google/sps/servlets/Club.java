@@ -10,6 +10,7 @@ public class Club {
   private String description;
   private String website;
   private String logo;
+  private ImmutableList<String> labels;
 
   public Club(
       String name,
@@ -17,13 +18,15 @@ public class Club {
       ImmutableList<String> officers,
       String description,
       String website,
-      String logo) {
+      String logo,
+      ImmutableList<String> labels) {
     this.name = name;
     this.members = members;
     this.officers = officers;
     this.description = description;
     this.website = website;
     this.logo = logo;
+    this.labels = labels;
   }
 
   public boolean hasOfficer(String officer) {

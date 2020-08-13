@@ -48,6 +48,7 @@ public class ExploreServlet extends HttpServlet {
         ServletUtil.getPropertyList(entity, Constants.OFFICER_PROP),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
-        key);
+        key,
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP));
   }
 }

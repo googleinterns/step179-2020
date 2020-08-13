@@ -12,6 +12,7 @@ class Constants {
   static final String PROPERTY_CLUBS = "clubs";
   static final String DESCRIP_PROP = "description";
   static final String WEBSITE_PROP = "website";
+  static final String LABELS_PROP = "labels";
   static final String LOGO_PROP = "logo";
   static final String MEMBER_PROP = "members";
   static final String OFFICER_PROP = "officers";

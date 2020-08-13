@@ -41,6 +41,7 @@ public class ClubServlet extends HttpServlet {
           ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
       ImmutableList<String> officers =
           ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
+      ImmutableList<String> labels = ServletUtil.getPropertyList(clubEntity, Constants.LABELS_PROP);
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
       String logoKey = "";
@@ -48,7 +49,7 @@ public class ClubServlet extends HttpServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website, logoKey);
+      Club club = new Club(name, members, officers, description, website, logoKey, labels);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -104,6 +105,7 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
+      clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
       datastore.put(clubEntity);
 
       addClubToFoundersClubList(datastore, founderEmail, clubName);
@@ -132,7 +134,7 @@ public class ClubServlet extends HttpServlet {
 
   private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,

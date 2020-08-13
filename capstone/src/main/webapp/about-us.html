@@ -32,12 +32,15 @@
         <p class="club-element" id="website"></p>
         <h3>Club Size:</h3>
         <p class="club-element" id="members"></p>
+        <h3>Labels:</h3>
+        <ul class="club-element" id="labels"></ul>
         <button hidden id="edit-button" onclick="showEdit()">Edit</button>
         <form hidden action="/club-edit" method="POST" id="edit-form" name="edit-about">
           <input type="hidden" id="name" name="name">
           <input type="hidden" id="new-desc" name="description">
           <input type="hidden" id="new-web" name="website">
           <input type="hidden" id="new-officers" name="officers">
+          <input type="hidden" id="new-labels" name="labels">
           <button name="edit-club" onclick="saveClubChanges()">Save Changes</button>
         </form>
       </div>
@@ -84,6 +87,10 @@
     </template>
     <template id="calendar">
       <iframe id="calendar-element"></iframe>
+      <form action="/calendar" method="POST"> 
+        <input type="hidden" name="name" id="club-name-cal">
+        <input type="submit" name="Create calendar" value="Create calendar">
+      </form>
     </template>
   </body>
 </html>
