@@ -45,7 +45,7 @@ public class AnnouncementsServlet extends HttpServlet {
                         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()),
                         entity.getProperty(Constants.CONTENT_PROP).toString(),
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
-                        Student.getNameByEmail(
+                        ServletUtil.getNameByEmail(
                             entity.getProperty(Constants.AUTHOR_PROP).toString())))
             .collect(toImmutableList())
             .reverse();

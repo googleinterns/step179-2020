@@ -328,7 +328,7 @@ public final class StudentServletTest {
         String.format(
             "%1$s from %2$s in %3$s sent at %4$s",
             announcement.getProperty(Constants.CONTENT_PROP),
-            Student.getNameByEmail(announcement.getProperty(Constants.AUTHOR_PROP).toString()),
+            ServletUtil.getNameByEmail(announcement.getProperty(Constants.AUTHOR_PROP).toString()),
             announcement.getProperty(Constants.CLUB_PROP),
             time);
     return fullAnnouncement;

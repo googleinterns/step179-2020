@@ -75,11 +75,6 @@
       <scope>test</scope>
     </dependency>    
     <dependency>
-      <groupId>com.google.apis</groupId>
-      <artifactId>google-api-services-gmail</artifactId>
-      <version>v1-rev110-1.25.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.oauth-client</groupId>
       <artifactId>google-oauth-client-java6</artifactId>
       <version>1.31.0</version>

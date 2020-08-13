@@ -34,7 +34,7 @@ public class ProfileImageServlet extends HttpServlet {
       BlobstoreService blobstore,
       DatastoreService datastore)
       throws IOException {
-
+    // Must use UserService to access logged in user here
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
     BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.PROFILE_PIC_PROP, blobstore);

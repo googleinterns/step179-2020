@@ -72,6 +72,7 @@ public class ClubServlet extends HttpServlet {
       BlobstoreService blobstore,
       DatastoreService datastore)
       throws IOException {
+    // Must use UserService to access logged in user here
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
 
