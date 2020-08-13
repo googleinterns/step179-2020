@@ -88,7 +88,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
   private Club getClub(DatastoreService datastore, String clubName) {
     Query query =
-        new Query("Club")
+        new Query(CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     Entity entity = datastore.prepare(query).asSingleEntity();
