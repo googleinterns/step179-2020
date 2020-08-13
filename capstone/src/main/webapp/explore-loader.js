@@ -9,7 +9,7 @@ async function getListings () {
 }
 
 async function loadListings (json) {
-  document.getElementById('club-listings').innerHTML = ''; //Clear the listings div, for if we're refreshing the listings
+  document.getElementById('club-listings').innerHTML = ''; // Clear the listings div, for if we're refreshing the listings
   const template = document.querySelector('#club-listing');
   for (var club of json) {
     imageUrl = 'images/logo.png';

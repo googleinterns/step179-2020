@@ -59,13 +59,14 @@ public class ExploreServlet extends HttpServlet {
   }
 
   private Comparator<Club> getComparator(String sort) {
-    if (sort.equals(Constants.ALPHA_SORT_PROP)) {
-      return Comparator.comparing(
-          club -> club.getName().toLowerCase()); // Should be case-insensitive
-    } else if (sort.equals(Constants.SIZE_SORT_PROP)) {
-      return Collections.reverseOrder(Comparator.comparing(club -> club.getSize()));
-    } else {
-      return Comparator.comparing(club -> club.getCreationTime());
+    switch (sort) {
+      case Constants.ALPHA_SORT_PROP:
+        return Comparator.comparing(
+            club -> club.getName().toLowerCase()); // Should be case-insensitive    
+      case Constants.SIZE_SORT_PROP:
+        return Collections.reverseOrder(Comparator.comparing(club -> club.getSize()));
+      default: 
+        return Comparator.comparing(club -> club.getCreationTime());
     }
   }
 }
