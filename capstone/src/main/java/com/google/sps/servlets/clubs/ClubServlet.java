@@ -1,7 +1,5 @@
 package com.google.sps.servlets;
 
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -61,16 +59,12 @@ public class ClubServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    doPostHelper(request, response, blobstore, datastore);
+    doPostHelper(request, response, datastore);
   }
 
   public void doPostHelper(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      BlobstoreService blobstore,
-      DatastoreService datastore)
+      HttpServletRequest request, HttpServletResponse response, DatastoreService datastore)
       throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail;
