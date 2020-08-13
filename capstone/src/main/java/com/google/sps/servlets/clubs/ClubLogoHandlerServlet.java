@@ -38,12 +38,11 @@ public class ClubLogoHandlerServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
     BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.LOGO_PROP, blobstore);
-    // when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     String blobKey = key != null ? key.getKeyString() : "";
-
-    clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
-
-    datastore.put(clubEntity);
+    if (clubEntity != null) {
+      clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
+      datastore.put(clubEntity);
+    }
     response.sendRedirect(
         "/about-us.html?name="
             + clubEntity.getProperty(Constants.PROPERTY_NAME)
