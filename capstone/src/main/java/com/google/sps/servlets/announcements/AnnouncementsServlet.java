@@ -51,7 +51,8 @@ public class AnnouncementsServlet extends HttpServlet {
                         entity.getProperty(Constants.CONTENT_PROP).toString(),
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
                         Student.getNameByEmail(
-                            entity.getProperty(Constants.AUTHOR_PROP).toString())))
+                            entity.getProperty(Constants.AUTHOR_PROP).toString()),
+                        Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString())))
             .collect(toImmutableList());
 
     Gson gson = new Gson();
@@ -80,6 +81,7 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
     announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
     announcementEntity.setProperty(Constants.CLUB_PROP, clubName);
+    announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
 
