@@ -45,7 +45,8 @@ public class ClubServlet extends HttpServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website, logoKey);
+      long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
+      Club club = new Club(name, members, officers, description, website, logoKey, creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -90,6 +91,7 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
+      clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       datastore.put(clubEntity);
 

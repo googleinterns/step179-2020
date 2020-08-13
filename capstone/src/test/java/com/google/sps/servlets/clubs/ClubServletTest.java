@@ -43,6 +43,7 @@ public class ClubServletTest {
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final String SAMPLE_BLOB = "test-blobkey";
   private final String TEST_EMAIL = "test-email@gmail.com";
+  private final long SAMPLE_TIME = 25;
   private final ImmutableList<String> STUDENT_LIST = ImmutableList.of(TEST_EMAIL);
 
   @Mock private HttpServletRequest request;
@@ -130,6 +131,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
+    clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
     StringWriter stringWriter = new StringWriter();
@@ -149,6 +151,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
+    Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 
   @Test

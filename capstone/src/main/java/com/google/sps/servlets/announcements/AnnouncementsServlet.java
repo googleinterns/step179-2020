@@ -108,6 +108,7 @@ public class AnnouncementsServlet extends HttpServlet {
         ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
-        key);
+        key,
+        Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

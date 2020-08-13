@@ -10,6 +10,7 @@ public class Club {
   private String description;
   private String website;
   private String logo;
+  private long time;
 
   public Club(
       String name,
@@ -17,16 +18,30 @@ public class Club {
       ImmutableList<String> officers,
       String description,
       String website,
-      String logo) {
+      String logo,
+      long creationTime) {
     this.name = name;
     this.members = members;
     this.officers = officers;
     this.description = description;
     this.website = website;
     this.logo = logo;
+    this.time = creationTime;
   }
 
   public boolean hasOfficer(String officer) {
     return officers.contains(officer);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public int getSize() {
+    return members.size();
+  }
+
+  public long getCreationTime() {
+    return time;
   }
 }
