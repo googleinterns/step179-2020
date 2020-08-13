@@ -1,4 +1,4 @@
-showOrHideProfile();
+getStudentInfo();
 
 /** Fetch login status and show or hide profile accordingly */
 function showOrHideProfile() {
@@ -11,6 +11,8 @@ function showOrHideProfile() {
     }
     else {
       document.getElementById('profile-content').innerHTML = loginStatus;
+      // document.getElementById('profile-content').innerHTML = '<div class="g-signin2" data-onsuccess="onSignIn"></div>';
+      console.log('here');
     }
   })
 }
@@ -18,6 +20,8 @@ function showOrHideProfile() {
 /** Fetch student information and add it to the profile */
 function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
+    // Edit email form with email as value so ProfileImageServlet can access email
+    
     var studentInfo = info['student'];
     // Display profile name with edit icon
     const pencilIcon = '<i class="far fa-edit pencil-edit"></i>';
@@ -93,6 +97,18 @@ function getImageUrl(pictureKey) {
 function fetchBlobstoreProfileUrl() {
   fetch('/blobstore-profile-url').then(response => response.text()).then((imageUploadUrl) => {  
     const messageForm = document.getElementById('profile-form');
-    messageForm.action = imageUploadUrl;
+    if (messageForm != null) {
+      messageForm.action = imageUploadUrl;
+    }
   });
+}
+
+function onSignIn(googleUser) {
+  console.log("HERE");
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  window.location.href = '/explore.html';
 }

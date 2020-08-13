@@ -11,9 +11,9 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,13 +37,13 @@ public class EditClubServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private DatastoreService datastore;
   private EditClubServlet editClubServlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
           new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0),
-          new LocalUserServiceTestConfig(),
           new LocalBlobstoreServiceTestConfig());
 
   @Before
@@ -69,6 +69,8 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
     editClubServlet.doPost(request, response);
 
     Query query =
@@ -96,6 +98,8 @@ public class EditClubServletTest {
         .thenReturn("fake-person@fake.com," + TEST_EMAIL);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
     editClubServlet.doPost(request, response);
 
     Query query =
@@ -121,6 +125,8 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn("fake-person@fake.com");
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
     editClubServlet.doPost(request, response);
 
     Query query =

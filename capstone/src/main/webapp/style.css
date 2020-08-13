@@ -29,7 +29,8 @@ p {
 
 .upload-profile-pic,
 .login-button,
-.save-button {
+.save-button,
+#login {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

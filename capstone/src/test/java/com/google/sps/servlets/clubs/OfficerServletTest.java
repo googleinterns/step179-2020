@@ -8,11 +8,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -29,13 +29,13 @@ public class OfficerServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private OfficerServlet servlet;
   private DatastoreService datastore;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
           new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0),
-          new LocalUserServiceTestConfig(),
           new LocalBlobstoreServiceTestConfig());
 
   @Before
@@ -65,6 +65,8 @@ public class OfficerServletTest {
 
     helper.setEnvEmail("kshao@google.com").setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(clubName);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(officer);
 
     boolean response = getServletResponse(servlet);
     Assert.assertTrue(response);
@@ -85,6 +87,8 @@ public class OfficerServletTest {
 
     helper.setEnvEmail("kshao@google.com").setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(clubName);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(member);
 
     boolean response = getServletResponse(servlet);
     Assert.assertFalse(response);

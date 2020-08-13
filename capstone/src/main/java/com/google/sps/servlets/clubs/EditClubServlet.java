@@ -8,8 +8,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -23,8 +21,7 @@ public class EditClubServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    UserService userService = UserServiceFactory.getUserService();
-    String founderEmail = userService.getCurrentUser().getEmail();
+    String founderEmail = request.getUserPrincipal().getName();
     ImmutableList<String> officers;
     String newOfficerList = request.getParameter(Constants.OFFICER_PROP);
     if (newOfficerList != null && !newOfficerList.isEmpty()) {

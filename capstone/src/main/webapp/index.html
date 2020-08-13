@@ -1,30 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta name="google-signin-client_id" content="264953829929-ffv5q12afu4a7bm3vd7pnlfg8d96tlom.apps.googleusercontent.com" charset="UTF-8">
     <title>ClubHub</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-    <script src="explore-loader.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="profile-loader.js"></script>
   </head>
   <body>
-    <div id="top-navigation"></div>
-    <h1 id="explore-heading">Explore Clubs</h1>
-    <div id="content">
-      <div id="club-listings" class="full-screen-panel">
-        <template id="club-listing">
-          <div class="club-logo-container">
-            <img src="" id="club-logo" class="club-logo" alt="Club logo">
-          </div>
-          <div class="club-info-container">
-            <h2><a href="" id="club-name"></a></h2>
-            <p id="description"></p>
-            <p id="members"></p>
-          </div> 
-          <form id="club-join-container" name="join" action="/student-data" method="POST"></form>
-        </template>
-      </div>
-      <button id="register-club-button" onclick="location.href='club-registration.html';">Register a new club!</button>
-    </div>
+    <div id="login" class="g-signin2" data-onsuccess="onSignIn"></div>
   </body>
 </html>

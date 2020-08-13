@@ -9,9 +9,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
@@ -29,15 +26,13 @@ public class AnnouncementsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get announcements object based on the logged in email
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)
-            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName))
-            .addSort("time", SortDirection.DESCENDING);
+            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName));
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Announcement> announcements =
         Streams.stream(results.asIterable())
@@ -52,7 +47,8 @@ public class AnnouncementsServlet extends HttpServlet {
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
                         Student.getNameByEmail(
                             entity.getProperty(Constants.AUTHOR_PROP).toString())))
-            .collect(toImmutableList());
+            .collect(toImmutableList())
+            .reverse();
 
     Gson gson = new Gson();
     String json = gson.toJson(announcements);
@@ -62,9 +58,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     String announcementContent = request.getParameter(Constants.CONTENT_PROP);
 

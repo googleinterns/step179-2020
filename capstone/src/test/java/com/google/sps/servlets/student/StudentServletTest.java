@@ -20,6 +20,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public final class StudentServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private StudentServlet studentServlet = new StudentServlet();
   private LocalServiceTestHelper localHelper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -121,7 +123,8 @@ public final class StudentServletTest {
   @Test
   public void doGet_studentLogsInForFirstTime() throws ServletException, IOException {
     localHelper.setEnvEmail(KEVIN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(KEVIN_EMAIL);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(KEVIN_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -145,7 +148,8 @@ public final class StudentServletTest {
     datastore.put(studentMegha);
 
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGHA_EMAIL);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGHA_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -169,7 +173,8 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -203,7 +208,8 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -238,6 +244,8 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
 
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
     String responseStr = doPost_studentServletResponse();
 
     Assert.assertTrue(responseStr.isEmpty());
@@ -250,6 +258,8 @@ public final class StudentServletTest {
     datastore.put(studentMegha);
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_2);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGHA_EMAIL);
 
     String responseStr = doPost_studentServletResponse();
 
@@ -275,6 +285,8 @@ public final class StudentServletTest {
     datastore.put(studentMegan);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_1);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     String responseStr = doPost_studentServletResponse();
 
@@ -316,7 +328,7 @@ public final class StudentServletTest {
         String.format(
             "%1$s from %2$s in %3$s sent at %4$s",
             announcement.getProperty(Constants.CONTENT_PROP),
-            announcement.getProperty(Constants.AUTHOR_PROP),
+            Student.getNameByEmail(announcement.getProperty(Constants.AUTHOR_PROP).toString()),
             announcement.getProperty(Constants.CLUB_PROP),
             time);
     return fullAnnouncement;
@@ -329,6 +341,8 @@ public final class StudentServletTest {
     datastore.put(club1);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     String responseStr = doPost_studentServletResponse();
 
@@ -354,6 +368,8 @@ public final class StudentServletTest {
     datastore.put(club1);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.LEAVE_CLUB_PROP)).thenReturn(CLUB_1);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     String responseStr = doPost_studentServletResponse();
 
@@ -379,6 +395,8 @@ public final class StudentServletTest {
     when(request.getParameter("new-name")).thenReturn(newName);
     when(request.getParameter("new-year")).thenReturn(newYear);
     when(request.getParameter("new-major")).thenReturn(newMajor);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     String responseStr = doPost_studentServletResponse();
 

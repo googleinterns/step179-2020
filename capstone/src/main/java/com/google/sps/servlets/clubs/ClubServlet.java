@@ -31,8 +31,7 @@ public class ClubServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
 
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
     if (clubEntity != null) {
@@ -74,13 +73,7 @@ public class ClubServlet extends HttpServlet {
       DatastoreService datastore)
       throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    String founderEmail;
-    if (userService.getCurrentUser() != null) {
-      founderEmail = userService.getCurrentUser().getEmail();
-    } else {
-      response.sendRedirect("/profile.html");
-      return;
-    }
+    String founderEmail = userService.getCurrentUser().getEmail();
 
     // Check if club name is valid
 
