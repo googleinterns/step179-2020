@@ -228,7 +228,6 @@ function showEdit() {
   document.getElementById('description').contentEditable = 'true';
   document.getElementById('website').contentEditable = 'true';
   document.getElementById('officers-list').contentEditable = 'true';
-//   document.getElementById('edit-button').style.visiblity = 'hidden';
   document.getElementById('edit-button').style.display = 'none';
   document.getElementById('edit-button').setAttribute('hidden', true);
   document.getElementById('edit-form').removeAttribute('hidden');

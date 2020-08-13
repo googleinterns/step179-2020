@@ -63,7 +63,7 @@ public class ClubLogoHandlerServletTest {
     String sampleBlob = "test blob";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.LOGO_PROP)).thenReturn(sampleBlob);
-    
+
     ImmutableList<BlobKey> keys = ImmutableList.of(new BlobKey(sampleBlob));
     ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
     when(blobstore.getUploads(request)).thenReturn(blobMap);
