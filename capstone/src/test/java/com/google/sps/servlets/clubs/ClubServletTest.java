@@ -3,7 +3,6 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -16,7 +15,6 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,7 +22,6 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +65,6 @@ public class ClubServletTest {
     this.clubServlet = new ClubServlet();
     this.blobstoreServlet = new BlobstoreServlet();
     datastore = DatastoreServiceFactory.getDatastoreService();
-    blobstore = Mockito.mock(BlobstoreService.class);
   }
 
   @After
@@ -79,7 +75,7 @@ public class ClubServletTest {
   @Test
   public void doPost_registerNewValidClub() throws ServletException, IOException {
     doPost_helper();
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -93,7 +89,6 @@ public class ClubServletTest {
     Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
-    Assert.assertEquals(SAMPLE_BLOB, clubEntity.getProperty(Constants.LOGO_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
 
@@ -103,10 +98,10 @@ public class ClubServletTest {
   @Test
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
     doPost_helper();
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
     Query query =
@@ -177,9 +172,5 @@ public class ClubServletTest {
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-
-    ImmutableList<BlobKey> keys = ImmutableList.of(new BlobKey(SAMPLE_BLOB));
-    ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
-    when(blobstore.getUploads(request)).thenReturn(blobMap);
   }
 }
