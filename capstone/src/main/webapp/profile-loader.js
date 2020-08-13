@@ -1,22 +1,5 @@
 getStudentInfo();
 
-/** Fetch login status and show or hide profile accordingly */
-function showOrHideProfile() {
-  fetch('/auth').then(response => response.text()).then((loginStatus) => {
-    if (loginStatus.includes('logout')) {
-      var authContent = document.getElementById('top-navigation');
-      authContent.innerHTML = '<a id="logout-url" href="">Logout</a>' + authContent.innerHTML;
-      document.getElementById('logout-url').href = loginStatus;
-      getStudentInfo();
-    }
-    else {
-      document.getElementById('profile-content').innerHTML = loginStatus;
-      // document.getElementById('profile-content').innerHTML = '<div class="g-signin2" data-onsuccess="onSignIn"></div>';
-      console.log('here');
-    }
-  })
-}
-
 /** Fetch student information and add it to the profile */
 function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
