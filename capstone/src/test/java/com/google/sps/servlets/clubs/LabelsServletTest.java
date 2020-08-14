@@ -51,7 +51,6 @@ public class LabelsServletTest {
 
   @Test
   public void correctLabelsAndOrder() throws ServletException, IOException {
-
     String NAME = "kshao@google.com";
     String CLUB = "Club 1";
     String SITE = "www.fakesite.com";
