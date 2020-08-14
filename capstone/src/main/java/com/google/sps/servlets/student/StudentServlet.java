@@ -181,7 +181,7 @@ public class StudentServlet extends HttpServlet {
     return announcements;
   }
 
-  private static String getAnnouncementAsString(Entity announcement) {
+  public static String getAnnouncementAsString(Entity announcement) {
     // Set calendar timezone and time
     TimeZone timePST = TimeZone.getTimeZone(TIMEZONE_PST);
     Calendar calendar = Calendar.getInstance(timePST);

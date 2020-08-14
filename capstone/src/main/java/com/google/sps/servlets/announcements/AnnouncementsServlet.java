@@ -78,6 +78,7 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
+    EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
