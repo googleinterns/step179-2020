@@ -25,7 +25,7 @@ public class GmailAPILoader {
   private static final String APPLICATION_NAME = "clubhub-step-2020";
 
   public static Gmail getGmailService() throws IOException, GeneralSecurityException {
-    // Create credentials for using API
+    // Add credentials for using API
     Credential authorize =
         new GoogleCredential.Builder()
             .setTransport(GoogleNetHttpTransport.newTrustedTransport())
@@ -34,6 +34,7 @@ public class GmailAPILoader {
             .build()
             .setRefreshToken(Secrets.REFRESH_TOKEN)
             .setAccessToken(getAccessToken());
+    
     // Create Gmail API Service
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     Gmail service =
