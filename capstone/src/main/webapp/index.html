@@ -7,7 +7,7 @@
     <script src="script.js"></script>
     <script src="explore-loader.js"></script>
   </head>
-  <body onload="getListings()">
+  <body onload="loadExplore()">
     <div id="top-navigation"></div>
     <h1 id="explore-heading">Explore Clubs</h1>
     <div id="content">
@@ -18,14 +18,16 @@
           <option value="size">Size</option>
         </select>
         
-        <datalist id="browsers">
-          <option value="Edge">
-          <option value="Firefox">
-          <option value="Chrome">
-          <option value="Opera">
-          <option value="Safari">
-        </datalist>
-        
+        <div>
+          <label for="labels-select">Add a filter:</label>
+          <input list="labels-select-options" name="labels-select" id="labels-select">
+          <datalist id="labels-select-options"></datalist>
+          <input type="button" onclick="addFilterAndReload()" value="Add">
+        </div>
+
+        <ul id="labels">
+          
+        </ul>
       </div>
       <div id="club-listings" class="full-screen-panel"></div>
       <template id="club-listing">

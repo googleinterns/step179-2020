@@ -273,7 +273,6 @@ function saveClubChanges() {
   document.getElementById('new-officers').value = newOfficers;
   document.getElementById('new-labels').value = newLabels;
   document.getElementById('new-name').value = params.get('name');
-//   document.getElementById('new-name').value = document.getElementById('club-name').innerHTML;
   document.forms['edit-form'].submit();
   alert('Changes submitted!');
 }

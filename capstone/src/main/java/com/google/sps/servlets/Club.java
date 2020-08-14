@@ -47,4 +47,8 @@ public class Club {
   public long getCreationTime() {
     return time;
   }
+
+  public ImmutableList<String> getLabels() {
+    return labels;
+  }
 }

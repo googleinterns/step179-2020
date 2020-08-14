@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
@@ -29,11 +30,18 @@ public class ExploreServlet extends HttpServlet {
     String sort = request.getParameter(Constants.SORT_PROP);
     Comparator<Club> comparator = getComparator(sort);
 
+    ImmutableList<String> rawLabels =
+        ImmutableList.copyOf(request.getParameter(Constants.LABELS_PROP).split(","));
+    ImmutableList<String> labels =
+        rawLabels.stream()
+            .filter(label -> !Strings.isNullOrEmpty(label))
+            .collect(toImmutableList());
     Query query = new Query(Constants.CLUB_ENTITY_PROP);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Club> clubs =
         Streams.stream(results.asIterable())
             .map(entity -> createClubFromEntity(entity))
+            .filter(club -> matchesLabels(club, labels))
             .sorted(comparator)
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
@@ -41,6 +49,17 @@ public class ExploreServlet extends HttpServlet {
     String json = gson.toJson(clubs);
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  private boolean matchesLabels(Club club, ImmutableList<String> labels) {
+    if (labels.size() == 0) { // No labels means no filtering.
+      return true;
+    }
+
+    ImmutableList<String> clubLabels = club.getLabels();
+    ImmutableList<String> intersect =
+        clubLabels.stream().filter(labels::contains).collect(toImmutableList());
+    return intersect.size() == labels.size();
   }
 
   private Club createClubFromEntity(Entity entity) {
