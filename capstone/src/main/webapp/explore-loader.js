@@ -26,7 +26,6 @@ async function getListings () {
   const labels = getLabelQueryString();
 
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
-  console.log(query);
   const response = await fetch(query);
   const json = await response.json();
   loadListings(json);

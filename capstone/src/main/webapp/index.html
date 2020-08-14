@@ -17,17 +17,13 @@
           <option value="alpha">Alphabetical</option>
           <option value="size">Size</option>
         </select>
-        
         <div>
           <label for="labels-select">Add a filter:</label>
           <input list="labels-select-options" name="labels-select" id="labels-select">
           <datalist id="labels-select-options"></datalist>
           <input type="button" onclick="addFilterAndReload()" value="Add">
         </div>
-
-        <ul id="labels">
-          
-        </ul>
+        <ul id="labels"></ul>
       </div>
       <div id="club-listings" class="full-screen-panel"></div>
       <template id="club-listing">
