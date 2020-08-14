@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
@@ -61,11 +62,19 @@ public class EditClubServlet extends HttpServlet {
       }
 
       String newLabelsList = request.getParameter(Constants.LABELS_PROP);
-      ImmutableList<String> labels =
+      ImmutableList<String> rawLabels =
           Strings.isNullOrEmpty(newLabelsList)
               ? ImmutableList.of()
               : ImmutableList.copyOf(newLabelsList.split(","));
-
+      ImmutableList<String> labels =
+          rawLabels.stream()
+              .map(
+                  label ->
+                      label
+                          .toLowerCase()
+                          .replaceAll("\\s", "")) // Removes all whitespace and moves to lower case.
+              .filter(Predicates.not(Strings::isNullOrEmpty))
+              .collect(toImmutableList());
       clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
       clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
       clubEntity.setProperty(Constants.OFFICER_PROP, intersect);

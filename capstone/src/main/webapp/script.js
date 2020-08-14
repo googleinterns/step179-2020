@@ -265,7 +265,7 @@ function saveClubChanges() {
   const labelsListElement = document.getElementById('labels');
   const labelsList = labelsListElement.getElementsByTagName('li');
   for (const label of labelsList) {
-    newLabels.push(label.innerText);
+    newLabels.push(label.innerText.replace(/\s+/g, '')); // Get rid of whitespaces
   }
 
   document.getElementById('new-desc').value = newDesc;

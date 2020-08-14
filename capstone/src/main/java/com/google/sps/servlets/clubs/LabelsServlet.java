@@ -1,16 +1,17 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,24 +26,26 @@ public class LabelsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Map<String, Integer> labelFrequency = new HashMap<String, Integer>();
-    List<String> labels = new ArrayList<String>();
 
     Query query = new Query(Constants.CLUB_ENTITY_PROP);
     PreparedQuery prepared = datastore.prepare(query);
 
-    for (Entity entity : prepared.asIterable()) {
-      for (String label : ServletUtil.getPropertyList(entity, Constants.LABELS_PROP)) {
-        if (labelFrequency.keySet().contains(label)) {
-          labelFrequency.put(label, labelFrequency.get(label) + 1);
-        } else {
-          labelFrequency.put(label, 1);
-        }
-      }
-    }
+    Streams.stream(prepared.asIterable())
+        .flatMap(entity -> ServletUtil.getPropertyList(entity, Constants.LABELS_PROP).stream())
+        .forEach(
+            label -> {
+              if (labelFrequency.keySet().contains(label)) {
+                labelFrequency.put(label, labelFrequency.get(label) + 1);
+              } else {
+                labelFrequency.put(label, 1);
+              }
+            });
 
-    labelFrequency.entrySet().stream()
-        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-        .forEachOrdered(x -> labels.add(x.getKey()));
+    ImmutableList<String> labels =
+        labelFrequency.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .map(Map.Entry::getKey)
+            .collect(toImmutableList());
 
     Gson gson = new Gson();
     String json = gson.toJson(labels);

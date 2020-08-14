@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
@@ -34,13 +35,13 @@ public class ExploreServlet extends HttpServlet {
         ImmutableList.copyOf(request.getParameter(Constants.LABELS_PROP).split(","));
     ImmutableList<String> labels =
         rawLabels.stream()
-            .filter(label -> !Strings.isNullOrEmpty(label))
+            .filter(Predicates.not(Strings::isNullOrEmpty))
             .collect(toImmutableList());
     Query query = new Query(Constants.CLUB_ENTITY_PROP);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Club> clubs =
         Streams.stream(results.asIterable())
-            .map(entity -> createClubFromEntity(entity))
+            .map(ExploreServlet::createClubFromEntity)
             .filter(club -> matchesLabels(club, labels))
             .sorted(comparator)
             .limit(Constants.LOAD_LIMIT)
@@ -51,8 +52,8 @@ public class ExploreServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private boolean matchesLabels(Club club, ImmutableList<String> labels) {
-    if (labels.size() == 0) { // No labels means no filtering.
+  private static boolean matchesLabels(Club club, ImmutableList<String> labels) {
+    if (labels.isEmpty()) { // No labels means no filtering.
       return true;
     }
 
@@ -62,7 +63,7 @@ public class ExploreServlet extends HttpServlet {
     return intersect.size() == labels.size();
   }
 
-  private Club createClubFromEntity(Entity entity) {
+  private static Club createClubFromEntity(Entity entity) {
     String key = "";
     if (entity.getProperty(Constants.LOGO_PROP) != null) {
       key = entity.getProperty(Constants.LOGO_PROP).toString();
@@ -78,7 +79,7 @@ public class ExploreServlet extends HttpServlet {
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 
-  private Comparator<Club> getComparator(String sort) {
+  private static Comparator<Club> getComparator(String sort) {
     switch (sort) {
       case Constants.ALPHA_SORT_PROP:
         return Comparator.comparing(
