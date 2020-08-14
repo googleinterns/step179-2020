@@ -206,7 +206,7 @@ public class StudentServlet extends HttpServlet {
   private Entity retrieveClub(
       String clubName, DatastoreService datastore, HttpServletResponse response) {
     Query query =
-        new Query("Club")
+        new Query(CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     PreparedQuery results = datastore.prepare(query);

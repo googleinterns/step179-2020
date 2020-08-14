@@ -3,7 +3,6 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -15,7 +14,6 @@ import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,6 +44,7 @@ public class ClubServletTest {
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final String SAMPLE_BLOB = "test-blobkey";
   private final String TEST_EMAIL = "test-email@gmail.com";
+  private final long SAMPLE_TIME = 25;
   private final ImmutableList<String> STUDENT_LIST = ImmutableList.of(TEST_EMAIL);
 
   @Mock private HttpServletRequest request;
@@ -68,7 +67,6 @@ public class ClubServletTest {
     this.clubServlet = new ClubServlet();
     this.blobstoreServlet = new BlobstoreServlet();
     datastore = DatastoreServiceFactory.getDatastoreService();
-    blobstore = Mockito.mock(BlobstoreService.class);
   }
 
   @After
@@ -81,7 +79,7 @@ public class ClubServletTest {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
     doPost_helper();
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -95,7 +93,6 @@ public class ClubServletTest {
     Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
-    Assert.assertEquals(SAMPLE_BLOB, clubEntity.getProperty(Constants.LOGO_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
 
@@ -107,10 +104,10 @@ public class ClubServletTest {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("officer@example.com");
     doPost_helper();
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-    clubServlet.doPostHelper(request, response, blobstore, datastore);
+    clubServlet.doPostHelper(request, response, datastore);
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
     Query query =
@@ -141,6 +138,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
+    clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
     StringWriter stringWriter = new StringWriter();
@@ -160,6 +158,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
+    Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 
   @Test
@@ -185,9 +184,5 @@ public class ClubServletTest {
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-
-    ImmutableList<BlobKey> keys = ImmutableList.of(new BlobKey(SAMPLE_BLOB));
-    ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.LOGO_PROP, keys);
-    when(blobstore.getUploads(request)).thenReturn(blobMap);
   }
 }

@@ -98,6 +98,7 @@ public final class EditAnnouncementServletTest {
 
     Assert.assertNotNull(entity);
     Assert.assertEquals(SAMPLE_NEW_CONTENT, entity.getProperty(Constants.CONTENT_PROP));
+    Assert.assertEquals(true, entity.getProperty(Constants.EDITED_PROP));
   }
 
   @Test
@@ -125,6 +126,7 @@ public final class EditAnnouncementServletTest {
 
     Assert.assertNotNull(entity);
     Assert.assertEquals(SAMPLE_CONTENT, entity.getProperty(Constants.CONTENT_PROP));
+    Assert.assertEquals(false, entity.getProperty(Constants.EDITED_PROP));
   }
 
   private void prepare() {
@@ -133,7 +135,7 @@ public final class EditAnnouncementServletTest {
     announcementEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     announcementEntity.setProperty(Constants.CONTENT_PROP, SAMPLE_CONTENT);
     announcementEntity.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
-
+    announcementEntity.setProperty(Constants.EDITED_PROP, false);
     datastore.put(announcementEntity);
   }
 }

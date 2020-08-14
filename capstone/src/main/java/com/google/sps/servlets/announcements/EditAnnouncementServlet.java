@@ -43,6 +43,7 @@ public class EditAnnouncementServlet extends HttpServlet {
     }
 
     entity.setProperty(Constants.CONTENT_PROP, content);
+    entity.setProperty(Constants.EDITED_PROP, true);
     datastore.put(entity);
 
     response.sendRedirect("/about-us.html?name=" + club + "&tab=announcements");

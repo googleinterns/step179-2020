@@ -12,6 +12,10 @@ class Constants {
   static final String PROPERTY_CLUBS = "clubs";
   static final String DESCRIP_PROP = "description";
   static final String WEBSITE_PROP = "website";
+  static final String SORT_PROP = "sort";
+  static final String DEFAULT_SORT_PROP = "default";
+  static final String ALPHA_SORT_PROP = "alpha";
+  static final String SIZE_SORT_PROP = "size";
   static final String LOGO_PROP = "logo";
   static final String MEMBER_PROP = "members";
   static final String OFFICER_PROP = "officers";
@@ -20,6 +24,7 @@ class Constants {
   static final String ANNOUNCEMENT_PROP = "Announcement";
   static final String AUTHOR_PROP = "author";
   static final String TIME_PROP = "time";
+  static final String EDITED_PROP = "edited";
   static final String CONTENT_PROP = "content";
   static final String JOIN_CLUB_PROP = "join";
   static final String BLOB_KEY_PROP = "blobKey";

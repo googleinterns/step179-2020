@@ -1,8 +1,5 @@
 package com.google.sps.servlets;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -47,7 +44,8 @@ public class ClubServlet extends HttpServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       boolean isOfficer = officers.contains(userEmail);
-      Club club = new Club(name, members, officers, description, website, logoKey);
+      long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
+      Club club = new Club(name, members, officers, description, website, logoKey, creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -61,16 +59,12 @@ public class ClubServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    doPostHelper(request, response, blobstore, datastore);
+    doPostHelper(request, response, datastore);
   }
 
   public void doPostHelper(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      BlobstoreService blobstore,
-      DatastoreService datastore)
+      HttpServletRequest request, HttpServletResponse response, DatastoreService datastore)
       throws IOException {
     // Must use UserService to access logged in user here
     UserService userService = UserServiceFactory.getUserService();
@@ -85,19 +79,14 @@ public class ClubServlet extends HttpServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
-      BlobKey key = BlobstoreUtil.getBlobKey(request, Constants.LOGO_PROP, blobstore);
-      String blobKey = "";
-      if (key != null) {
-        blobKey = key.getKeyString();
-      }
-
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
-      clubEntity.setProperty(Constants.LOGO_PROP, blobKey);
+      clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
+      clubEntity.setProperty(Constants.LOGO_PROP, "");
       datastore.put(clubEntity);
 
       addClubToFoundersClubList(datastore, founderEmail, clubName);
@@ -126,7 +115,7 @@ public class ClubServlet extends HttpServlet {
 
   private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {
     Query query =
-        new Query("Club")
+        new Query(CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,
