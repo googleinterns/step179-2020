@@ -90,7 +90,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
   private Club getClub(DatastoreService datastore, String clubName) {
     Query query =
-        new Query(CLUB_ENTITY_PROP)
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     Entity entity = datastore.prepare(query).asSingleEntity();
@@ -109,7 +109,7 @@ public class AnnouncementsServlet extends HttpServlet {
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
-        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP));
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

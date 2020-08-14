@@ -55,7 +55,7 @@ public class ExploreServlet extends HttpServlet {
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
-        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP));
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 
@@ -63,10 +63,10 @@ public class ExploreServlet extends HttpServlet {
     switch (sort) {
       case Constants.ALPHA_SORT_PROP:
         return Comparator.comparing(
-            club -> club.getName().toLowerCase()); // Should be case-insensitive    
+            club -> club.getName().toLowerCase()); // Should be case-insensitive
       case Constants.SIZE_SORT_PROP:
         return Collections.reverseOrder(Comparator.comparing(club -> club.getSize()));
-      default: 
+      default:
         return Comparator.comparing(club -> club.getCreationTime());
     }
   }

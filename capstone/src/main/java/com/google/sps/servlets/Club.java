@@ -10,11 +10,8 @@ public class Club {
   private String description;
   private String website;
   private String logo;
-<<<<<<< HEAD
   private ImmutableList<String> labels;
-=======
   private long time;
->>>>>>> d19e8bf5a4ad0f62e92a1d4c93186f1caa6aaa75
 
   public Club(
       String name,
@@ -23,7 +20,7 @@ public class Club {
       String description,
       String website,
       String logo,
-      ImmutableList<String> labels) {
+      ImmutableList<String> labels,
       long creationTime) {
     this.name = name;
     this.members = members;
