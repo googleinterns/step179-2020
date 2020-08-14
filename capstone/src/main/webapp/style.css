@@ -8,9 +8,9 @@ body {
   background-color: #f5fcfc;
 }
 
-.login-intro,
 #profile-heading,
-#explore-heading {
+#explore-heading,
+#login {
   text-align: center;
 }
 
@@ -28,16 +28,14 @@ p {
 }
 
 .upload-profile-pic,
-.login-button,
-.save-button {
+.save-button,
+#login-button {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
 }
 
-.login-button,
-.save-button,
 button {
   font-size: 20px;
   color: #fff;
@@ -54,20 +52,19 @@ button {
   z-index: 10;
 }
 
-.login-button,
+#login {
+  position: absolute;
+  top: 25%;
+  transform: translateY(-50%);
+  left: 25%;
+}
+
 .save-button {
   text-align: center;
 }
 
-.login-button:hover,
-.save-button:hover,
 button:hover {
   opacity: 1;
-}
-
-.login-button {
-  margin-top: 5%;
-  font-size: 26px;
 }
 
 .profile-button {

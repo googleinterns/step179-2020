@@ -23,7 +23,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
@@ -58,9 +57,7 @@ public final class ExploreServletTest {
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig(),
-          new LocalUserServiceTestConfig(),
-          new LocalURLFetchServiceTestConfig());
+          new LocalDatastoreServiceTestConfig(), new LocalURLFetchServiceTestConfig());
 
   @Before
   public void setUp() {

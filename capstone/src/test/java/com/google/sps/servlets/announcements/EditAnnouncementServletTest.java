@@ -24,9 +24,9 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
+import java.security.Principal;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,13 +52,13 @@ public final class EditAnnouncementServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private DatastoreService datastore;
   private EditAnnouncementServlet servlet;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
           new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0),
-          new LocalUserServiceTestConfig(),
           new LocalBlobstoreServiceTestConfig());
 
   @Before
@@ -83,6 +83,8 @@ public final class EditAnnouncementServletTest {
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
     when(request.getParameter(Constants.CLUB_PROP)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(ID_PROP)).thenReturn(id);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
     servlet.doPost(request, response);
 
     Query query = new Query(Constants.ANNOUNCEMENT_PROP);
@@ -110,6 +112,8 @@ public final class EditAnnouncementServletTest {
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
     when(request.getParameter(Constants.CLUB_PROP)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(ID_PROP)).thenReturn(SAMPLE_ID);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("anotherEmail@google.com");
     servlet.doPost(request, response);
 
     Query query = new Query(Constants.ANNOUNCEMENT_PROP);

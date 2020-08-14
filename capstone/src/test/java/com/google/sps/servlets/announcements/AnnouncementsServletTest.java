@@ -22,7 +22,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,6 +29,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -61,6 +61,7 @@ public final class AnnouncementsServletTest {
   private AnnouncementsServlet servlet;
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private DatastoreService datastore;
 
   private Entity announcement1;
@@ -68,9 +69,7 @@ public final class AnnouncementsServletTest {
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig(),
-          new LocalUserServiceTestConfig(),
-          new LocalURLFetchServiceTestConfig());
+          new LocalDatastoreServiceTestConfig(), new LocalURLFetchServiceTestConfig());
 
   @Before
   public void setUp() {
@@ -98,6 +97,8 @@ public final class AnnouncementsServletTest {
   public void clubHasNoAnnouncements() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_2);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(AUTHOR_1);
 
     JsonArray response = getServletResponse(servlet);
 
@@ -109,6 +110,8 @@ public final class AnnouncementsServletTest {
   public void clubHasOnlyOneAnnouncement() throws IOException {
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_1);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(AUTHOR_1);
 
     JsonArray response = getServletResponse(servlet);
 

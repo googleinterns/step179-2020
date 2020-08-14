@@ -82,4 +82,15 @@ public final class ServletUtilTest {
     Assert.assertEquals(
         ImmutableList.of(MEGAN_EMAIL), ServletUtil.getPropertyList(club, Constants.MEMBER_PROP));
   }
+
+  @Test
+  public void getNameByEmail_getNameByValidEmail() throws ServletException, IOException {
+    Entity studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_NAME, "Megan Shi");
+    datastore.put(studentMegan);
+
+    Assert.assertEquals(
+        studentMegan.getProperty(Constants.PROPERTY_NAME), ServletUtil.getNameByEmail(MEGAN_EMAIL));
+  }
 }

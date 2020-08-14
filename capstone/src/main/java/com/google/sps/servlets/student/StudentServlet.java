@@ -9,9 +9,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
@@ -35,8 +32,7 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get student object based on the logged in email
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity currentStudent = getStudent(userEmail, datastore);
 
@@ -64,7 +60,7 @@ public class StudentServlet extends HttpServlet {
             clubs,
             profilePictureKey);
 
-    ImmutableList<String> announcements = getAllAnnouncements(student.getClubList(), datastore);
+    ImmutableList<String> announcements = getAllAnnouncements(clubs, datastore);
     StudentInfo allInfo = new StudentInfo(student, announcements);
     String studentJson = convertToJsonUsingGson(allInfo);
 
@@ -81,8 +77,7 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get student object based on the logged in email
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity student = getStudent(userEmail, datastore);
 
@@ -174,15 +169,15 @@ public class StudentServlet extends HttpServlet {
     // Get all announcements from given club name in reverse chronological order
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)
-            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName))
-            .addSort(Constants.TIME_PROP, SortDirection.DESCENDING);
+            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName));
     PreparedQuery results = datastore.prepare(query);
 
     // Stream through results and get formatted announcements
     ImmutableList<String> announcements =
         Streams.stream(results.asIterable())
             .map(StudentServlet::getAnnouncementAsString)
-            .collect(toImmutableList());
+            .collect(toImmutableList())
+            .reverse();
     return announcements;
   }
 
@@ -202,7 +197,7 @@ public class StudentServlet extends HttpServlet {
         String.format(
             "%1$s from %2$s in %3$s sent at %4$s",
             announcement.getProperty(Constants.CONTENT_PROP),
-            announcement.getProperty(Constants.AUTHOR_PROP),
+            ServletUtil.getNameByEmail(announcement.getProperty(Constants.AUTHOR_PROP).toString()),
             announcement.getProperty(Constants.CLUB_PROP),
             time);
     return fullAnnouncement;

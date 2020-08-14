@@ -1,19 +1,4 @@
-showOrHideProfile();
-
-/** Fetch login status and show or hide profile accordingly */
-function showOrHideProfile() {
-  fetch('/auth').then(response => response.text()).then((loginStatus) => {
-    if (loginStatus.includes('logout')) {
-      var authContent = document.getElementById('top-navigation');
-      authContent.innerHTML = '<a id="logout-url" href="">Logout</a>' + authContent.innerHTML;
-      document.getElementById('logout-url').href = loginStatus;
-      getStudentInfo();
-    }
-    else {
-      document.getElementById('profile-content').innerHTML = loginStatus;
-    }
-  })
-}
+getStudentInfo();
 
 /** Fetch student information and add it to the profile */
 function getStudentInfo() {
@@ -93,6 +78,13 @@ function getImageUrl(pictureKey) {
 function fetchBlobstoreProfileUrl() {
   fetch('/blobstore-profile-url').then(response => response.text()).then((imageUploadUrl) => {  
     const messageForm = document.getElementById('profile-form');
-    messageForm.action = imageUploadUrl;
+    if (messageForm != null) {
+      messageForm.action = imageUploadUrl;
+    }
   });
+}
+
+/** Direct to Explore page once logged in */
+function onSignIn(googleUser) {
+  window.location.href = '/explore.html';
 }
