@@ -10,7 +10,11 @@ public class Club {
   private String description;
   private String website;
   private String logo;
+<<<<<<< HEAD
   private ImmutableList<String> labels;
+=======
+  private long time;
+>>>>>>> d19e8bf5a4ad0f62e92a1d4c93186f1caa6aaa75
 
   public Club(
       String name,
@@ -20,6 +24,7 @@ public class Club {
       String website,
       String logo,
       ImmutableList<String> labels) {
+      long creationTime) {
     this.name = name;
     this.members = members;
     this.officers = officers;
@@ -27,9 +32,22 @@ public class Club {
     this.website = website;
     this.logo = logo;
     this.labels = labels;
+    this.time = creationTime;
   }
 
   public boolean hasOfficer(String officer) {
     return officers.contains(officer);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public int getSize() {
+    return members.size();
+  }
+
+  public long getCreationTime() {
+    return time;
   }
 }

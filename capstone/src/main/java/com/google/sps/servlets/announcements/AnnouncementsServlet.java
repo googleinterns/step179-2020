@@ -51,7 +51,8 @@ public class AnnouncementsServlet extends HttpServlet {
                         entity.getProperty(Constants.CONTENT_PROP).toString(),
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
                         Student.getNameByEmail(
-                            entity.getProperty(Constants.AUTHOR_PROP).toString())))
+                            entity.getProperty(Constants.AUTHOR_PROP).toString()),
+                        Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString())))
             .collect(toImmutableList());
 
     Gson gson = new Gson();
@@ -80,6 +81,7 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
     announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
     announcementEntity.setProperty(Constants.CLUB_PROP, clubName);
+    announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
 
@@ -88,7 +90,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
   private Club getClub(DatastoreService datastore, String clubName) {
     Query query =
-        new Query("Club")
+        new Query(CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     Entity entity = datastore.prepare(query).asSingleEntity();
@@ -108,5 +110,6 @@ public class AnnouncementsServlet extends HttpServlet {
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP));
+        Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

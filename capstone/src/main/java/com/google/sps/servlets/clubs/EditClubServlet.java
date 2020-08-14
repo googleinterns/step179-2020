@@ -71,7 +71,6 @@ public class EditClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
       clubEntity.setProperty(Constants.LABELS_PROP, labels);
       datastore.put(clubEntity);
-
       response.sendRedirect(
           "/about-us.html?name="
               + clubEntity.getProperty(Constants.PROPERTY_NAME)
