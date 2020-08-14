@@ -51,7 +51,7 @@ public class ClubLogoHandlerServlet extends HttpServlet {
 
   private PreparedQuery retrieveClub(HttpServletRequest request, DatastoreService datastore) {
     Query query =
-        new Query(CLUB_ENTITY_PROP)
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,

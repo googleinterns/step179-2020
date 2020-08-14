@@ -1,4 +1,3 @@
-
 async function getListings () {
   const sortType = document.getElementById('sort-type').value;
 

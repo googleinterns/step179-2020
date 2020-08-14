@@ -62,10 +62,10 @@ public class ExploreServlet extends HttpServlet {
     switch (sort) {
       case Constants.ALPHA_SORT_PROP:
         return Comparator.comparing(
-            club -> club.getName().toLowerCase()); // Should be case-insensitive    
+            club -> club.getName().toLowerCase()); // Should be case-insensitive
       case Constants.SIZE_SORT_PROP:
         return Collections.reverseOrder(Comparator.comparing(club -> club.getSize()));
-      default: 
+      default:
         return Comparator.comparing(club -> club.getCreationTime());
     }
   }

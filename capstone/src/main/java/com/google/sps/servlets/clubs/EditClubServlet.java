@@ -30,7 +30,7 @@ public class EditClubServlet extends HttpServlet {
       officers = ImmutableList.of();
     }
     Query query =
-        new Query(CLUB_ENTITY_PROP)
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,

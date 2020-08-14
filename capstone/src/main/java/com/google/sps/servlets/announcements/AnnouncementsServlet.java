@@ -45,7 +45,7 @@ public class AnnouncementsServlet extends HttpServlet {
                         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()),
                         entity.getProperty(Constants.CONTENT_PROP).toString(),
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
-                        Student.getNameByEmail(
+                        ServletUtil.getNameByEmail(
                             entity.getProperty(Constants.AUTHOR_PROP).toString()),
                         Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString())))
             .collect(toImmutableList())
@@ -84,7 +84,7 @@ public class AnnouncementsServlet extends HttpServlet {
 
   private Club getClub(DatastoreService datastore, String clubName) {
     Query query =
-        new Query(CLUB_ENTITY_PROP)
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
     Entity entity = datastore.prepare(query).asSingleEntity();
