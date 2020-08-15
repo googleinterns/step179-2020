@@ -25,7 +25,8 @@ import org.apache.commons.codec.binary.Base64;
 public class EmailFactory {
   // The special value "me" can be used to indicate the authenticated user
   private static final String AUTH_USER = "me";
-  private static final String SENDER_EMAIL = "kakm@google.com"; // TODO: create dummy email to send email notifications
+  private static final String SENDER_EMAIL =
+      "kakm@google.com"; // TODO: create dummy email to send email notifications from
 
   private static Message createMessageWithEmail(MimeMessage emailContent)
       throws MessagingException, IOException {
@@ -45,6 +46,7 @@ public class EmailFactory {
     Session session = Session.getDefaultInstance(props, null);
     MimeMessage email = new MimeMessage(session);
 
+    // Set necessary information for email
     email.setFrom(new InternetAddress(SENDER_EMAIL));
     email.addRecipient(RecipientType.TO, new InternetAddress(recipientEmail));
     email.setSubject(subject);
@@ -52,12 +54,12 @@ public class EmailFactory {
     return email;
   }
 
-  public static void sendEmail(String recipientEmail, String body, String clubName) {
+  private static void sendEmail(String recipientEmail, String body, String clubName) {
     try {
       String subject = String.format("ClubHub: New announcement from %s!", clubName);
-      Gmail service = GmailAPILoader.getGmailService();
       MimeMessage email = createEmail(recipientEmail, subject, body);
       Message message = createMessageWithEmail(email);
+      Gmail service = GmailAPILoader.getGmailService();
       service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
