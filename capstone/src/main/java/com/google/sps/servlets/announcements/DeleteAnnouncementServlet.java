@@ -13,8 +13,6 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import java.io.IOException;
@@ -30,8 +28,7 @@ public class DeleteAnnouncementServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.CLUB_PROP);
     String content = request.getParameter(Constants.CONTENT_PROP);
     long time = Long.parseLong(request.getParameter(Constants.TIME_PROP));

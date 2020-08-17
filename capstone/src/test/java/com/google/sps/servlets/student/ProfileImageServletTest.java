@@ -15,6 +15,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ public class ProfileImageServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private BlobstoreService blobstore;
   private DatastoreService datastore;
   private ProfileImageServlet profileImageServlet;
@@ -61,6 +63,8 @@ public class ProfileImageServletTest {
   public void doPost_studentUpdatesProfilePicture() throws IOException {
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_EMAIL)).thenReturn(MEGAN_EMAIL);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
 
     Entity studentMegan = new Entity(MEGAN_EMAIL);
     studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
@@ -86,6 +90,8 @@ public class ProfileImageServletTest {
     ImmutableList<BlobKey> keys = ImmutableList.of(new BlobKey(SAMPLE_BLOB));
     ImmutableMap<String, List<BlobKey>> blobMap = ImmutableMap.of(Constants.PROFILE_PIC_PROP, keys);
     when(blobstore.getUploads(request)).thenReturn(blobMap);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
     profileImageServlet.doPostHelper(request, response, blobstore, datastore);
   }
 }

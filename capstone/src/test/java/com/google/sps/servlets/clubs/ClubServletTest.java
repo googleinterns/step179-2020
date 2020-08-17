@@ -13,7 +13,6 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
@@ -22,6 +21,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +48,7 @@ public class ClubServletTest {
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private BlobstoreService blobstore;
   private ClubServlet clubServlet;
   private DatastoreService datastore;
@@ -56,7 +57,6 @@ public class ClubServletTest {
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
           new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0),
-          new LocalUserServiceTestConfig(),
           new LocalBlobstoreServiceTestConfig());
 
   @Before
@@ -75,6 +75,8 @@ public class ClubServletTest {
 
   @Test
   public void doPost_registerNewValidClub() throws ServletException, IOException {
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("test-email@gmail.com");
     doPost_helper();
     clubServlet.doPostHelper(request, response, datastore);
 
@@ -98,6 +100,8 @@ public class ClubServletTest {
 
   @Test
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("officer@example.com");
     doPost_helper();
     clubServlet.doPostHelper(request, response, datastore);
 
@@ -121,6 +125,8 @@ public class ClubServletTest {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     String officerEmail = "officer@example.com";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(officerEmail);
     ImmutableList<String> expectedMembers = ImmutableList.of("student@example.com", officerEmail);
     ImmutableList<String> expectedOfficers = ImmutableList.of(officerEmail);
 
@@ -158,6 +164,8 @@ public class ClubServletTest {
   public void doGet_clubDoesNotExist() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn("Imaginary Club");
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
     clubServlet.doGet(request, response);
     Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }

@@ -25,8 +25,7 @@ public class EditClubServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    UserService userService = UserServiceFactory.getUserService();
-    String founderEmail = userService.getCurrentUser().getEmail();
+    String founderEmail = request.getUserPrincipal().getName();
     ImmutableList<String> officers;
     String newOfficerList = request.getParameter(Constants.OFFICER_PROP);
     if (newOfficerList != null && !newOfficerList.isEmpty()) {
