@@ -10,7 +10,7 @@ async function loadLabels () {
   const response = await fetch(query);
   const labels = await response.json();
   for (var label of labels) {
-    listElement.innerHTML += '<option value="' + label + '">'; // Forgoing templates because this is simple. 
+    listElement.innerHTML += '<option value="' + label + '">';
   }
 }
 
