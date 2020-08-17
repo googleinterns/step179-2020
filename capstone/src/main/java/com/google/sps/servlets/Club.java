@@ -10,6 +10,7 @@ public class Club {
   private String description;
   private String website;
   private String logo;
+  private ImmutableList<String> labels;
   private long time;
 
   public Club(
@@ -19,6 +20,7 @@ public class Club {
       String description,
       String website,
       String logo,
+      ImmutableList<String> labels,
       long creationTime) {
     this.name = name;
     this.members = members;
@@ -26,6 +28,7 @@ public class Club {
     this.description = description;
     this.website = website;
     this.logo = logo;
+    this.labels = labels;
     this.time = creationTime;
   }
 
@@ -43,5 +46,9 @@ public class Club {
 
   public long getCreationTime() {
     return time;
+  }
+
+  public ImmutableList<String> getLabels() {
+    return labels;
   }
 }

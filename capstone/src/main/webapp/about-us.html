@@ -32,7 +32,9 @@
         <p class="club-element" id="website"></p>
         <h3>Club Size:</h3>
         <p class="club-element" id="members"></p>
-        <button id="edit-button" onclick="showEdit()">Edit</button>
+        <h3>Labels:</h3>
+        <ul class="club-element" id="labels"></ul>
+        <button hidden id="edit-button" onclick="showEdit()">Edit</button>
         <form hidden method="POST" id="logo-form" enctype="multipart/form-data">
           <label for="logo">Upload new club logo:</label>
           <input type="file" name="logo" id="club-logo">
@@ -44,6 +46,7 @@
           <input type="hidden" id="new-desc" name="description">
           <input type="hidden" id="new-web" name="website">
           <input type="hidden" id="new-officers" name="officers">
+          <input type="hidden" id="new-labels" name="labels">
           <button name="edit-club" onclick="saveClubChanges()">Save Changes</button>
         </form>
       </div>
@@ -90,6 +93,10 @@
     </template>
     <template id="calendar">
       <iframe id="calendar-element"></iframe>
+      <form action="/calendar" method="POST"> 
+        <input type="hidden" name="name" id="club-name-cal">
+        <input type="submit" name="Create calendar" value="Create calendar">
+      </form>
     </template>
   </body>
 </html>

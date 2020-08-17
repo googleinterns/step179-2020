@@ -45,6 +45,12 @@ async function getClubInfo() {
       officerList.innerHTML += '<li>' + officer + '</li>';
     }
 
+    var labelsList = document.getElementById('labels');
+    var labels = clubInfo['labels'];
+    for (const label of labels) {
+      labelsList.innerHTML += '<li>' + label + '</li>';
+    }
+
     const membersElement = document.getElementById('members');
     if (clubInfo['members'].length == 1) {
       membersElement.innerHTML = 'There is 1 member in this club.';
@@ -156,6 +162,7 @@ async function loadCalendar () {
   }
   const firstOfficer = json['officers'][0];
   document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
+  document.getElementById('club-name-cal').value = params.get('name');
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
@@ -232,7 +239,8 @@ function showEdit() {
   document.getElementById('website').contentEditable = 'true';
   document.getElementById('officers-list').contentEditable = 'true';
   document.getElementById('edit-button').style.display = 'none';
-  document.getElementById('edit-button').setAttribute('hidden', true);
+  document.getElementById('labels').contentEditable = 'true';
+  document.getElementById('labels').innerHTML += '<li></li>';
   document.getElementById('edit-form').removeAttribute('hidden');
   document.getElementById('logo-form').removeAttribute('hidden');
   document.getElementById('logo-club-name').value = document.getElementById('club-name').innerHTML;
@@ -241,20 +249,30 @@ function showEdit() {
 
 /** Store edited content from club page */
 function saveClubChanges() {
+  const params = new URLSearchParams(window.location.search);
+
   const newDesc = document.getElementById("description").innerHTML;
   const newWebsite = document.getElementById("website").innerHTML;
-  var newOfficers = [];
 
-  const list = document.getElementById('officers-list');
-  const officerList = list.getElementsByTagName('li');
-  for (var i = 0; i < officerList.length; i++) {
-    newOfficers.push(officerList[i].innerText);
+  var newOfficers = [];
+  const officerListElement = document.getElementById('officers-list');
+  const officerList = officerListElement.getElementsByTagName('li');
+  for (const officer of officerList) {
+    newOfficers.push(officer.innerText);
   }
   
+  var newLabels = [];
+  const labelsListElement = document.getElementById('labels');
+  const labelsList = labelsListElement.getElementsByTagName('li');
+  for (const label of labelsList) {
+    newLabels.push(label.innerText.replace(/\s+/g, '')); // Get rid of whitespaces
+  }
+
   document.getElementById('new-desc').value = newDesc;
   document.getElementById('new-web').value = newWebsite;
   document.getElementById('new-officers').value = newOfficers;
-  document.getElementById('new-name').value = document.getElementById('club-name').innerHTML;
+  document.getElementById('new-labels').value = newLabels;
+  document.getElementById('new-name').value = params.get('name');
   document.forms['edit-form'].submit();
   alert('Changes submitted!');
 }
