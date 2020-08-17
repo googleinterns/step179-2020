@@ -1,11 +1,11 @@
 package com.google.sps.servlets;
 
 /* Stores constants shared between multiple servlets. */
-class Constants {
-  private Constants() {}
+public final class Constants {
+  public Constants() {}
 
   static final String CLUB_PROP = "club";
-  static final String PROPERTY_NAME = "name";
+  public static final String PROPERTY_NAME = "name";
   static final String PROPERTY_EMAIL = "email";
   static final String PROPERTY_GRADYEAR = "gradYear";
   static final String PROPERTY_MAJOR = "major";
@@ -17,10 +17,10 @@ class Constants {
   static final String ALPHA_SORT_PROP = "alpha";
   static final String SIZE_SORT_PROP = "size";
   static final String LOGO_PROP = "logo";
-  static final String MEMBER_PROP = "members";
+  public static final String MEMBER_PROP = "members";
   static final String OFFICER_PROP = "officers";
   static final int LOAD_LIMIT = 10;
-  static final String CLUB_ENTITY_PROP = "Club";
+  public static final String CLUB_ENTITY_PROP = "Club";
   static final String ANNOUNCEMENT_PROP = "Announcement";
   static final String AUTHOR_PROP = "author";
   static final String TIME_PROP = "time";

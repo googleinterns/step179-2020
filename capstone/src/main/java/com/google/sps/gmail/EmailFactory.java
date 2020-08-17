@@ -1,4 +1,4 @@
-package com.google.sps.servlets;
+package com.google.sps.gmail;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
@@ -11,7 +11,9 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
-import com.google.sps.gmail.GmailAPILoader;
+import com.google.sps.servlets.Constants;
+import com.google.sps.servlets.ServletUtil;
+import com.google.sps.servlets.StudentServlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
