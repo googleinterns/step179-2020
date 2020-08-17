@@ -2,6 +2,7 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.services.gmail.Gmail;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -13,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.sps.gmail.EmailFactory;
+import com.google.sps.gmail.GmailAPILoader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
@@ -79,7 +81,13 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
-    EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
+    try {
+      Gmail gmail = GmailAPILoader.getGmailService();
+      EmailFactory emailFactory = new EmailFactory(gmail);
+      EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
+    } catch (Exception e) {
+      System.out.println("ERROR: Unable to send message : " + e.toString());
+    }
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }

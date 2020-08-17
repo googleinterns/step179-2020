@@ -29,6 +29,11 @@ public class EmailFactory {
   private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
       "kakm@google.com"; // TODO: create dummy email to send email notifications from
+  private static Gmail service;
+
+  public EmailFactory(Gmail service) {
+    this.service = service;
+  }
 
   private static Message createMessageWithEmail(MimeMessage emailContent)
       throws MessagingException, IOException {
@@ -61,7 +66,6 @@ public class EmailFactory {
       String subject = String.format("ClubHub: New announcement from %s!", clubName);
       MimeMessage email = createEmail(recipientEmail, subject, body);
       Message message = createMessageWithEmail(email);
-      Gmail service = GmailAPILoader.getGmailService();
       service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
