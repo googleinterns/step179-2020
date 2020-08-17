@@ -10,6 +10,7 @@ public class Club {
   private String description;
   private String website;
   private String logo;
+  private String calendar;
   private long time;
 
   public Club(
@@ -19,6 +20,7 @@ public class Club {
       String description,
       String website,
       String logo,
+      String calendar,
       long creationTime) {
     this.name = name;
     this.members = members;
@@ -26,6 +28,7 @@ public class Club {
     this.description = description;
     this.website = website;
     this.logo = logo;
+    this.calendar = calendar;
     this.time = creationTime;
   }
 

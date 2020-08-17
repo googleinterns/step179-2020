@@ -38,7 +38,7 @@ async function getClubInfo() {
     }
     document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
-    document.getElementById('description').innerHTML = clubInfo['description'];
+    document.getElementById('description').innerHTML = clubInfo['description'] + clubInfo['calendar'];
     var officerList = document.getElementById('officers-list');
     var officers = clubInfo['officers'];
     for (const officer of officers) {

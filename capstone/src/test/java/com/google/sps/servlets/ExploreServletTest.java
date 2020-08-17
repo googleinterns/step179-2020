@@ -105,6 +105,7 @@ public final class ExploreServletTest {
     club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
     club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
     club1.setProperty(Constants.LOGO_PROP, BLOB_KEY_1);
+    club1.setProperty("calendar", "hi there");
     club1.setProperty(Constants.TIME_PROP, TIME_1);
 
     Entity club2 = new Entity(Constants.CLUB_ENTITY_PROP);
@@ -114,6 +115,7 @@ public final class ExploreServletTest {
     club2.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_2);
     club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
     club2.setProperty(Constants.LOGO_PROP, BLOB_KEY_2);
+    club2.setProperty("calendar", "hello there");
     club2.setProperty(Constants.TIME_PROP, TIME_2);
 
     this.datastore.put(club1);
