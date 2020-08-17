@@ -7,6 +7,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
+import com.google.common.collect.Streams;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +17,7 @@ import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.json.JSONObject;
 
 public class GmailAPILoader {
@@ -44,23 +46,24 @@ public class GmailAPILoader {
 
   private static String getAccessToken() throws IOException {
     try {
+      // Add secret values to Map
       Map<String, Object> params = new LinkedHashMap<>();
       params.put("grant_type", "refresh_token");
       params.put("client_id", Secrets.CLIENT_ID);
       params.put("client_secret", Secrets.CLIENT_SECRET);
       params.put("refresh_token", Secrets.REFRESH_TOKEN);
 
-      StringBuilder postData = new StringBuilder();
-      for (Map.Entry<String, Object> param : params.entrySet()) {
-        if (postData.length() != 0) {
-          postData.append('&');
-        }
-        postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
-      }
+      // Add secret values as String for POST request
+      String postData =
+          Streams.stream(params.entrySet())
+              .map(GmailAPILoader::getParamAsString)
+              .collect(Collectors.joining());
+
+      // Remove first '&' symbol and get value as byte array
+      postData = postData.substring(1, postData.length());
       byte[] postDataBytes = postData.toString().getBytes("UTF-8");
 
+      // Call POST request to receive access token
       URL url = new URL("https://accounts.google.com/o/oauth2/token");
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setDoOutput(true);
@@ -68,17 +71,27 @@ public class GmailAPILoader {
       con.setRequestMethod("POST");
       con.getOutputStream().write(postDataBytes);
 
+      // Get access token from POST response
       BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-      StringBuffer buffer = new StringBuffer();
-      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        buffer.append(line);
-      }
-
-      JSONObject json = new JSONObject(buffer.toString());
+      JSONObject json = new JSONObject(reader.lines().collect(Collectors.joining()));
       String accessToken = json.getString("access_token");
       return accessToken;
-    } catch (Exception ex) {
-      ex.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  private static String getParamAsString(Map.Entry<String, Object> param) {
+    try {
+      String paramAsString =
+          "&"
+              + URLEncoder.encode(param.getKey(), "UTF-8")
+              + "="
+              + URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8");
+      return paramAsString;
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     return null;
   }
