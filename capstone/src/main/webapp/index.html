@@ -7,39 +7,7 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="profile-loader.js"></script>
   </head>
-  <body onload="loadExplore()">
-    <div id="top-navigation"></div>
-    <h1 id="explore-heading">Explore Clubs</h1>
-    <div id="content">
-      <div id="control-panel" class="full-screen-panel">
-        <select id="sort-type" onchange="getListings()">
-          <option value="default" selected>Chronological</option>
-          <option value="alpha">Alphabetical</option>
-          <option value="size">Size</option>
-        </select>
-        <div>
-          <label for="labels-select">Add a filter:</label>
-          <input list="labels-select-options" name="labels-select" id="labels-select">
-          <datalist id="labels-select-options"></datalist>
-          <input type="button" onclick="addFilterAndReload()" value="Add">
-        </div>
-        <ul id="labels"></ul>
-      </div>
-      <div id="club-listings" class="full-screen-panel"></div>
-      <template id="club-listing">
-        <div class="club-logo-container">
-          <img src="" id="club-logo" class="club-logo" alt="Club logo">
-        </div>
-        <div class="club-info-container">
-          <h2><a href="" id="club-name"></a></h2>
-          <p id="description"></p>
-          <p id="members"></p>
-        </div> 
-        <form id="club-join-container" name="join" action="/student-data" method="POST"></form>
-      </template>
-      <button id="register-club-button" onclick="location.href='club-registration.html';">Register a new club!</button>
-    </div>
-
+ 
   <body id="login">
     <h1>ClubHub</h1>
     <p>Welcome to ClubHub, a platform to streamline communication between college campus organizations and college students.</p>
