@@ -28,7 +28,7 @@ public class EmailFactory {
   // The special value "me" can be used to indicate the authenticated user
   private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
-      "kakm@google.com"; // TODO: create dummy email to send email notifications from
+      "kakm+clubhub@google.com"; // TODO: create dummy email to send email notifications from
   private static Gmail service;
 
   public EmailFactory(Gmail service) {
@@ -63,6 +63,10 @@ public class EmailFactory {
 
   private static void sendEmail(String recipientEmail, String body, String clubName) {
     try {
+      // Set up Gmail service if necessary and send email
+      if (service == null) {
+        service = GmailAPILoader.getGmailService();
+      }
       String subject = String.format("ClubHub: New announcement from %s!", clubName);
       MimeMessage email = createEmail(recipientEmail, subject, body);
       Message message = createMessageWithEmail(email);

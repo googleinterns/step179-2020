@@ -4,10 +4,9 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.common.collect.Streams;
+import com.google.sps.servlets.Constants;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,15 +20,12 @@ import java.util.stream.Collectors;
 import org.json.JSONObject;
 
 public class GmailAPILoader {
-  private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-  private static final String APPLICATION_NAME = "clubhub-step-2020";
-
   public static Gmail getGmailService() throws IOException, GeneralSecurityException {
     // Add credentials for using API
     Credential authorize =
         new GoogleCredential.Builder()
             .setTransport(GoogleNetHttpTransport.newTrustedTransport())
-            .setJsonFactory(JSON_FACTORY)
+            .setJsonFactory(Constants.JSON_FACTORY)
             .setClientSecrets(Secrets.CLIENT_ID, Secrets.CLIENT_SECRET)
             .build()
             .setRefreshToken(Secrets.REFRESH_TOKEN)
@@ -38,13 +34,13 @@ public class GmailAPILoader {
     // Create Gmail API Service
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     Gmail service =
-        new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, authorize)
-            .setApplicationName(APPLICATION_NAME)
+        new Gmail.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, authorize)
+            .setApplicationName(Constants.APPLICATION_NAME)
             .build();
     return service;
   }
 
-  private static String getAccessToken() throws IOException {
+  private static String getAccessToken() {
     try {
       // Add secret values to Map
       Map<String, Object> params = new LinkedHashMap<>();
