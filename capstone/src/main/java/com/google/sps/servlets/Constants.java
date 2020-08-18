@@ -15,6 +15,7 @@ public final class Constants {
   public static final String PROPERTY_CLUBS = "clubs";
   public static final String DESCRIP_PROP = "description";
   public static final String WEBSITE_PROP = "website";
+  public static final String LABELS_PROP = "labels";
   public static final String SORT_PROP = "sort";
   public static final String DEFAULT_SORT_PROP = "default";
   public static final String ALPHA_SORT_PROP = "alpha";
