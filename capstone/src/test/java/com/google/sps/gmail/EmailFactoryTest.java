@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -27,6 +28,7 @@ import java.util.TimeZone;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +46,8 @@ public class EmailFactoryTest {
   private static final String KEVIN_EMAIL = "kshao@google.com";
   private static final String MEGAN_EMAIL = "meganshi@google.com";
   private static final String ANNOUNCEMENT = "Here is an announcement";
+  private static final String EMAIL_PATH =
+      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 
   private Entity club1;
   private Entity announcement1;
@@ -101,7 +105,7 @@ public class EmailFactoryTest {
     verify(messages).send(any(), argument.capture());
     String body = convertToMimeMessage(argument.getValue()).getContent().toString();
 
-    Assert.assertEquals(getEmailContent(announcement1), body);
+    Assert.assertEquals(getEmailContent(CLUB_1, announcement1), body);
   }
 
   @Test
@@ -118,7 +122,17 @@ public class EmailFactoryTest {
     verify(messages, times(3)).send(any(), argument.capture());
     String body = convertToMimeMessage(argument.getValue()).getContent().toString();
 
-    Assert.assertEquals(getEmailContent(announcement1), body);
+    Assert.assertEquals(getEmailContent(CLUB_1, announcement1), body);
+  }
+
+  @Test
+  public void sendWelcomeEmail_studentLogsInForFirstTime() throws IOException, MessagingException {
+    ArgumentCaptor<Message> argument = ArgumentCaptor.forClass(Message.class);
+    emailFactory.sendWelcomeEmail(MEGHA_EMAIL);
+    verify(messages).send(any(), argument.capture());
+    String body = convertToMimeMessage(argument.getValue()).getContent().toString();
+
+    Assert.assertEquals(getEmailBody("/welcome-email.html"), body);
   }
 
   private static MimeMessage convertToMimeMessage(Message message) throws MessagingException {
@@ -129,7 +143,7 @@ public class EmailFactoryTest {
     return new MimeMessage(session, targetStream);
   }
 
-  private String getEmailContent(Entity announcement) {
+  private String getEmailContent(String clubName, Entity announcement) throws IOException {
     // Format announcement date and time
     TimeZone timePST = TimeZone.getTimeZone("PST");
     DateFormat formatDate = new SimpleDateFormat("HH:mm MM-dd-yyyy");
@@ -145,6 +159,17 @@ public class EmailFactoryTest {
             ServletUtil.getNameByEmail(announcement.getProperty(Constants.AUTHOR_PROP).toString()),
             announcement.getProperty(Constants.CLUB_PROP),
             time);
-    return fullAnnouncement;
+    String emailBody =
+        getEmailBody("/announcement-email.html")
+            .replace("[CLUB_NAME]", clubName)
+            .replace("[ANNOUNCEMENT]", fullAnnouncement);
+    return emailBody;
+  }
+
+  private String getEmailBody(String path) throws IOException {
+    String fullPath = EMAIL_PATH + path;
+    File htmlTemplate = new File(fullPath);
+    String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
+    return emailBody;
   }
 }
