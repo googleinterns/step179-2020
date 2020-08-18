@@ -13,22 +13,38 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.json.JSONObject;
+import org.json.simple.parser.ParseException;
 
 public class GmailAPILoader {
-  public static Gmail getGmailService() throws IOException, GeneralSecurityException {
+  private static final String CREDENTIALS_PATH =
+      System.getProperty("user.home")
+          + "/step179-2020/capstone/src/main/java/com/google/sps/gmail/credentials.json";
+  private static String CLIENT_ID = "";
+  private static String CLIENT_SECRET = "";
+  private static String REFRESH_TOKEN = "";
+
+  public static Gmail getGmailService()
+      throws IOException, GeneralSecurityException, ParseException {
+    // Use credentials.json to access secret keys
+    CLIENT_ID = getSecretValue("client_id");
+    CLIENT_SECRET = getSecretValue("client_secret");
+    REFRESH_TOKEN = getSecretValue("refresh_token");
+
     // Add credentials for using API
     Credential authorize =
         new GoogleCredential.Builder()
             .setTransport(GoogleNetHttpTransport.newTrustedTransport())
             .setJsonFactory(Constants.JSON_FACTORY)
-            .setClientSecrets(Secrets.CLIENT_ID, Secrets.CLIENT_SECRET)
+            .setClientSecrets(CLIENT_ID, CLIENT_SECRET)
             .build()
-            .setRefreshToken(Secrets.REFRESH_TOKEN)
+            .setRefreshToken(REFRESH_TOKEN)
             .setAccessToken(getAccessToken());
 
     // Create Gmail API Service
@@ -45,9 +61,9 @@ public class GmailAPILoader {
       // Add secret values to Map
       Map<String, Object> params = new LinkedHashMap<>();
       params.put("grant_type", "refresh_token");
-      params.put("client_id", Secrets.CLIENT_ID);
-      params.put("client_secret", Secrets.CLIENT_SECRET);
-      params.put("refresh_token", Secrets.REFRESH_TOKEN);
+      params.put("client_id", CLIENT_ID);
+      params.put("client_secret", CLIENT_SECRET);
+      params.put("refresh_token", REFRESH_TOKEN);
 
       // Add secret values as String for POST request
       String postData =
@@ -90,5 +106,12 @@ public class GmailAPILoader {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private static String getSecretValue(String key) throws IOException {
+    String json = new String(Files.readAllBytes(Paths.get(CREDENTIALS_PATH)));
+    JSONObject credentialsJson = new JSONObject(json);
+    String secretValue = credentialsJson.get(key).toString();
+    return secretValue;
   }
 }

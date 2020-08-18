@@ -1,4 +1,4 @@
 target/
 .idea
 appengine-generated/
-Secrets.java
+credentials.json
