@@ -2,7 +2,7 @@
 Capstone Project by Megan Shi, Megha Kak, and Kevin Shao.
 
 ## Overview
-The high-level goal of ClubHub is to  ClubHub is to ease access to resources and information provided 
+The high-level goal of ClubHub is to ease access to resources and information provided 
 by student organizations on college campuses and their officers. Many student organizations face 
 difficulty in spreading awareness of their club’s goals and events they host. Frequently, officers 
 are required to post on multiple social media platforms, such as Facebook, Instagram, Gmail, 
@@ -17,15 +17,15 @@ to the web app, sign in (with Google, of course), and get started!
 
 The landing page for signed-in users is the explore page, where all clubs are listed. The explore page 
 provides several options for viewing the clubs (as they will surely grow over time). The user may sort 
-the clubs chronologically, alphabetically, and by size (number of members), as well as filtering by labels 
+the clubs chronologically, alphabetically, and by size (number of members), as well as filter by labels 
 which the clubs tag themselves with. By doing so, anyone can quickly and easily find a club they're looking for, 
-or a club they didn't even know existed. If still unsatisfied, of course they can create their own. 
+or a club they didn't even know existed. If still unsatisfied, they can create their own. 
 
 2. Club page
 
-The club page has 3 panels: a information page, an announcements page, and a calendar page. The information page 
+The club page has 3 panels: an information page, an announcements page, and a calendar page. The information page 
 gives basic information about the clubs (description, size, labels, officers, etc.), and the announcements page shows 
-recent announcements made by the club. Officers, of course, may edit information, post and edit announcements as they please. 
+recent announcements made by the club. Officers may edit information, post and edit announcements as they please. 
 The calendar page displays the club calendar, which shows upcoming club events. 
 
 3. Profile page
@@ -58,7 +58,6 @@ The following APIs were used:
 * Google Calendar API
 
 ## Deploying the project
-
 To deploy the main project
 1. Install maven (https://maven.apache.org/install.html)
 2. Clone the project (`git clone https://github.com/googleinterns/step179-2020`)
