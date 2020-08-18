@@ -15,6 +15,7 @@ import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import com.google.sps.servlets.StudentServlet;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import javax.mail.Message.RecipientType;
@@ -23,12 +24,15 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 
 public class EmailFactory {
   // The special value "me" can be used to indicate the authenticated user
   private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
       "kakm+clubhub@google.com"; // TODO: create dummy email to send email notifications from
+  private static final String EMAIL_PATH =
+      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
   private static Gmail service;
 
   public EmailFactory(Gmail service) {
@@ -57,24 +61,38 @@ public class EmailFactory {
     email.setFrom(new InternetAddress(SENDER_EMAIL));
     email.addRecipient(RecipientType.TO, new InternetAddress(recipientEmail));
     email.setSubject(subject);
-    email.setText(body);
+    email.setContent(body, "text/html;charset=utf-8");
     return email;
   }
 
-  private static void sendEmail(String recipientEmail, String body, String clubName) {
+  private static void sendEmail(String recipientEmail, String body, String subject) {
     try {
       // Set up Gmail service if necessary and send email
       if (service == null) {
         service = GmailAPILoader.getGmailService();
       }
-      String subject = String.format("ClubHub: New announcement from %s!", clubName);
       MimeMessage email = createEmail(recipientEmail, subject, body);
       Message message = createMessageWithEmail(email);
       service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
       System.out.println("ERROR: Unable to send message : " + e.toString());
+      e.printStackTrace();
     }
+  }
+
+  private static String getHTMLAsString(String path) throws IOException {
+    String fullPath = EMAIL_PATH + path;
+    File htmlTemplate = new File(fullPath);
+    String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
+    return emailBody;
+  }
+
+  public static void sendWelcomeEmail(String recipientEmail) throws IOException {
+    // Prepare email content and send email
+    String subject = String.format("Welcome to ClubHub!");
+    String emailBody = getHTMLAsString("/welcome-email.html");
+    sendEmail(recipientEmail, emailBody, subject);
   }
 
   public static void sendEmailToAllMembers(String clubName, Entity announcement)
@@ -89,8 +107,15 @@ public class EmailFactory {
     Entity club = results.asSingleEntity();
     ImmutableList<String> members = ServletUtil.getPropertyList(club, Constants.MEMBER_PROP);
 
+    // Prepare email content
+    String announcementString = StudentServlet.getAnnouncementAsString(announcement);
+    String emailBody =
+        getHTMLAsString("/announcement-email.html")
+            .replace("[CLUB_NAME]", clubName)
+            .replace("[ANNOUNCEMENT]", announcementString);
+    String subject = String.format("ClubHub: New announcement from %s!", clubName);
+
     // Send email to all members of the club
-    String body = StudentServlet.getAnnouncementAsString(announcement);
-    Streams.stream(members).forEach(memberEmail -> sendEmail(memberEmail, body, clubName));
+    Streams.stream(members).forEach(memberEmail -> sendEmail(memberEmail, emailBody, subject));
   }
 }

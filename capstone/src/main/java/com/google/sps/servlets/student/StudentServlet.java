@@ -138,6 +138,7 @@ public class StudentServlet extends HttpServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
+      EmailFactory.sendWelcomeEmail(userEmail);
       results = datastore.prepare(query);
       students = ImmutableList.copyOf(results.asIterable());
     }
