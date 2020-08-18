@@ -46,8 +46,6 @@ public class EmailFactoryTest {
   private static final String KEVIN_EMAIL = "kshao@google.com";
   private static final String MEGAN_EMAIL = "meganshi@google.com";
   private static final String ANNOUNCEMENT = "Here is an announcement";
-  private static final String EMAIL_PATH =
-      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 
   private Entity club1;
   private Entity announcement1;
@@ -167,7 +165,7 @@ public class EmailFactoryTest {
   }
 
   private String getEmailBody(String path) throws IOException {
-    String fullPath = EMAIL_PATH + path;
+    String fullPath = Constants.EMAIL_PATH + path;
     File htmlTemplate = new File(fullPath);
     String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
     return emailBody;

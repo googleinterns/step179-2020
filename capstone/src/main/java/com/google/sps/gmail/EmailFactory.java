@@ -31,8 +31,6 @@ public class EmailFactory {
   private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
       "kakm+clubhub@google.com"; // TODO: create dummy email to send email notifications from
-  private static final String EMAIL_PATH =
-      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
   private static Gmail service;
 
   public EmailFactory(Gmail service) {
@@ -77,19 +75,19 @@ public class EmailFactory {
 
     } catch (Exception e) {
       System.out.println("ERROR: Unable to send message : " + e.toString());
-      e.printStackTrace();
     }
   }
 
   private static String getHTMLAsString(String path) throws IOException {
-    String fullPath = EMAIL_PATH + path;
+    // Load HTML file and convert to String
+    String fullPath = Constants.EMAIL_PATH + path;
     File htmlTemplate = new File(fullPath);
     String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
     return emailBody;
   }
 
   public static void sendWelcomeEmail(String recipientEmail) throws IOException {
-    // Prepare email content and send email
+    // Prepare welcome email content and send
     String subject = String.format("Welcome to ClubHub!");
     String emailBody = getHTMLAsString("/welcome-email.html");
     sendEmail(recipientEmail, emailBody, subject);
