@@ -105,6 +105,7 @@ public class AnnouncementsServlet extends HttpServlet {
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

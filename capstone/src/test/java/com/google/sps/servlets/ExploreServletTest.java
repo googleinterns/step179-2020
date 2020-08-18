@@ -97,6 +97,7 @@ public final class ExploreServletTest {
 
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.SORT_PROP)).thenReturn(Constants.DEFAULT_SORT_PROP);
+    when(request.getParameter(Constants.LABELS_PROP)).thenReturn("");
 
     Entity club1 = new Entity(Constants.CLUB_ENTITY_PROP);
     club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
