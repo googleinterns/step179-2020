@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns a student's profile content */
+/** Servlet that returns a student's interested club list */
 @WebServlet("/interested-clubs")
 public class InterestedClubServlet extends HttpServlet {
   @Override
@@ -30,7 +30,7 @@ public class InterestedClubServlet extends HttpServlet {
 
     if (student != null) {
       ImmutableList<String> interestedClubs =
-          ServletUtil.getPropertyList(student, "interestedClubs");
+          ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP);
       String interestedJson = convertToJsonUsingGson(interestedClubs);
       response.setContentType("application/json;");
       response.getWriter().println(interestedJson);
@@ -51,10 +51,16 @@ public class InterestedClubServlet extends HttpServlet {
     Entity student = getStudent(userEmail, datastore);
 
     // Add interested club if necessary
-    String interestedClubToJoin = request.getParameter("interested-join");
+    String interestedClubToJoin = request.getParameter(Constants.INTERESTED_JOIN_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToJoin)) {
-      // TODO: Add member to club's member list and update Datastore
-      addOrRemoveItemToEntity(student, datastore, interestedClubToJoin, "interestedClubs", true);
+      // Add member to  club's interested member list and update Datastore
+      Entity club = retrieveClub(interestedClubToJoin, datastore, response);
+      if (club == null) {
+        return;
+      }
+      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.INTERESTED_MEMBER_PROP, true);
+      addOrRemoveItemToEntity(
+          student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP, true);
     }
     response.sendRedirect("/explore.html");
   }

@@ -91,6 +91,7 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
       clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
+      clubEntity.setProperty(Constants.INTERESTED_MEMBER_PROP, ImmutableList.of());
       datastore.put(clubEntity);
 
       addClubToFoundersClubList(datastore, founderEmail, clubName);

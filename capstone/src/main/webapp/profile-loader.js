@@ -27,6 +27,18 @@ function getStudentInfo() {
       document.getElementsByClassName('profile-pic')[0].src = 'images/profile.jpeg';
     }
   });
+  getInterestedClubList();
+}
+
+function getInterestedClubList() {
+  fetch('/interested-clubs').then(response => response.json()).then((interestedClubs) => {
+    const template = document.querySelector('#interested-list');
+    for(const club of interestedClubs) {
+      template.content.querySelector('li').innerHTML = club;
+      var clone = document.importNode(template.content, true);
+      document.getElementById('interested-club-content').appendChild(clone);
+    }
+  });
 }
 
 /** Fill in inbox template with each club's announcements */

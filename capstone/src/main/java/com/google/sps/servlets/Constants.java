@@ -8,6 +8,8 @@ public final class Constants {
   public Constants() {}
 
   public static final String CLUB_PROP = "club";
+  public static final String INTERESTED_CLUB_PROP = "interestedClubs";
+  public static final String INTERESTED_JOIN_PROP = "interested-join";
   public static final String PROPERTY_NAME = "name";
   public static final String PROPERTY_EMAIL = "email";
   public static final String PROPERTY_GRADYEAR = "gradYear";
@@ -22,6 +24,7 @@ public final class Constants {
   public static final String SIZE_SORT_PROP = "size";
   public static final String LOGO_PROP = "logo";
   public static final String MEMBER_PROP = "members";
+  public static final String INTERESTED_MEMBER_PROP = "interestedMembers";
   public static final String OFFICER_PROP = "officers";
   public static final int LOAD_LIMIT = 10;
   public static final String CLUB_ENTITY_PROP = "Club";
