@@ -134,7 +134,7 @@ button:hover {
 }
 
 .club-info-container {
-  width: 60%;
+  width: 50%;
 }
 
 #club-join-container {
@@ -284,4 +284,13 @@ button:hover {
 
 #edit-button { 
   display: none; 
+}
+
+#club-join-container,
+#interested-club-container {
+  display: inline;
+}
+
+.join-button {
+  margin-top: -5px;
 }
