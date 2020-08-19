@@ -67,7 +67,7 @@ public class StudentServlet extends HttpServlet {
     StudentInfo allInfo = new StudentInfo(student, announcements);
     String studentJson = convertToJsonUsingGson(allInfo);
 
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(studentJson);
   }
 

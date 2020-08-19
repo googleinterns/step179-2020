@@ -294,3 +294,7 @@ button:hover {
 .join-button {
   margin-top: -5px;
 }
+
+#hidden-input {
+  all: revert;
+}
