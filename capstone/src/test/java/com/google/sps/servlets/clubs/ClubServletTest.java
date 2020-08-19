@@ -70,52 +70,52 @@ public class ClubServletTest {
     helper.tearDown();
   }
 
-  //   @Test
-  //   public void doPost_registerNewValidClub() throws ServletException, IOException {
-  //     when(request.getUserPrincipal()).thenReturn(principal);
-  //     when(principal.getName()).thenReturn("test-email@gmail.com");
-  //     doPost_helper();
-  //     clubServlet.doPostHelper(request, response, datastore);
+  @Test
+  public void doPost_registerNewValidClub() throws ServletException, IOException {
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("test-email@gmail.com");
+    doPost_helper();
+    clubServlet.doPostHelper(request, response, datastore);
 
-  //     Query query =
-  //         new Query(Constants.CLUB_ENTITY_PROP)
-  //             .setFilter(
-  //                 new FilterPredicate(
-  //                     Constants.PROPERTY_NAME,
-  //                     FilterOperator.EQUAL,
-  //                     request.getParameter(Constants.PROPERTY_NAME)));
-  //     Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.PROPERTY_NAME)));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
 
-  //     Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
-  //     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
-  //     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
-  //     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
-  //     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
+    Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
+    Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
 
-  //     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
-  //   }
+    Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
+  }
 
-  //   @Test
-  //   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
-  //     when(request.getUserPrincipal()).thenReturn(principal);
-  //     when(principal.getName()).thenReturn("officer@example.com");
-  //     doPost_helper();
-  //     clubServlet.doPostHelper(request, response, datastore);
+  @Test
+  public void doPost_registerNewInvalidClub() throws ServletException, IOException {
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("officer@example.com");
+    doPost_helper();
+    clubServlet.doPostHelper(request, response, datastore);
 
-  //     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-  //     clubServlet.doPostHelper(request, response, datastore);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
+    clubServlet.doPostHelper(request, response, datastore);
 
-  //     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
-  //     Query query =
-  //         new Query("Club")
-  //             .setFilter(
-  //                 new FilterPredicate(
-  //                     Constants.PROPERTY_NAME,
-  //                     FilterOperator.EQUAL,
-  //                     request.getParameter(Constants.PROPERTY_NAME)));
-  //     Entity clubEntity = datastore.prepare(query).asSingleEntity();
-  //     Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
-  //   }
+    Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
+    Query query =
+        new Query("Club")
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.PROPERTY_NAME)));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+  }
 
   @Test
   public void doGet_clubExists() throws ServletException, IOException {

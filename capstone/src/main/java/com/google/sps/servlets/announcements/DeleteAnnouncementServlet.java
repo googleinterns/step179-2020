@@ -2,6 +2,8 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -17,14 +19,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.util.Arrays;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example club content */
 @WebServlet("/delete-announcement")
-public class DeleteAnnouncementServlet extends HttpServlet {
+public class DeleteAnnouncementServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,5 +59,15 @@ public class DeleteAnnouncementServlet extends HttpServlet {
     datastore.delete(comments);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }

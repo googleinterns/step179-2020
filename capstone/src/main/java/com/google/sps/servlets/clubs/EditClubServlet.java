@@ -14,10 +14,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 
 /* Servlet that stores and returns data relating to clubs. */
 @WebServlet("/club-edit")
-public class EditClubServlet extends HttpServlet {
+public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -66,5 +69,15 @@ public class EditClubServlet extends HttpServlet {
               + "&is-invalid="
               + isInvalid);
     }
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }

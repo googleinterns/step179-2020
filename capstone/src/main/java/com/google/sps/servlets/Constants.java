@@ -33,4 +33,5 @@ class Constants {
   static final String NEW_YEAR_PROP = "new-year";
   static final String NEW_MAJOR_PROP = "new-major";
   static final String PROFILE_PIC_PROP = "upload-profile";
+  static final String CALENDAR_PROP = "calendar";
 }

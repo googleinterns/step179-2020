@@ -2,6 +2,9 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import javax.servlet.ServletException;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -14,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /* Servlet that stores and returns data relating to clubs. */
 @WebServlet("/officer")
-public class OfficerServlet extends HttpServlet {
+public class OfficerServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -36,5 +39,15 @@ public class OfficerServlet extends HttpServlet {
       return false;
     }
     return ServletUtil.getPropertyList(entity, Constants.OFFICER_PROP).contains(user);
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }
