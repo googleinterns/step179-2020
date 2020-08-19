@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
+import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -128,7 +129,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  private Entity getStudent(String userEmail, DatastoreService datastore) {
+  private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -138,6 +139,7 @@ public class StudentServlet extends HttpServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
+      EmailFactory.sendWelcomeEmail(userEmail);
       results = datastore.prepare(query);
       students = ImmutableList.copyOf(results.asIterable());
     }

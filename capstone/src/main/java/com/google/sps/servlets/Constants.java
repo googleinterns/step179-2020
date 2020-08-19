@@ -39,4 +39,6 @@ public final class Constants {
   public static final String PROFILE_PIC_PROP = "upload-profile";
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   public static final String APPLICATION_NAME = "clubhub-step-2020";
+  public static final String EMAIL_PATH =
+      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 }
