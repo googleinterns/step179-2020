@@ -5,8 +5,6 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -50,18 +48,10 @@ public class InterestedClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity student = getStudent(userEmail, datastore);
 
-    // TODO: ADD TESTS
-
     // Add interested club if necessary
     String interestedClubToJoin = request.getParameter(Constants.INTERESTED_JOIN_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToJoin)) {
-      // Add member to  club's interested member list and update Datastore
-      Entity club = retrieveClub(interestedClubToJoin, datastore, response);
-      if (club == null) {
-        return;
-      }
-      // Update Datastore with edited entities
-      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.INTERESTED_MEMBER_PROP, true);
+      // Update Datastore with edited student entity
       addOrRemoveItemToEntity(
           student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP, true);
     }
@@ -80,21 +70,6 @@ public class InterestedClubServlet extends HttpServlet {
     }
     // A user can only be logged in with one email address at a time
     return students.get(0);
-  }
-
-  private Entity retrieveClub(
-      String clubName, DatastoreService datastore, HttpServletResponse response) {
-    Query query =
-        new Query(Constants.CLUB_ENTITY_PROP)
-            .setFilter(
-                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
-    PreparedQuery results = datastore.prepare(query);
-    ImmutableList<Entity> clubs = ImmutableList.copyOf(results.asIterable());
-    if (clubs.isEmpty()) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return null;
-    }
-    return clubs.get(0);
   }
 
   private static void addOrRemoveItemToEntity(

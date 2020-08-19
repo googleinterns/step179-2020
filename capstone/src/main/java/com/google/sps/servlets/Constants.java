@@ -24,7 +24,6 @@ public final class Constants {
   public static final String SIZE_SORT_PROP = "size";
   public static final String LOGO_PROP = "logo";
   public static final String MEMBER_PROP = "members";
-  public static final String INTERESTED_MEMBER_PROP = "interestedMembers";
   public static final String OFFICER_PROP = "officers";
   public static final int LOAD_LIMIT = 10;
   public static final String CLUB_ENTITY_PROP = "Club";
