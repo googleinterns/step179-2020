@@ -50,6 +50,8 @@ public class InterestedClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity student = getStudent(userEmail, datastore);
 
+    // TODO: ADD TESTS
+
     // Add interested club if necessary
     String interestedClubToJoin = request.getParameter(Constants.INTERESTED_JOIN_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToJoin)) {
@@ -58,6 +60,7 @@ public class InterestedClubServlet extends HttpServlet {
       if (club == null) {
         return;
       }
+      // Update Datastore with edited entities
       addOrRemoveItemToEntity(club, datastore, userEmail, Constants.INTERESTED_MEMBER_PROP, true);
       addOrRemoveItemToEntity(
           student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP, true);

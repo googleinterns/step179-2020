@@ -10,7 +10,7 @@ function getStudentInfo() {
     document.getElementById('profile-heading').innerHTML += pencilIcon;
 
     // Display profile club list
-    getClubElements(studentInfo['clubs']);
+    displayElements(studentInfo['clubs'], '#club-list', 'club-content');
 
     // Add additional student information
     document.getElementById('email').innerHTML += studentInfo['email'];
@@ -18,7 +18,7 @@ function getStudentInfo() {
     document.getElementById('edit-major').innerHTML += studentInfo['major'];
 
     // Add announcements to student's inbox
-    addAnnoucements(info['announcements']);
+    displayElements(info['announcements'], '#inbox-list', 'inbox');
 
     // Upload profile picture
     if (studentInfo['profilePicture'] != '') {
@@ -30,34 +30,25 @@ function getStudentInfo() {
   getInterestedClubList();
 }
 
+/** Fetch interested club list and display on profile page */
 function getInterestedClubList() {
   fetch('/interested-clubs').then(response => response.json()).then((interestedClubs) => {
-    const template = document.querySelector('#interested-list');
-    for(const club of interestedClubs) {
-      template.content.querySelector('li').innerHTML = club;
-      var clone = document.importNode(template.content, true);
-      document.getElementById('interested-club-content').appendChild(clone);
-    }
+    displayElements(interestedClubs, '#interested-list', 'interested-club-content');
   });
 }
 
-/** Fill in inbox template with each club's announcements */
-function addAnnoucements(announcements) {
-  const template = document.querySelector('#inbox-list');
-  for(const announcement of announcements){
-    template.content.querySelector('li').innerHTML = announcement;
+/** Fill list templates with necessary information */
+function displayElements(items, templateId, documentId) {
+  const template = document.querySelector(templateId);
+  for(const item of items){
+    if (templateId == '#club-list') {
+      template.content.querySelector('li').innerHTML = getClubContent(item);
+    }
+    else {
+      template.content.querySelector('li').innerHTML = item;
+    }
     var clone = document.importNode(template.content, true);
-    document.getElementById('inbox').appendChild(clone);
-  }
-}
-
-/** Fill in club list template with all club names and leave buttons */
-function getClubElements(clubs) {
-  const template = document.querySelector('#club-list');
-  for(const club of clubs){
-    template.content.querySelector('li').innerHTML = getClubContent(club);
-    var clone = document.importNode(template.content, true);
-    document.getElementById('club-content').appendChild(clone);
+    document.getElementById(documentId).appendChild(clone);
   }
 }
 
@@ -97,6 +88,6 @@ function fetchBlobstoreProfileUrl() {
 }
 
 /** Direct to Explore page once logged in */
-function onSignIn(googleUser) {
+function onSignIn() {
   window.location.href = '/explore.html';
 }
