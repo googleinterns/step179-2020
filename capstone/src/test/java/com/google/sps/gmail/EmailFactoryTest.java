@@ -43,8 +43,8 @@ import org.mockito.MockitoAnnotations;
 public class EmailFactoryTest {
   private static final String CLUB_1 = "Club 1";
   private static final String MEGHA_EMAIL = "kakm@google.com";
-  private static final String KEVIN_EMAIL = "kshao@google.com";
-  private static final String MEGAN_EMAIL = "meganshi@google.com";
+  //   private static final String KEVIN_EMAIL = "kshao@google.com";
+  //   private static final String MEGAN_EMAIL = "meganshi@google.com";
   private static final String ANNOUNCEMENT = "Here is an announcement";
 
   private Entity club1;
@@ -94,7 +94,7 @@ public class EmailFactoryTest {
 
   @Test
   public void sendEmailToAllMembers_clubWithOnlyOneMember() throws IOException, MessagingException {
-    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGAN_EMAIL));
+    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA_EMAIL));
     datastore.put(club1);
     datastore.put(announcement1);
 
@@ -109,15 +109,14 @@ public class EmailFactoryTest {
   @Test
   public void sendEmailToAllMembers_clubWithMultipleMembers()
       throws IOException, MessagingException {
-    club1.setProperty(
-        Constants.MEMBER_PROP, ImmutableList.of(MEGHA_EMAIL, MEGAN_EMAIL, KEVIN_EMAIL));
+    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA_EMAIL, "test@example.com"));
     datastore.put(club1);
     datastore.put(announcement1);
 
     ArgumentCaptor<Message> argument = ArgumentCaptor.forClass(Message.class);
     emailFactory.sendEmailToAllMembers(CLUB_1, announcement1);
     // Need to add times(3) because there are 3 recipients of the same email
-    verify(messages, times(3)).send(any(), argument.capture());
+    verify(messages, times(2)).send(any(), argument.capture());
     String body = convertToMimeMessage(argument.getValue()).getContent().toString();
 
     Assert.assertEquals(getEmailContent(CLUB_1, announcement1), body);
