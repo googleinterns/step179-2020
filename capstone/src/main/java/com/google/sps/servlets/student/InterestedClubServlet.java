@@ -52,8 +52,7 @@ public class InterestedClubServlet extends HttpServlet {
     String interestedClubToJoin = request.getParameter(Constants.INTERESTED_JOIN_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToJoin)) {
       // Update Datastore with edited student entity
-      addOrRemoveItemToEntity(
-          student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP, true);
+      addItemToEntity(student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
     }
     response.sendRedirect("/explore.html");
   }
@@ -72,19 +71,12 @@ public class InterestedClubServlet extends HttpServlet {
     return students.get(0);
   }
 
-  private static void addOrRemoveItemToEntity(
-      Entity entity,
-      DatastoreService datastore,
-      String itemToAddOrRemove,
-      String property,
-      Boolean addItem) {
+  private static void addItemToEntity(
+      Entity entity, DatastoreService datastore, String itemToAdd, String property) {
     // Create empty List if property does not exist yet
     List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
-    if (addItem && !generalList.contains(itemToAddOrRemove)) {
-      generalList.add(itemToAddOrRemove);
-    }
-    if (!addItem && generalList.contains(itemToAddOrRemove)) {
-      generalList.remove(itemToAddOrRemove);
+    if (!generalList.contains(itemToAdd)) {
+      generalList.add(itemToAdd);
     }
     // Add updated entity to Datastore
     entity.setProperty(property, generalList);
