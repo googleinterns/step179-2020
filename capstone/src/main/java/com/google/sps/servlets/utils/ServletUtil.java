@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class ServletUtil {
   public static ImmutableList<String> getPropertyList(Entity entity, String property) {
@@ -25,5 +26,27 @@ public final class ServletUtil {
       return null;
     }
     return entity.getProperty(Constants.PROPERTY_NAME).toString();
+  }
+
+  public static Entity addItemToEntity(Entity entity, String itemToAdd, String property) {
+    // Create empty List if property does not exist yet
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
+    if (!generalList.contains(itemToAdd)) {
+      generalList.add(itemToAdd);
+    }
+    // Add updated entity to Datastore
+    entity.setProperty(property, generalList);
+    return entity;
+  }
+
+  public static Entity removeItemFromEntity(Entity entity, String itemToRemove, String property) {
+    // Create empty List if property does not exist yet
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
+    if (generalList.contains(itemToRemove)) {
+      generalList.remove(itemToRemove);
+    }
+    // Add updated entity to Datastore
+    entity.setProperty(property, generalList);
+    return entity;
   }
 }
