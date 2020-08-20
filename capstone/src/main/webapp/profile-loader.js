@@ -43,8 +43,7 @@ function displayElements(items, templateId, documentId) {
   for(const item of items){
     if (templateId == '#club-list') {
       template.content.querySelector('li').innerHTML = getClubContent(item);
-    }
-    else {
+    } else {
       template.content.querySelector('li').innerHTML = item;
     }
     var clone = document.importNode(template.content, true);
