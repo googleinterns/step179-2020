@@ -38,5 +38,6 @@ class Constants {
   static final String PROFILE_PIC_PROP = "upload-profile";
   static final String CALENDAR_PROP = "calendar";
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-  public static final String APPLICATION_NAME = "clubhub-step-2020";
+  public static final String GOOGLE_APPLICATION_NAME = "google.com:clubhub-step-2020";
+  public static final String PST_TIMEZONE = "America/Los_Angeles";
 }

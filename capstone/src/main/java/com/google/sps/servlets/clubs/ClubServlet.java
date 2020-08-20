@@ -156,7 +156,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     com.google.api.services.calendar.model.Calendar calendar =
         new com.google.api.services.calendar.model.Calendar()
             .setSummary(clubName + " Calendar")
-            .setTimeZone("America/Los_Angeles");
+            .setTimeZone(Constants.PST_TIMEZONE);
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
 
     // TODO: set up permissions for club members (read only) and officers (read and write)
@@ -172,7 +172,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
     Credential credential = ServletUtil.newFlow().loadCredential(userId);
     return new Calendar.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
-        .setApplicationName(Constants.APPLICATION_NAME)
+        .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
         .build();
   }
 
