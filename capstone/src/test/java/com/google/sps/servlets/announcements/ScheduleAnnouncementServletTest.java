@@ -32,12 +32,10 @@ import java.security.Principal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jmock.lib.concurrent.DeterministicScheduler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -97,8 +95,8 @@ public final class ScheduleAnnouncementServletTest {
   @Test
   public void scheduleAnnouncement() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    DeterministicScheduler scheduler = new DeterministicScheduler();
-    servlet.setExecutor(scheduler);
+    // DeterministicScheduler scheduler = new DeterministicScheduler();
+    // servlet.setExecutor(scheduler);
     ZoneId zone = ZoneId.of("America/Los_Angeles");
 
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
@@ -114,12 +112,14 @@ public final class ScheduleAnnouncementServletTest {
     // Announcement has been made to happen after a minute. Check after 50 and 70 seconds.
     instant = Instant.parse("2016-01-23T20:34:50.00Z");
     servlet.setClock(Clock.fixed(instant, ZoneId.of("Z")));
-    scheduler.tick(50000, TimeUnit.MILLISECONDS);
+    AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
+    AnnouncementsSweeper.sweepAnnouncements();
     Assert.assertFalse(checkForAnnouncement(SAMPLE_CLUB_NAME, SAMPLE_NEW_CONTENT));
 
     instant = Instant.parse("2016-01-23T20:35:10.00Z");
     servlet.setClock(Clock.fixed(instant, ZoneId.of("Z")));
-    scheduler.tick(20000, TimeUnit.MILLISECONDS);
+    AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
+    AnnouncementsSweeper.sweepAnnouncements();
     Assert.assertTrue(checkForAnnouncement(SAMPLE_CLUB_NAME, SAMPLE_NEW_CONTENT));
   }
 
