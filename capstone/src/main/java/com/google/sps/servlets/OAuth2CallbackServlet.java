@@ -20,7 +20,6 @@ public class OAuth2CallbackServlet extends AbstractAppEngineAuthorizationCodeCal
   @Override
   protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential)
       throws ServletException, IOException {
-    System.out.println("Hello there this is oauth");
     resp.sendRedirect("/explore");
     resp.getWriter().print(userEmail + " is logged in and has given access to their calendar.");
   }

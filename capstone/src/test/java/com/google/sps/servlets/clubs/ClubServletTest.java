@@ -3,10 +3,16 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.mockito.Mockito.when;
 
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.Calendar.Calendars;
+import com.google.api.services.calendar.Calendar.Calendars.Insert;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -40,12 +46,17 @@ public class ClubServletTest {
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final String SAMPLE_BLOB = "test-blobkey";
   private final String TEST_EMAIL = "test-email@gmail.com";
+  private final String SAMPLE_CAL_ID = "Club 1 Calendar ID";
   private final long SAMPLE_TIME = 25;
   private final ImmutableList<String> STUDENT_LIST = ImmutableList.of(TEST_EMAIL);
 
-  @Mock private HttpServletRequest request;
-  @Mock private HttpServletResponse response;
+  @Mock HttpServletRequest request;
+  @Mock HttpServletResponse response;
   @Mock Principal principal;
+  @Mock Calendar calendarService;
+  @Mock Calendars mockCalendar;
+  @Mock Insert calendarInsert;
+  @Mock com.google.api.services.calendar.model.Calendar modelCalendar;
   private BlobstoreService blobstore;
   private ClubServlet clubServlet;
   private DatastoreService datastore;
@@ -74,8 +85,9 @@ public class ClubServletTest {
   public void doPost_registerNewValidClub() throws ServletException, IOException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
+
     doPost_helper();
-    clubServlet.doPostHelper(request, response, datastore);
+    clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -91,6 +103,7 @@ public class ClubServletTest {
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
+    Assert.assertEquals(SAMPLE_CAL_ID, clubEntity.getProperty(Constants.CALENDAR_PROP));
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
@@ -99,11 +112,13 @@ public class ClubServletTest {
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("officer@example.com");
+    // when(calendarService.calendars().insert(calendar).execute().getId()).thenReturn("calendar
+    // ID");
     doPost_helper();
-    clubServlet.doPostHelper(request, response, datastore);
+    clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-    clubServlet.doPostHelper(request, response, datastore);
+    clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
     Query query =
@@ -134,7 +149,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.OFFICER_PROP, expectedOfficers);
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
-    clubEntity.setProperty("calendar", "calendar ID");
+    clubEntity.setProperty(Constants.CALENDAR_PROP, SAMPLE_CAL_ID);
     clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
@@ -155,7 +170,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
-    Assert.assertEquals("calendar ID", response.get("calendar").getAsString());
+    Assert.assertEquals(SAMPLE_CAL_ID, response.get("calendar").getAsString());
     Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 
@@ -177,10 +192,20 @@ public class ClubServletTest {
     return converted;
   }
 
-  private void doPost_helper() {
+  private void doPost_helper() throws IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+
+    com.google.api.services.calendar.model.Calendar calendar =
+        new com.google.api.services.calendar.model.Calendar()
+            .setSummary(SAMPLE_CLUB_NAME + " Calendar")
+            .setTimeZone("America/Los_Angeles");
+
+    when(calendarService.calendars()).thenReturn(mockCalendar);
+    when(mockCalendar.insert(calendar)).thenReturn(calendarInsert);
+    when(calendarInsert.execute()).thenReturn(modelCalendar);
+    when(modelCalendar.getId()).thenReturn(SAMPLE_CAL_ID);
   }
 }

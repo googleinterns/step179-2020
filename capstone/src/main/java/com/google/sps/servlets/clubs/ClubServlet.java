@@ -75,11 +75,19 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    doPostHelper(request, response, datastore);
+    try {
+      Calendar service = getCalendarService();
+      doPostHelper(request, response, datastore, service);
+    } catch (GeneralSecurityException calendarError) {
+      response.getWriter().println(calendarError);
+    }
   }
 
   public void doPostHelper(
-      HttpServletRequest request, HttpServletResponse response, DatastoreService datastore)
+      HttpServletRequest request,
+      HttpServletResponse response,
+      DatastoreService datastore,
+      Calendar service)
       throws IOException {
     // Must use UserService to access logged in user here
     UserService userService = UserServiceFactory.getUserService();
@@ -95,7 +103,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       String website = request.getParameter(Constants.WEBSITE_PROP);
       String calendarId = "";
       try {
-        calendarId = createCalendar(clubName);
+        calendarId = createCalendar(clubName, service);
       } catch (Exception entityError) {
         response.getWriter().println("Error");
       }
@@ -146,12 +154,12 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   }
 
   /** Return the Calendar ID after creating a calendar for the given club name. */
-  public String createCalendar(String clubName) throws IOException, GeneralSecurityException {
+  public String createCalendar(String clubName, Calendar service)
+      throws IOException, GeneralSecurityException {
     com.google.api.services.calendar.model.Calendar calendar =
         new com.google.api.services.calendar.model.Calendar()
             .setSummary(clubName + " Calendar")
             .setTimeZone("America/Los_Angeles");
-    Calendar service = getCalendarService();
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
 
     // TODO: set up permissions for club members (read only) and officers (read and write)
