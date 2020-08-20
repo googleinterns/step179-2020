@@ -36,6 +36,9 @@ public class StudentServlet extends HttpServlet {
     String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity currentStudent = getStudent(userEmail, datastore);
+    if (currentStudent == null) {
+      return;
+    }
 
     String profilePictureKey = "";
     if (currentStudent.getProperty(Constants.PROFILE_PIC_PROP) != null) {
@@ -65,7 +68,7 @@ public class StudentServlet extends HttpServlet {
     StudentInfo allInfo = new StudentInfo(student, announcements);
     String studentJson = convertToJsonUsingGson(allInfo);
 
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(studentJson);
   }
 
@@ -155,6 +158,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "");
+    studentEntity.setProperty(Constants.INTERESTED_CLUB_PROP, ImmutableList.of());
     return studentEntity;
   }
 
