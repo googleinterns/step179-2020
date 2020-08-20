@@ -32,6 +32,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -53,6 +54,7 @@ public final class ExploreServletTest {
   private ExploreServlet servlet;
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
+  @Mock Principal principal;
   private DatastoreService datastore;
 
   private LocalServiceTestHelper helper =
@@ -96,6 +98,8 @@ public final class ExploreServletTest {
     long TIME_2 = 20;
 
     helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(KEVIN);
     when(request.getParameter(Constants.SORT_PROP)).thenReturn(Constants.DEFAULT_SORT_PROP);
     when(request.getParameter(Constants.LABELS_PROP)).thenReturn("");
 
@@ -177,7 +181,8 @@ public final class ExploreServletTest {
 
     String responseStr = stringWriter.toString().trim();
     JsonElement responseJsonElement = new JsonParser().parse(responseStr);
+    JsonObject responseJsonObject = (JsonObject) responseJsonElement;
 
-    return responseJsonElement.getAsJsonArray();
+    return responseJsonObject.get("clubs").getAsJsonArray();
   }
 }

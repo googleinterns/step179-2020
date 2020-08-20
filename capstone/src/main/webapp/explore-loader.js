@@ -28,13 +28,14 @@ async function getListings () {
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
   const response = await fetch(query);
   const json = await response.json();
-  loadListings(json);
+  console.log(json);
+  loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
 }
 
-async function loadListings (json) {
+async function loadListings (clubs, studentClubs, interestedClubs) {
   document.getElementById('club-listings').innerHTML = ''; // Clear the listings div, for if we're refreshing the listings
   const template = document.querySelector('#club-listing');
-  for (var club of json) {
+  for (var club of clubs) {
     imageUrl = 'images/logo.png';
     if (club.logo != '') {
       imageUrl = await getImageUrl(club.logo);
@@ -48,6 +49,28 @@ async function loadListings (json) {
     template.content.querySelector('.interested-join-button').value = club.name;
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);
+    editButton(club.name, studentClubs, 'join-button');
+    editButton(club.name, interestedClubs, 'interested-join-button');
+  }
+}
+
+function editButton(club, joinedClubList, className) {
+  if (!joinedClubList.includes(club)) {
+    return;
+  }
+  var allButtons = document.getElementsByClassName(className);
+  for (button of allButtons) {
+    if (button.value == club) {
+      button.type = 'button';
+      button.style.backgroundColor = 'revert';
+      button.style.color = '#000';
+      button.style.opacity = 'revert';
+      if(className.includes('interested')) {
+        button.onclick = function() {sendJoinedAlert('interested', true)};
+      } else {
+        button.onclick = function() {sendJoinedAlert('joined', true)};
+      }
+    }
   }
 }
 
@@ -61,12 +84,13 @@ function getLabelQueryString () {
   return queryString.slice(0, -1); // Takes out the last comma. 
 }
 
-function sendJoinedAlert(interestedOrJoin) {
-  var alertMessage = 'You have successfully ';
+function sendJoinedAlert(interestedOrJoin, alreadyJoined) {
+  var alertMessage = 'You have ';
+  alertMessage += alreadyJoined ? 'already ' : 'successfully ';
   if (interestedOrJoin == 'interested') {
     alertMessage += 'expressed interest in this club! You can view your interested club list on your profile page.';
   } else {
-    alertMessage += 'joined a club! You can view your club list or leave a club on your profile page. You will now receive notifications for this club.';
+    alertMessage += 'joined this club! You can view your club list or leave a club on your profile page. You will receive notifications for this club.';
   }
   alert(alertMessage);
 }

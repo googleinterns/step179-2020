@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ExploreServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String userEmail = request.getUserPrincipal().getName();
     Gson gson = new Gson();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -47,9 +48,26 @@ public class ExploreServlet extends HttpServlet {
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
 
-    String json = gson.toJson(clubs);
+    ImmutableList<String> studentClubs =
+        getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
+    ImmutableList<String> interestedClubs =
+        getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
+
+    String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  private static ImmutableList<String> getStudentClubList(
+      String userEmail, String property, DatastoreService datastore) {
+    Query query = new Query(userEmail);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = results.asSingleEntity();
+    if (student == null) {
+      return null;
+    }
+    return ServletUtil.getPropertyList(student, property);
   }
 
   private static boolean matchesLabels(Club club, ImmutableList<String> labels) {
@@ -89,5 +107,20 @@ public class ExploreServlet extends HttpServlet {
       default:
         return Comparator.comparing(club -> club.getCreationTime());
     }
+  }
+}
+
+class ExploreInfo {
+  private ImmutableList<Club> clubs;
+  private ImmutableList<String> studentClubs;
+  private ImmutableList<String> studentInterestedClubs;
+
+  public ExploreInfo(
+      ImmutableList<Club> clubs,
+      ImmutableList<String> studentClubs,
+      ImmutableList<String> studentInterestedClubs) {
+    this.clubs = clubs;
+    this.studentClubs = studentClubs;
+    this.studentInterestedClubs = studentInterestedClubs;
   }
 }
