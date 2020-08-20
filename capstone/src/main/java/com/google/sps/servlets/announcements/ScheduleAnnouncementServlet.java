@@ -7,15 +7,11 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
-import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,16 +21,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/schedule-announcement")
 public class ScheduleAnnouncementServlet extends HttpServlet {
 
-  private ScheduledExecutorService mockExecutor = null; // Set a mock executor during testing.
   private ZoneId timeZone = ZoneId.of("America/Los_Angeles");
   private Clock clock = Clock.system(timeZone);
 
   protected void setClock(Clock clock) {
     this.clock = clock;
-  }
-
-  protected void setExecutor(ScheduledExecutorService service) {
-    mockExecutor = service;
   }
 
   @Override
@@ -63,51 +54,16 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
       return; // Not authenticated to post.
     }
 
-    Entity announcementEntity = new Entity(Constants.ANNOUNCEMENT_PROP);
+    Entity announcementEntity = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
     announcementEntity.setProperty(Constants.AUTHOR_PROP, userEmail);
     announcementEntity.setProperty(Constants.TIME_PROP, scheduledTimestamp);
     announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
     announcementEntity.setProperty(Constants.CLUB_PROP, clubName);
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
-    this.scheduleAnnouncement(announcementEntity, clubName, waitTime, datastore);
-    if (mockExecutor == null
-        && this.getServletConfig().getServletContext().getAttribute("executorService") == null) {
-      return;
-    }
+    datastore.put(announcementEntity);
     response.sendRedirect(
-        "/about-us.html?name=" + clubName + "&tab=announcements&waittime=" + waitTime);
-  }
-
-  private void scheduleAnnouncement(
-      final Entity entity,
-      final String clubName,
-      final long waitTime,
-      final DatastoreService datastore) {
-
-    ServletContext context = this.getServletConfig().getServletContext();
-    ScheduledExecutorService service =
-        (mockExecutor == null)
-            ? (ScheduledExecutorService) context.getAttribute("executorService")
-            : mockExecutor;
-    // if (context.getAttribute("scheduler") == null) {
-    //   context.setAttribute("scheduler", service);
-    // } else {
-    //   service = (ScheduledExecutorService) context.getAttribute("scheduler");
-    // }
-    service.schedule(
-        new Runnable() {
-          public void run() {
-            datastore.put(entity);
-            try {
-              EmailFactory.sendEmailToAllMembers(clubName, entity);
-            } catch (IOException e) {
-              System.err.println(e.getMessage());
-            }
-          }
-        },
-        waitTime,
-        TimeUnit.MILLISECONDS);
+        "/about-us.html?name=" + clubName + "&tab=announcements");
   }
 
   private Club getClub(DatastoreService datastore, String clubName) {

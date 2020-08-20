@@ -30,6 +30,7 @@ public class AnnouncementsServlet extends HttpServlet {
     String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
 
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)

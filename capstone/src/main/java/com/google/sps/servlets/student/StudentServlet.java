@@ -38,6 +38,7 @@ public class StudentServlet extends HttpServlet {
     String userEmail = userService.getCurrentUser().getEmail();
     // String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
     Entity currentStudent = getStudent(userEmail, datastore);
 
     String profilePictureKey = "";
