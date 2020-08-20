@@ -57,6 +57,12 @@
         <scope>test</scope>
     </dependency>
     <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit4</artifactId>
+        <version>2.12.0</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-api-labs</artifactId>
         <version>1.9.60</version>

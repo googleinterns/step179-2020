@@ -58,6 +58,12 @@
           <input type="submit" value="Post">
           <input type="hidden" name="name" id="club-name">
         </form>
+        <form action="/schedule-announcement" class="full-screen-panel" method="POST">
+          <input type="text" name="content" placeholder="Schedule announcement to be made later...">
+          <input type="datetime-local" name="scheduled-date">
+          <input type="submit" value="Schedule">
+          <input type="hidden" name="name" id="schedule-club-name">
+        </form>
       </div>
       <div class="full-screen-panel">
         <h1>Announcements</h1>

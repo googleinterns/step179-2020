@@ -37,6 +37,7 @@ public final class Constants {
   public static final String NEW_YEAR_PROP = "new-year";
   public static final String NEW_MAJOR_PROP = "new-major";
   public static final String PROFILE_PIC_PROP = "upload-profile";
+  public static final String SCHEDULED_DATE_PROP = "scheduled-date";
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   public static final String APPLICATION_NAME = "clubhub-step-2020";
 }
