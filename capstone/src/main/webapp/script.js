@@ -151,7 +151,11 @@ async function loadCalendar () {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/clubs?name=' + params.get('name'));
   const json = await response.json();
-  document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['calendar'];
+
+  // Check that calendar ID exists before updating iframe
+  if (json['calendar'].length != 0) {
+    document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['calendar'];
+  }
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
