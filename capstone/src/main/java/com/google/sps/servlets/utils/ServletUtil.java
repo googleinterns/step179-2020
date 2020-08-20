@@ -34,7 +34,6 @@ public final class ServletUtil {
     if (!generalList.contains(itemToAdd)) {
       generalList.add(itemToAdd);
     }
-    // Add updated entity to Datastore
     entity.setProperty(property, generalList);
     return entity;
   }
@@ -45,7 +44,6 @@ public final class ServletUtil {
     if (generalList.contains(itemToRemove)) {
       generalList.remove(itemToRemove);
     }
-    // Add updated entity to Datastore
     entity.setProperty(property, generalList);
     return entity;
   }
