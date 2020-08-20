@@ -1,5 +1,8 @@
 package com.google.sps.servlets;
 
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+
 /* Stores constants shared between multiple servlets. */
 class Constants {
   private Constants() {}
@@ -34,4 +37,6 @@ class Constants {
   static final String NEW_MAJOR_PROP = "new-major";
   static final String PROFILE_PIC_PROP = "upload-profile";
   static final String CALENDAR_PROP = "calendar";
+  public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+  public static final String APPLICATION_NAME = "clubhub-step-2020";
 }

@@ -115,7 +115,7 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
-        entity.getProperty("calendar").toString(),
+        entity.getProperty(Constants.CALENDAR_PROP).toString(),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

@@ -112,8 +112,6 @@ public class ClubServletTest {
   public void doPost_registerNewInvalidClub() throws ServletException, IOException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("officer@example.com");
-    // when(calendarService.calendars().insert(calendar).execute().getId()).thenReturn("calendar
-    // ID");
     doPost_helper();
     clubServlet.doPostHelper(request, response, datastore, calendarService);
 
@@ -170,7 +168,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedMembers, actualMembers);
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
-    Assert.assertEquals(SAMPLE_CAL_ID, response.get("calendar").getAsString());
+    Assert.assertEquals(SAMPLE_CAL_ID, response.get(Constants.CALENDAR_PROP).getAsString());
     Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 

@@ -5,8 +5,6 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -36,7 +34,6 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   private final String SCOPE_TYPE = "user";
   private final String USER_CALENDAR_PERMISSIONS = "reader";
   private static final HttpTransport HTTP_TRANSPORT = UrlFetchTransport.getDefaultInstance();
-  protected static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -174,8 +171,8 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   private Calendar getCalendarService() throws IOException, GeneralSecurityException {
     String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
     Credential credential = ServletUtil.newFlow().loadCredential(userId);
-    return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-        .setApplicationName("google.com:clubhub-step-2020")
+    return new Calendar.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
+        .setApplicationName(Constants.APPLICATION_NAME)
         .build();
   }
 
