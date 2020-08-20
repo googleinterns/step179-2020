@@ -64,9 +64,9 @@ function getLabelQueryString () {
 function sendJoinedAlert(interestedOrJoin) {
   var alertMessage = 'You have successfully ';
   if (interestedOrJoin == 'interested') {
-    alertMessage += 'expressed interest in this club! You can view your interested club list on your profile page.'
+    alertMessage += 'expressed interest in this club! You can view your interested club list on your profile page.';
   } else {
-    alertMessage += 'joined a club! You can view your club list or leave a club on your profile page. You will now receive notifications for this club.'
+    alertMessage += 'joined a club! You can view your club list or leave a club on your profile page. You will now receive notifications for this club.';
   }
   alert(alertMessage);
 }
