@@ -28,7 +28,6 @@ async function getListings () {
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
   const response = await fetch(query);
   const json = await response.json();
-  console.log(json);
   loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
 }
 
@@ -61,14 +60,21 @@ function editButton(club, joinedClubList, className) {
   var allButtons = document.getElementsByClassName(className);
   for (button of allButtons) {
     if (button.value == club) {
-      button.type = 'button';
+      // Change to type button so we do not submit the form
+      button.type = 'button'; 
+      
+      // Revert to basic colors to show difference between clubs joined and clubs not joined
       button.style.backgroundColor = 'revert';
       button.style.color = '#000';
       button.style.opacity = 'revert';
-      if(className.includes('interested')) {
-        button.onclick = function() {sendJoinedAlert('interested', true)};
-      } else {
-        button.onclick = function() {sendJoinedAlert('joined', true)};
+
+      // Update onclick functions
+      button.onclick = className.includes('interested') 
+          ? function() {sendJoinedAlert('interested', true)} 
+          : function() {sendJoinedAlert('joined', true)};
+    
+      if (button.innerText == 'Join Club') {
+        button.innerText = 'Joined';
       }
     }
   }

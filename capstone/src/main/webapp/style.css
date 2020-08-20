@@ -298,11 +298,3 @@ button:hover {
 #hidden-input {
   all: revert;
 }
-
-.joined-button {
-  all: revert;
-  font-size: 20px;
-  padding: 16px 32px;
-  border-radius: 12px;
-  border: none;
-}
