@@ -226,26 +226,6 @@ public class StudentServlet extends HttpServlet {
     }
     return clubs.get(0);
   }
-
-  //   private static void addOrRemoveItemToEntity(
-  //       Entity entity,
-  //       DatastoreService datastore,
-  //       String itemToAddOrRemove,
-  //       String property,
-  //       Boolean addItem) {
-  //     // Create empty List if property does not exist yet
-  //     List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity,
-  // property));
-  //     if (addItem && !generalList.contains(itemToAddOrRemove)) {
-  //       generalList.add(itemToAddOrRemove);
-  //     }
-  //     if (!addItem && generalList.contains(itemToAddOrRemove)) {
-  //       generalList.remove(itemToAddOrRemove);
-  //     }
-  //     // Add updated entity to Datastore
-  //     entity.setProperty(property, generalList);
-  //     datastore.put(entity);
-  //   }
 }
 
 class StudentInfo {
