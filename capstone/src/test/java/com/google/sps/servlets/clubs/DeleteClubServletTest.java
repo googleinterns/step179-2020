@@ -61,6 +61,7 @@ public class DeleteClubServletTest {
 
   @Test
   public void doPost_deleteValidClub() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     prepClubEnv();
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     deleteClubServlet.doPost(request, response);
@@ -76,6 +77,7 @@ public class DeleteClubServletTest {
 
   @Test
   public void doPost_deleteNonexistentClub() throws ServletException, IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     prepClubEnv();
     String fakeClubName = "hello";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(fakeClubName);
@@ -90,8 +92,23 @@ public class DeleteClubServletTest {
     Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
+  @Test
+  public void doPost_deleteNonexistentClub() throws ServletException, IOException {
+    helper.setEnvEmail("fake-email").setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    prepClubEnv();
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    deleteClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, fakeClubName));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Assert.assertNull(clubEntity);
+    Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
   private void prepClubEnv() {
-    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, SAMPLE_CLUB_NAME);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
     clubEntity.setProperty(Constants.DESCRIP_PROP, SAMPLE_CLUB_DESC_1);

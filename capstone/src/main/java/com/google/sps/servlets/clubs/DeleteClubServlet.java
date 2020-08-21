@@ -46,6 +46,6 @@ public class DeleteClubServlet extends HttpServlet {
               Constants.CLUB_ENTITY_PROP, request.getParameter(Constants.PROPERTY_NAME));
       datastore.delete(clubKey);
     }
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/explore.html");
   }
 }
