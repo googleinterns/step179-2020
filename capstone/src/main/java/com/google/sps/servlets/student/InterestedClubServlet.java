@@ -9,8 +9,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +50,10 @@ public class InterestedClubServlet extends HttpServlet {
     String interestedClubToJoin = request.getParameter(Constants.INTERESTED_JOIN_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToJoin)) {
       // Update Datastore with edited student entity
-      addItemToEntity(student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
+      student =
+          ServletUtil.addItemToEntity(
+              student, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
+      datastore.put(student);
     }
     response.sendRedirect("/explore.html");
   }
@@ -69,17 +70,5 @@ public class InterestedClubServlet extends HttpServlet {
     }
     // A user can only be logged in with one email address at a time
     return students.get(0);
-  }
-
-  private static void addItemToEntity(
-      Entity entity, DatastoreService datastore, String itemToAdd, String property) {
-    // Create empty List if property does not exist yet
-    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
-    if (!generalList.contains(itemToAdd)) {
-      generalList.add(itemToAdd);
-    }
-    // Add updated entity to Datastore
-    entity.setProperty(property, generalList);
-    datastore.put(entity);
   }
 }

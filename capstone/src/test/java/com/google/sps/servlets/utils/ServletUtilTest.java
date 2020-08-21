@@ -26,16 +26,22 @@ import org.mockito.MockitoAnnotations;
 public final class ServletUtilTest {
   public static final String MEGAN_EMAIL = "meganshi@google.com";
   public static final String CLUB_1 = "Club 1";
+  public static final String CLUB_2 = "Club 2";
 
   @Mock private HttpServletRequest request;
   private LocalServiceTestHelper localHelper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  Entity studentMegan;
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     localHelper.setUp();
+
+    studentMegan = new Entity(MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
   }
 
   @After
@@ -45,18 +51,9 @@ public final class ServletUtilTest {
 
   @Test
   public void getPropertyList_getEmptyClubList() throws ServletException, IOException {
-    Entity studentMegan = new Entity(MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     datastore.put(studentMegan);
-
-    // Get student entity from Datastore
-    Query query = new Query(MEGAN_EMAIL);
-    PreparedQuery results = datastore.prepare(query);
-    ImmutableList<Entity> students = ImmutableList.copyOf(results.asIterable());
-    Assert.assertFalse(students.isEmpty());
-    Assert.assertTrue(students.size() == 1);
-    Entity student = students.get(0);
+    Entity student = getEntityFromDatastore(MEGAN_EMAIL);
+    Assert.assertTrue(student != null);
 
     Assert.assertEquals(
         ImmutableList.of(), ServletUtil.getPropertyList(student, Constants.PROPERTY_CLUBS));
@@ -85,12 +82,72 @@ public final class ServletUtilTest {
 
   @Test
   public void getNameByEmail_getNameByValidEmail() throws ServletException, IOException {
-    Entity studentMegan = new Entity(MEGAN_EMAIL);
-    studentMegan.setProperty(Constants.PROPERTY_EMAIL, MEGAN_EMAIL);
     studentMegan.setProperty(Constants.PROPERTY_NAME, "Megan Shi");
     datastore.put(studentMegan);
 
     Assert.assertEquals(
         studentMegan.getProperty(Constants.PROPERTY_NAME), ServletUtil.getNameByEmail(MEGAN_EMAIL));
+  }
+
+  @Test
+  public void addItemToEntity_listIsInitiallyEmpty() throws ServletException, IOException {
+    datastore.put(studentMegan);
+    Entity student = getEntityFromDatastore(MEGAN_EMAIL);
+    Assert.assertTrue(student != null);
+    // Get updated entity
+    studentMegan = ServletUtil.addItemToEntity(student, CLUB_1, Constants.PROPERTY_CLUBS);
+    datastore.put(studentMegan);
+    ImmutableList<String> expectedClubList = ImmutableList.of(CLUB_1);
+
+    Assert.assertEquals(expectedClubList, studentMegan.getProperty(Constants.PROPERTY_CLUBS));
+  }
+
+  @Test
+  public void addItemToEntity_listIsNotEmpty() throws ServletException, IOException {
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
+    datastore.put(studentMegan);
+    Entity student = getEntityFromDatastore(MEGAN_EMAIL);
+    Assert.assertTrue(student != null);
+    // Get updated entity
+    studentMegan = ServletUtil.addItemToEntity(student, CLUB_2, Constants.PROPERTY_CLUBS);
+    datastore.put(studentMegan);
+    ImmutableList<String> expectedClubList = ImmutableList.of(CLUB_1, CLUB_2);
+
+    Assert.assertEquals(expectedClubList, studentMegan.getProperty(Constants.PROPERTY_CLUBS));
+  }
+
+  @Test
+  public void removeItemToEntity_listIsInitiallyEmpty() throws ServletException, IOException {
+    datastore.put(studentMegan);
+    Entity student = getEntityFromDatastore(MEGAN_EMAIL);
+    Assert.assertTrue(student != null);
+    // Get updated entity
+    studentMegan = ServletUtil.removeItemFromEntity(student, CLUB_1, Constants.PROPERTY_CLUBS);
+    datastore.put(studentMegan);
+    ImmutableList<String> expectedClubList = ImmutableList.of();
+
+    Assert.assertEquals(expectedClubList, studentMegan.getProperty(Constants.PROPERTY_CLUBS));
+  }
+
+  @Test
+  public void removeItemToEntity_listIsNotEmpty() throws ServletException, IOException {
+    studentMegan.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1, CLUB_2));
+    datastore.put(studentMegan);
+    Entity student = getEntityFromDatastore(MEGAN_EMAIL);
+    Assert.assertTrue(student != null);
+    // Get updated entity
+    studentMegan = ServletUtil.removeItemFromEntity(student, CLUB_1, Constants.PROPERTY_CLUBS);
+    datastore.put(studentMegan);
+    ImmutableList<String> expectedClubList = ImmutableList.of(CLUB_2);
+
+    Assert.assertEquals(expectedClubList, studentMegan.getProperty(Constants.PROPERTY_CLUBS));
+  }
+
+  private Entity getEntityFromDatastore(String email) {
+    // Get student entity from Datastore to resolve casting errors
+    Query query = new Query(email);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = results.asSingleEntity();
+    return student;
   }
 }
