@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
+import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,9 @@ public class StudentServlet extends HttpServlet {
     String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity currentStudent = getStudent(userEmail, datastore);
+    if (currentStudent == null) {
+      return;
+    }
 
     String profilePictureKey = "";
     if (currentStudent.getProperty(Constants.PROFILE_PIC_PROP) != null) {
@@ -64,7 +68,7 @@ public class StudentServlet extends HttpServlet {
     StudentInfo allInfo = new StudentInfo(student, announcements);
     String studentJson = convertToJsonUsingGson(allInfo);
 
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(studentJson);
   }
 
@@ -128,7 +132,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  private Entity getStudent(String userEmail, DatastoreService datastore) {
+  private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -138,6 +142,7 @@ public class StudentServlet extends HttpServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
+      EmailFactory.sendWelcomeEmail(userEmail);
       results = datastore.prepare(query);
       students = ImmutableList.copyOf(results.asIterable());
     }
@@ -153,6 +158,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "");
+    studentEntity.setProperty(Constants.INTERESTED_CLUB_PROP, ImmutableList.of());
     return studentEntity;
   }
 
@@ -181,7 +187,7 @@ public class StudentServlet extends HttpServlet {
     return announcements;
   }
 
-  private static String getAnnouncementAsString(Entity announcement) {
+  public static String getAnnouncementAsString(Entity announcement) {
     // Set calendar timezone and time
     TimeZone timePST = TimeZone.getTimeZone(TIMEZONE_PST);
     Calendar calendar = Calendar.getInstance(timePST);

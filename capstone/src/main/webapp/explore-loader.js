@@ -44,7 +44,8 @@ async function loadListings (json) {
     template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;
     template.content.querySelector('#members').innerHTML = club.members.length + ' members';
-    template.content.querySelector("#club-join-container").innerHTML = getJoinButton(club.name);    
+    template.content.querySelector('.join-button').value = club.name;
+    template.content.querySelector('.interested-join-button').value = club.name;
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);
   }
@@ -60,9 +61,12 @@ function getLabelQueryString () {
   return queryString.slice(0, -1); // Takes out the last comma. 
 }
 
-function getJoinButton(clubName) {
-  var joinButton = '<button name="join" value="'
-    + clubName
-    + '" formmethod="POST">Join Club</button>';
-  return joinButton;
+function sendJoinedAlert(interestedOrJoin) {
+  var alertMessage = 'You have successfully ';
+  if (interestedOrJoin == 'interested') {
+    alertMessage += 'expressed interest in this club! You can view your interested club list on your profile page.';
+  } else {
+    alertMessage += 'joined a club! You can view your club list or leave a club on your profile page. You will now receive notifications for this club.';
+  }
+  alert(alertMessage);
 }

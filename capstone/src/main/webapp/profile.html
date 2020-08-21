@@ -25,6 +25,14 @@
           </ul>
         </form>
         <br>
+        <h2>My Interested Clubs:</h2>
+        <ul id="interested-club-content">
+          <template id="interested-list">
+            <li></li>
+          </template>
+        </ul>
+        </form>
+        <br>
         <form name="edit-profile" action="/student-data" method="POST">
           <div id="student-info">
             <div id="email">Email: </div>
@@ -53,8 +61,8 @@
       <div class="split profile middle-profile">
         <img src="" class="profile-pic" alt="Profile picture">
         <form class="upload-profile-pic" id="profile-form" method="POST" enctype="multipart/form-data">
-          <input type="file" name="upload-profile">
-          <input type="submit" name="new-pic" value="Upload Profile Picture">
+          <button id="hidden-input" onclick="document.getElementById('submit-picture').click(); return false;">Upload Profile Picture</button>
+          <input hidden id="submit-picture" onchange="this.form.submit()" type="file" name="upload-profile">
         </form>
         <br><br>
       </div>

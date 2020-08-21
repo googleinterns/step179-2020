@@ -44,8 +44,8 @@ public final class StudentServletTest {
   private static final String STUDENT = "student";
   private static final String ANNOUNCEMENTS = "announcements";
   public static final String MEGHA_EMAIL = "kakm@google.com";
-  public static final String KEVIN_EMAIL = "kshao@google.com";
   public static final String MEGAN_EMAIL = "meganshi@google.com";
+  public static final String TEST_EMAIL = "test@example.com";
   public static final String MEGAN_NAME = "Megan Shi";
   public static final String MEGHA_NAME = "Megha Kak";
   public static final int YEAR_2022 = 2022;
@@ -86,7 +86,7 @@ public final class StudentServletTest {
 
     club1 = new Entity("Club");
     club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
-    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGAN_EMAIL));
+    club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA_EMAIL));
 
     club2 = new Entity("Club");
     club2.setProperty(Constants.PROPERTY_NAME, CLUB_2);
@@ -122,9 +122,9 @@ public final class StudentServletTest {
 
   @Test
   public void doGet_studentLogsInForFirstTime() throws ServletException, IOException {
-    localHelper.setEnvEmail(KEVIN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    localHelper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("example.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
-    when(principal.getName()).thenReturn(KEVIN_EMAIL);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -137,7 +137,7 @@ public final class StudentServletTest {
         ImmutableList.copyOf(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray());
 
     Assert.assertEquals("First Last", responseName);
-    Assert.assertEquals(KEVIN_EMAIL, responseEmail);
+    Assert.assertEquals(TEST_EMAIL, responseEmail);
     Assert.assertEquals(0, responseYear);
     Assert.assertEquals("Enter your major here", responseMajor);
     Assert.assertEquals(ImmutableList.of(), responseClubs);
@@ -204,12 +204,13 @@ public final class StudentServletTest {
     announcementEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
     announcementEntity.setProperty(Constants.CONTENT_PROP, announcementContent);
     announcementEntity.setProperty(Constants.CLUB_PROP, CLUB_1);
+    studentMegha.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of(CLUB_1));
     datastore.put(announcementEntity);
-    datastore.put(studentMegan);
+    datastore.put(studentMegha);
 
-    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
-    when(principal.getName()).thenReturn(MEGAN_EMAIL);
+    when(principal.getName()).thenReturn(MEGHA_EMAIL);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -231,11 +232,11 @@ public final class StudentServletTest {
 
     String expectedAnnouncement = getAnnouncement(announcementContent);
 
-    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_NAME), responseName);
-    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
-    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
-    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
-    Assert.assertEquals(studentMegan.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_NAME), responseName);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_EMAIL), responseEmail);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_GRADYEAR), responseYear);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_MAJOR), responseMajor);
+    Assert.assertEquals(studentMegha.getProperty(Constants.PROPERTY_CLUBS), responseClubs);
     Assert.assertEquals(expectedAnnouncement, responseAnnouncement);
   }
 

@@ -285,3 +285,16 @@ button:hover {
 #edit-button { 
   display: none; 
 }
+
+#club-join-container,
+#interested-club-container {
+  display: inline;
+}
+
+.join-button {
+  margin-top: -5px;
+}
+
+#hidden-input {
+  all: revert;
+}

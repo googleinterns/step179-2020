@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
+import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
@@ -78,6 +79,7 @@ public class AnnouncementsServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
+    EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
