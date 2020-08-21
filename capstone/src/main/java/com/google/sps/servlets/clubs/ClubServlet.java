@@ -128,10 +128,4 @@ public class ClubServlet extends HttpServlet {
     PreparedQuery prepared = datastore.prepare(query);
     return prepared;
   }
-
-  public static GoogleAuthorizationCodeFlow newFlow() throws IOException {
-    return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
-        getClientCredential(), Collections.singleton(CalendarScopes.CALENDAR)).setDataStoreFactory(
-        DATA_STORE_FACTORY).setAccessType("offline").build();
-  }
 }

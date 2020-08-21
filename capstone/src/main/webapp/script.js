@@ -60,6 +60,7 @@ async function getClubInfo() {
     document.getElementById('website').innerHTML = clubInfo['website'];
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
+      document.getElementById('delete-button').style.display = 'inline-block';
     }
   }
 }
@@ -282,4 +283,13 @@ async function getImageUrl(logoKey) {
         .then((pic) => {
           return pic.url;
         });
+}
+
+async function deleteClub() {
+  if (window.confirm('Are you sure you want to delete your club? It will be gone forever :(')) {
+    var clubName = document.getElementById('club-name').innerHTML;
+    const response = await fetch('/delete-club?name=' + clubName, {method: 'POST'});
+    window.alert('Your club has been deleted.');
+    window.location.href = "/explore.html";
+  }
 }
