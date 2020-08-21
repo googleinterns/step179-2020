@@ -14,6 +14,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ public class DeleteClubServletTest {
   private final String SAMPLE_CLUB_DESC_1 = "Test club description";
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final String TEST_EMAIL = "test-email@gmail.com";
+  private final String MEGAN_EMAIL = "meganshi@google.com";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -93,7 +95,7 @@ public class DeleteClubServletTest {
   }
 
   @Test
-  public void doPost_deleteNonexistentClub() throws ServletException, IOException {
+  public void doPost_invalidOfficerDelete() throws ServletException, IOException {
     helper.setEnvEmail("fake-email").setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     prepClubEnv();
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
@@ -102,10 +104,21 @@ public class DeleteClubServletTest {
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
-                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, fakeClubName));
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
     Entity clubEntity = datastore.prepare(query).asSingleEntity();
-    Assert.assertNull(clubEntity);
-    Mockito.verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    Assert.assertNotNull(clubEntity);
+    Assert.assertEquals(SAMPLE_CLUB_DESC_1, clubEntity.getProperty(Constants.DESCRIP_PROP));
+    Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
+    ImmutableList<String> officers =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.OFFICER_PROP));
+    ImmutableList<String> members =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.MEMBER_PROP));
+    Assert.assertEquals(1, officers.size());
+    Assert.assertEquals(TEST_EMAIL, officers.get(0));
+    Assert.assertEquals(2, members.size());
+    Assert.assertEquals(TEST_EMAIL, members.get(0));
+    Assert.assertEquals(MEGAN_EMAIL, members.get(1));
   }
 
   private void prepClubEnv() {
@@ -114,9 +127,7 @@ public class DeleteClubServletTest {
     clubEntity.setProperty(Constants.DESCRIP_PROP, SAMPLE_CLUB_DESC_1);
     clubEntity.setProperty(Constants.WEBSITE_PROP, SAMPLE_CLUB_WEB);
     clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(TEST_EMAIL));
-    clubEntity.setProperty(
-        Constants.MEMBER_PROP,
-        ImmutableList.of(TEST_EMAIL, "meganshi@google.com", "kakm@google.com", "kshao@google.com"));
+    clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(TEST_EMAIL, MEGAN_EMAIL));
     datastore.put(clubEntity);
   }
 }
