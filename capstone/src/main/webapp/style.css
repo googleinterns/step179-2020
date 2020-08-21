@@ -10,7 +10,8 @@ body {
 
 #profile-heading,
 #explore-heading,
-#login {
+#login,
+#student-info {
   text-align: center;
 }
 
@@ -29,11 +30,20 @@ p {
 
 .upload-profile-pic,
 .save-button,
-#login-button {
+#login-button,
+#student-info {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
+}
+
+.save-button {
+  margin-top: 5%;
+}
+
+#student-info {
+  margin-top: 1%;
 }
 
 button {
