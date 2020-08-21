@@ -42,7 +42,9 @@ function displayElements(items, templateId, documentId) {
   const template = document.querySelector(templateId);
   for(const item of items){
     if (templateId == '#club-list') {
-      template.content.querySelector('li').innerHTML = getClubContent(item);
+      template.content.querySelector('li').innerHTML = getClubContent(item, 'leave');
+    } else if(templateId == '#interested-list') {
+      template.content.querySelector('li').innerHTML = getClubContent(item, 'interested-leave');
     } else {
       template.content.querySelector('li').innerHTML = item;
     }
@@ -51,9 +53,9 @@ function displayElements(items, templateId, documentId) {
   }
 }
 
-function getClubContent(club) {
-  const content = club + '  <button id="leave" name="leave" value="' + club + '" formmethod="POST">Leave</button>';
-  return content;
+function getClubContent(club, name) {
+  const content = club + '  <button id="leave" name="insert-name" value="' + club + '" formmethod="POST">Leave</button>';
+  return content.replace('insert-name', name);
 }
 
 /** Store edited content from profile page */

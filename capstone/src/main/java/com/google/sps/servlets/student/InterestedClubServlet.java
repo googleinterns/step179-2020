@@ -54,8 +54,18 @@ public class InterestedClubServlet extends HttpServlet {
           ServletUtil.addItemToEntity(
               student, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
       datastore.put(student);
+      response.sendRedirect("/explore.html");
     }
-    response.sendRedirect("/explore.html");
+    // Remove interested club if necessary
+    String interestedClubToLeave = request.getParameter("interested-leave");
+    if (!Strings.isNullOrEmpty(interestedClubToLeave)) {
+      // Update Datastore with edited student entity
+      student =
+          ServletUtil.removeItemFromEntity(
+              student, interestedClubToLeave, Constants.INTERESTED_CLUB_PROP);
+      datastore.put(student);
+      response.sendRedirect("/profile.html");
+    }
   }
 
   private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {

@@ -26,11 +26,12 @@
         </form>
         <br>
         <h2>My Interested Clubs:</h2>
-        <ul id="interested-club-content">
-          <template id="interested-list">
-            <li></li>
-          </template>
-        </ul>
+        <form name="interested-leave" action="/interested-clubs" method="GET">
+          <ul id="interested-club-content">
+            <template id="interested-list">
+              <li></li>
+            </template>
+          </ul>
         </form>
         <br>
         <form name="edit-profile" action="/student-data" method="POST">
