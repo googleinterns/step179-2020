@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
     <script src="script.js"></script>
+    <script src="explore-loader.js"></script>
   </head>
   <body onload="displayTab()">
     <div id="top-navigation"></div>
@@ -18,7 +19,6 @@
         <li class="club-navbar-element" onclick="showTab('#about-us')"><a>About Us</a></li>
         <li class="club-navbar-element" onclick="showTab('#announcements')"><a>Announcements</a></li>
         <li class="club-navbar-element" onclick="showTab('#calendar')"><a>Calendar</a></li>
-        <li style="float:right" class="club-navbar-element" onclick="joinClub()"><a>Join</a></li>
       </ul>
     </div>  
     <div id="tab"></div>
@@ -98,5 +98,11 @@
         <input type="submit" name="Create calendar" value="Create calendar">
       </form>
     </template>
+    <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">
+      <button class="interested-join-button" name="interested-join" value="" formmethod="POST" onclick="sendJoinedAlert('interested', false)">Interested</button>
+    </form>
+    <form id="club-join-container" name="join" action="/student-data" method="POST">
+      <button class="join-button" name="join" value="" formmethod="POST" onclick="sendJoinedAlert('joined', false)">Join Club</button>
+    </form>
   </body>
 </html>

@@ -54,7 +54,7 @@ public class InterestedClubServlet extends HttpServlet {
       // Update Datastore with edited student entity
       addItemToEntity(student, datastore, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
     }
-    response.sendRedirect("/explore.html");
+    response.sendRedirect("/about-us.html?name=" + interestedClubToJoin);
   }
 
   private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {

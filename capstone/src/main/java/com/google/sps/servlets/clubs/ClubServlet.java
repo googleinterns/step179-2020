@@ -30,6 +30,11 @@ public class ClubServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String userEmail = request.getUserPrincipal().getName();
 
+    ImmutableList<String> studentClubs =
+        getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
+    ImmutableList<String> interestedClubs =
+        getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
+
     Entity clubEntity = retrieveClub(request, datastore).asSingleEntity();
     if (clubEntity != null) {
       String name = clubEntity.getProperty(Constants.PROPERTY_NAME).toString();
@@ -52,7 +57,8 @@ public class ClubServlet extends HttpServlet {
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
-      String json = gson.toJson(jsonElement);
+      ClubInfo clubInfo = new ClubInfo(jsonElement, studentClubs, interestedClubs);
+      String json = gson.toJson(clubInfo);
       response.setContentType("text/html;");
       response.getWriter().println(json);
     } else {
@@ -98,6 +104,17 @@ public class ClubServlet extends HttpServlet {
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
   }
 
+  private static ImmutableList<String> getStudentClubList(
+      String userEmail, String property, DatastoreService datastore) {
+    Query query = new Query(userEmail);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = results.asSingleEntity();
+    if (student == null) {
+      return null;
+    }
+    return ServletUtil.getPropertyList(student, property);
+  }
+
   private void addClubToFoundersClubList(
       DatastoreService datastore, String founderEmail, String clubName) {
     Query query = new Query(founderEmail);
@@ -127,5 +144,20 @@ public class ClubServlet extends HttpServlet {
                     request.getParameter(Constants.PROPERTY_NAME)));
     PreparedQuery prepared = datastore.prepare(query);
     return prepared;
+  }
+}
+
+class ClubInfo {
+  private JsonElement club;
+  private ImmutableList<String> studentClubs;
+  private ImmutableList<String> studentInterestedClubs;
+
+  public ClubInfo(
+      JsonElement club,
+      ImmutableList<String> studentClubs,
+      ImmutableList<String> studentInterestedClubs) {
+    this.club = club;
+    this.studentClubs = studentClubs;
+    this.studentInterestedClubs = studentInterestedClubs;
   }
 }
