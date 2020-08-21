@@ -110,7 +110,7 @@ public class ClubServletTest {
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME,
