@@ -151,20 +151,13 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   }
 
   /** Return the Calendar ID after creating a calendar for the given club name. */
-  public String createCalendar(String clubName, Calendar service)
+  private String createCalendar(String clubName, Calendar service)
       throws IOException, GeneralSecurityException {
     com.google.api.services.calendar.model.Calendar calendar =
         new com.google.api.services.calendar.model.Calendar()
             .setSummary(clubName + " Calendar")
             .setTimeZone(Constants.PST_TIMEZONE);
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
-
-    // TODO: set up permissions for club members (read only) and officers (read and write)
-    // Enable reader permission for user
-    // AclRule rule =
-    //     new AclRule().setScope(new
-    // Scope().setType(SCOPE_TYPE)).setRole(USER_CALENDAR_PERMISSIONS);
-    // service.acl().insert(createdCalendarId, rule).execute();
     return createdCalendarId;
   }
 
