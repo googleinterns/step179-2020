@@ -1,3 +1,9 @@
+// Ignore Enter / Return key for profile page
+document.addEventListener('keydown', (event) => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+  }
+});
 getStudentInfo();
 
 /** Fetch student information and add it to the profile */
