@@ -13,7 +13,7 @@ import java.time.ZoneId;
 
 public class AnnouncementsSweeper {
 
-  private static ZoneId timeZone = ZoneId.of("America/Los_Angeles");
+  private static ZoneId timeZone = ZoneId.of(Constants.TIME_ZONE);
   private static Clock clock = Clock.system(timeZone);
 
   protected static void setClock(Clock clock) {
@@ -21,7 +21,6 @@ public class AnnouncementsSweeper {
   }
 
   public static void sweepAnnouncements() {
-
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
         new Query(Constants.FUTURE_ANNOUNCEMENT_PROP)

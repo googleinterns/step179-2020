@@ -15,7 +15,6 @@
 package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -28,11 +27,9 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import java.io.IOException;
-import java.security.Principal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,21 +44,25 @@ import org.mockito.MockitoAnnotations;
 
 /** */
 @RunWith(JUnit4.class)
-public final class ScheduleAnnouncementServletTest {
+public final class AnnouncementsSweeperTest {
 
   private final long SAMPLE_TIME = 123456789;
   private final String SAMPLE_CLUB_NAME = "Test Club";
   private final String SAMPLE_CONTENT = "A random announcement";
-  private final String SAMPLE_NEW_CONTENT = "A new announcement";
+  private final String CONTENT_1 = "Thing 1";
+  private final String CONTENT_2 = "Thing 2";
+  private final String CONTENT_3 = "Thing 3";
+  private final String CONTENT_4 = "Thing 4";
   private final String TEST_EMAIL = "test-email@gmail.com";
+
+  private final long TIME_10 = 10;
+  private final long TIME_20 = 20;
+  private final long TIME_30 = 30;
+  private final long TIME_40 = 40;
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
-  @Mock Principal principal;
-  @Mock ServletConfig config;
   private DatastoreService datastore;
-  private ScheduleAnnouncementServlet servlet;
-  private Clock clock;
 
   private LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
@@ -72,19 +73,43 @@ public final class ScheduleAnnouncementServletTest {
   public void setUp() throws IOException, ServletException {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
-    this.servlet = new ScheduleAnnouncementServlet();
-    this.servlet.init(config);
     datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
-    clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
-    clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(TEST_EMAIL));
-    clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(TEST_EMAIL));
-    clubEntity.setProperty(Constants.DESCRIP_PROP, "");
-    clubEntity.setProperty(Constants.WEBSITE_PROP, "");
-    clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
-    clubEntity.setProperty(Constants.TIME_PROP, 0);
-    datastore.put(clubEntity);
+    Instant instant = Instant.ofEpochMilli(0);
+    AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
+
+    Entity announcement1 = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
+    announcement1.setProperty(Constants.AUTHOR_PROP, TEST_EMAIL);
+    announcement1.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
+    announcement1.setProperty(Constants.CONTENT_PROP, CONTENT_1);
+    announcement1.setProperty(Constants.TIME_PROP, TIME_10);
+    announcement1.setProperty(Constants.EDITED_PROP, false);
+
+    Entity announcement2 = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
+    announcement2.setProperty(Constants.AUTHOR_PROP, TEST_EMAIL);
+    announcement2.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
+    announcement2.setProperty(Constants.CONTENT_PROP, CONTENT_2);
+    announcement2.setProperty(Constants.TIME_PROP, TIME_20);
+    announcement2.setProperty(Constants.EDITED_PROP, false);
+
+    Entity announcement3 = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
+    announcement3.setProperty(Constants.AUTHOR_PROP, TEST_EMAIL);
+    announcement3.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
+    announcement3.setProperty(Constants.CONTENT_PROP, CONTENT_3);
+    announcement3.setProperty(Constants.TIME_PROP, TIME_30);
+    announcement3.setProperty(Constants.EDITED_PROP, false);
+
+    Entity announcement4 = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
+    announcement4.setProperty(Constants.AUTHOR_PROP, TEST_EMAIL);
+    announcement4.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
+    announcement4.setProperty(Constants.CONTENT_PROP, CONTENT_4);
+    announcement4.setProperty(Constants.TIME_PROP, TIME_40);
+    announcement4.setProperty(Constants.EDITED_PROP, false);
+
+    datastore.put(announcement1);
+    datastore.put(announcement2);
+    datastore.put(announcement3);
+    datastore.put(announcement4);
   }
 
   @After
@@ -93,32 +118,15 @@ public final class ScheduleAnnouncementServletTest {
   }
 
   @Test
-  public void scheduleAnnouncement() throws ServletException, IOException {
-    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    ZoneId zone = ZoneId.of(Constants.TIME_ZONE);
-
-    when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
-    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
-
-    when(request.getParameter(Constants.SCHEDULED_DATE_PROP)).thenReturn("2016-01-23T12:35");
-    when(request.getUserPrincipal()).thenReturn(principal);
-    when(principal.getName()).thenReturn(TEST_EMAIL);
-    Instant instant = Instant.parse("2016-01-23T20:34:00.00Z"); // This should be UTC time
-    servlet.setClock(Clock.fixed(instant, ZoneId.of("Z")));
-    servlet.doPost(request, response);
-
-    // Announcement has been made to happen after a minute. Check after 50 and 70 seconds.
-    instant = Instant.parse("2016-01-23T20:34:50.00Z");
-    servlet.setClock(Clock.fixed(instant, ZoneId.of("Z")));
+  public void testSweepAnnouncements() throws ServletException, IOException {
+    Instant instant = Instant.ofEpochMilli(25); // So only announcements 1 and 2 should post.
     AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
     AnnouncementsSweeper.sweepAnnouncements();
-    Assert.assertFalse(checkForAnnouncement(SAMPLE_CLUB_NAME, SAMPLE_NEW_CONTENT));
 
-    instant = Instant.parse("2016-01-23T20:35:10.00Z");
-    servlet.setClock(Clock.fixed(instant, ZoneId.of("Z")));
-    AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
-    AnnouncementsSweeper.sweepAnnouncements();
-    Assert.assertTrue(checkForAnnouncement(SAMPLE_CLUB_NAME, SAMPLE_NEW_CONTENT));
+    Assert.assertTrue(checkForAnnouncement(SAMPLE_CLUB_NAME, CONTENT_1));
+    Assert.assertTrue(checkForAnnouncement(SAMPLE_CLUB_NAME, CONTENT_2));
+    Assert.assertFalse(checkForAnnouncement(SAMPLE_CLUB_NAME, CONTENT_3));
+    Assert.assertFalse(checkForAnnouncement(SAMPLE_CLUB_NAME, CONTENT_4));
   }
 
   private boolean checkForAnnouncement(String club, String content) {

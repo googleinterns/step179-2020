@@ -36,7 +36,6 @@ public class StudentServlet extends HttpServlet {
     // Get student object based on the logged in email
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail();
-    // String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     AnnouncementsSweeper.sweepAnnouncements();
     Entity currentStudent = getStudent(userEmail, datastore);

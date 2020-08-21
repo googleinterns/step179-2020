@@ -41,4 +41,5 @@ public final class Constants {
   public static final String SCHEDULED_DATE_PROP = "scheduled-date";
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   public static final String APPLICATION_NAME = "clubhub-step-2020";
+  public static final String TIME_ZONE = "America/Los_Angeles";
 }

@@ -6,12 +6,10 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/schedule-announcement")
 public class ScheduleAnnouncementServlet extends HttpServlet {
 
-  private ZoneId timeZone = ZoneId.of("America/Los_Angeles");
+  private ZoneId timeZone = ZoneId.of(Constants.TIME_ZONE);
   private Clock clock = Clock.system(timeZone);
 
   protected void setClock(Clock clock) {
@@ -34,7 +32,7 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
     final String clubName = request.getParameter(Constants.PROPERTY_NAME);
     final String announcementContent = request.getParameter(Constants.CONTENT_PROP);
     String scheduledDate = request.getParameter(Constants.SCHEDULED_DATE_PROP);
-    if (scheduledDate.charAt(scheduledDate.length() - 1) != 'Z') {
+    if (!scheduledDate.endsWith("Z")) {
       scheduledDate += ":00.00Z";
     }
     Instant instant = Instant.parse(scheduledDate);
@@ -62,8 +60,7 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
-    response.sendRedirect(
-        "/about-us.html?name=" + clubName + "&tab=announcements");
+    response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
 
   private Club getClub(DatastoreService datastore, String clubName) {
@@ -82,8 +79,8 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
 
     return new Club(
         entity.getProperty(Constants.PROPERTY_NAME).toString(),
-        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.MEMBER_PROP)),
-        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
+        ServletUtil.getPropertyList(entity, Constants.MEMBER_PROP),
+        ServletUtil.getPropertyList(entity, Constants.OFFICER_PROP),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
