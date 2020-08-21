@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -130,7 +129,8 @@ public final class InterestedClubServletTest {
     PreparedQuery results = datastore.prepare(query);
     Entity student = results.asSingleEntity();
     Assert.assertTrue(student != null);
-    ImmutableList<String> interestedClubList = ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP));
+    ImmutableList<String> interestedClubList =
+        ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP);
     Assert.assertFalse(interestedClubList.isEmpty());
     String interestedClub = interestedClubList.get(0);
 
