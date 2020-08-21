@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +35,12 @@ public class DeleteClubServlet extends HttpServlet {
     if (clubEntity == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     } else {
+      String userEmail = UserServiceFactory.getUserService().getCurrentUser().getEmail();
+      ImmutableList<String> currentOfficers =
+          ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
+      if (!currentOfficers.contains(userEmail)) {
+        return; // Not authenticated to post
+      }
       Key clubKey =
           KeyFactory.createKey(
               Constants.CLUB_ENTITY_PROP, request.getParameter(Constants.PROPERTY_NAME));
