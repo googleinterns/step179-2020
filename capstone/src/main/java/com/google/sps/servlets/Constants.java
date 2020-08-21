@@ -10,6 +10,7 @@ public final class Constants {
   public static final String CLUB_PROP = "club";
   public static final String INTERESTED_CLUB_PROP = "interestedClubs";
   public static final String INTERESTED_JOIN_PROP = "interested-join";
+  public static final String INTERESTED_LEAVE_PROP = "interested-leave";
   public static final String PROPERTY_NAME = "name";
   public static final String PROPERTY_EMAIL = "email";
   public static final String PROPERTY_GRADYEAR = "gradYear";

@@ -130,9 +130,7 @@ public final class InterestedClubServletTest {
     PreparedQuery results = datastore.prepare(query);
     Entity student = results.asSingleEntity();
     Assert.assertTrue(student != null);
-    ImmutableList<String> interestedClubList =
-        ImmutableList.copyOf(
-            (ArrayList<String>) student.getProperty(Constants.INTERESTED_CLUB_PROP));
+    ImmutableList<String> interestedClubList = ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP));
     Assert.assertFalse(interestedClubList.isEmpty());
     String interestedClub = interestedClubList.get(0);
 
@@ -145,7 +143,7 @@ public final class InterestedClubServletTest {
   public void doPost_studentLeavesInterestedClub() throws ServletException, IOException {
     datastore.put(studentMegan);
     localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    when(request.getParameter("interested-leave")).thenReturn(CLUB_1);
+    when(request.getParameter(Constants.INTERESTED_LEAVE_PROP)).thenReturn(CLUB_1);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(MEGAN_EMAIL);
 

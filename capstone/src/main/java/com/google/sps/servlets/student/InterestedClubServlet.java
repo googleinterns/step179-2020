@@ -57,7 +57,7 @@ public class InterestedClubServlet extends HttpServlet {
       response.sendRedirect("/explore.html");
     }
     // Remove interested club if necessary
-    String interestedClubToLeave = request.getParameter("interested-leave");
+    String interestedClubToLeave = request.getParameter(Constants.INTERESTED_LEAVE_PROP);
     if (!Strings.isNullOrEmpty(interestedClubToLeave)) {
       // Update Datastore with edited student entity
       student =
