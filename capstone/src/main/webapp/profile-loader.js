@@ -1,3 +1,9 @@
+// Ignore Enter / Return key for profile page
+document.addEventListener('keydown', (event) => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+  }
+});
 getStudentInfo();
 
 /** Fetch student information and add it to the profile */
@@ -5,9 +11,10 @@ function getStudentInfo() {
   fetch('/student-data').then(response => response.json()).then((info) => {  
     var studentInfo = info['student'];
     // Display profile name with edit icon
-    const pencilIcon = '<i class="far fa-edit pencil-edit"></i>';
+    const pencilIcon = '<i id="pencil-name" class="far fa-edit pencil-edit"></i>';
     document.getElementById('edit-name').innerHTML = studentInfo['name'];
     document.getElementById('profile-heading').innerHTML += pencilIcon;
+    document.getElementById('pencil-name').onclick= function() {sendEditAlert('name')};
 
     // Display profile club list
     displayElements(studentInfo['clubs'], '#club-list', 'club-content');
@@ -28,6 +35,10 @@ function getStudentInfo() {
     }
   });
   getInterestedClubList();
+}
+
+function sendEditAlert(type) {
+  alert('Hover over and click on your [type] to edit. Be sure to click "Save Changes" when you are done!'.replace('[type]', type));
 }
 
 /** Fetch interested club list and display on profile page */

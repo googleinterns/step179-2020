@@ -139,6 +139,6 @@ public final class InterestedClubServletTest {
 
     Assert.assertEquals(1, interestedClubList.size());
     Assert.assertEquals(CLUB_1, interestedClub);
-    Mockito.verify(response).sendRedirect("/explore.html");
+    Mockito.verify(response).sendRedirect("/about-us.html?name=" + interestedClub);
   }
 }

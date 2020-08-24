@@ -37,9 +37,9 @@
           <div id="student-info">
             <div id="email">Email: </div>
             Grad Year: 
-            <div id="edit-year" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i><br>
+            <div id="edit-year" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit" onclick="sendEditAlert('graduation year')"></i><br>
             Major: 
-            <div id="edit-major" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i>
+            <div id="edit-major" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit" onclick="sendEditAlert('major')"></i>
           </div><br>
           <button class="save-button" name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
           <div id="update-profile">

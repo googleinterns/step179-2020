@@ -158,7 +158,8 @@ public class ClubServletTest {
 
     String responseStr = stringWriter.toString().trim();
     JsonElement responseJsonElement = new JsonParser().parse(responseStr);
-    JsonObject response = responseJsonElement.getAsJsonObject();
+    JsonObject response = (JsonObject) responseJsonElement;
+    response = response.get("club").getAsJsonObject();
 
     ImmutableList<String> actualMembers = convertJsonList(response.get(Constants.MEMBER_PROP));
     ImmutableList<String> actualOfficers = convertJsonList(response.get(Constants.OFFICER_PROP));

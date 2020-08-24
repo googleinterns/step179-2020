@@ -31,7 +31,8 @@ async function getClubInfo() {
     if (params.get('is-invalid') == 'true') {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
-    const clubInfo = await response.json();
+    const allInfo = await response.json()
+    const clubInfo = allInfo.club;
     imageUrl = 'images/logo.png';
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
@@ -62,6 +63,14 @@ async function getClubInfo() {
       document.getElementById('edit-button').style.display = 'inline-block';
       document.getElementById('delete-button').style.display = 'inline-block';
     }
+
+    // Update join and interested buttons if needed
+    const studentClubs = allInfo.studentClubs;
+    const interestedClubs = allInfo.studentInterestedClubs;
+    document.getElementsByClassName('join-button')[0].value = clubInfo['name'];
+    document.getElementsByClassName('interested-join-button')[0].value = clubInfo['name'];
+    editButton(clubInfo['name'], studentClubs, 'join-button');
+    editButton(clubInfo['name'], interestedClubs, 'interested-join-button');
   }
 }
 
