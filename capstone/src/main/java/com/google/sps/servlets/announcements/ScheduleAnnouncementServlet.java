@@ -31,6 +31,10 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
     final String userEmail = request.getUserPrincipal().getName();
     final String clubName = request.getParameter(Constants.PROPERTY_NAME);
     final String announcementContent = request.getParameter(Constants.CONTENT_PROP);
+    final String clientTimezone = request.getParameter(Constants.TIMEZONE_PROP);
+    if (clientTimezone != null) {
+      timeZone = ZoneId.of(clientTimezone);
+    }
     String scheduledDatetime = request.getParameter(Constants.SCHEDULED_DATE_PROP);
     if (!scheduledDatetime.endsWith("Z")) {
       scheduledDatetime += ":00.00Z";

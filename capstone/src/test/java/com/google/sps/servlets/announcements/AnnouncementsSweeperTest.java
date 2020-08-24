@@ -119,7 +119,7 @@ public final class AnnouncementsSweeperTest {
     datastore.put(announcement3);
     datastore.put(announcement4);
 
-    Instant instant = Instant.ofEpochMilli(25); // So only announcements 1 and 2 should post.
+    instant = Instant.ofEpochMilli(25); // So only announcements 1 and 2 should post.
     AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
     AnnouncementsSweeper.sweepAnnouncements();
 
