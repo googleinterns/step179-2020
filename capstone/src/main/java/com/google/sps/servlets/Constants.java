@@ -28,6 +28,7 @@ public final class Constants {
   public static final int LOAD_LIMIT = 10;
   public static final String CLUB_ENTITY_PROP = "Club";
   public static final String ANNOUNCEMENT_PROP = "Announcement";
+  public static final String FUTURE_ANNOUNCEMENT_PROP = "FutureAnnouncement";
   public static final String AUTHOR_PROP = "author";
   public static final String TIME_PROP = "time";
   public static final String EDITED_PROP = "edited";
@@ -39,8 +40,10 @@ public final class Constants {
   public static final String NEW_YEAR_PROP = "new-year";
   public static final String NEW_MAJOR_PROP = "new-major";
   public static final String PROFILE_PIC_PROP = "upload-profile";
+  public static final String SCHEDULED_DATE_PROP = "scheduled-date";
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   public static final String APPLICATION_NAME = "clubhub-step-2020";
+  public static final String TIME_ZONE = "America/Los_Angeles";
   public static final String EMAIL_PATH =
       System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 }

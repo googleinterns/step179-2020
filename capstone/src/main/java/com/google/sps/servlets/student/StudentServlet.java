@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
@@ -32,8 +34,10 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get student object based on the logged in email
-    String userEmail = request.getUserPrincipal().getName();
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
     Entity currentStudent = getStudent(userEmail, datastore);
     if (currentStudent == null) {
       return;

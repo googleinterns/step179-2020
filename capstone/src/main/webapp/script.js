@@ -190,6 +190,7 @@ function showTab(tabName) {
   const params = new URLSearchParams(window.location.search);
   if (tabName === '#announcements') {
     template.content.querySelector('#club-name').value = params.get('name');
+    template.content.querySelector('#schedule-club-name').value = params.get('name');
   }
 
   const node = document.importNode(template.content, true);
