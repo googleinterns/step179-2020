@@ -100,16 +100,15 @@
     </template>
     <template id="calendar">
       <iframe id="calendar-element" title="Club Calendar"></iframe>
-      <form action="/calendar" method="POST"> 
-        <input type="hidden" name="name" id="club-name-cal">
-        <input type="submit" name="Create calendar" value="Create calendar">
-      </form>
       <div id="event-input">
         <p>Add an event for your club by filling out the necessary information below:</p>
-        <input type="datetime-local" name="start-date">-<input type="datetime-local" name="end-date">
-        <input type="text" name="event-title" placeholder="Event title...">
-        <input type="text" name="event-description" placeholder="Event description...">
-        <input type="submit" value="Add Event">
+        <form action="/add-event" method="POST">
+          <input id="club-name-input" type="hidden" name="club-name" value="">
+          From <input type="datetime-local" name="start-time" required> To <input type="datetime-local" name="end-time" required>
+          <input type="text" name="event-title" placeholder="Event title..." required>
+          <input type="text" name="event-description" placeholder="Event description...">
+          <input type="submit" value="Add Event">
+        </form>
       </div>
     </template>
     <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">

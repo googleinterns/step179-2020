@@ -174,6 +174,7 @@ async function loadCalendar () {
   }
   if(json['club']['isOfficer']) {
     document.getElementById('event-input').style.visibility = 'visible';
+    document.getElementById('club-name-input').value = json['club']['name'];
   }
   document.getElementById('club-name-cal').value = params.get('name');
 }
