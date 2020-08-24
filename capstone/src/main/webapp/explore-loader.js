@@ -48,8 +48,21 @@ async function loadListings (clubs, studentClubs, interestedClubs) {
     template.content.querySelector('.interested-join-button').value = club.name;
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);
+    addAlertOnclick('join-button', club.name);
+    addAlertOnclick('interested-join-button', club.name);
     editButton(club.name, studentClubs, 'join-button');
     editButton(club.name, interestedClubs, 'interested-join-button');
+  }
+}
+
+function addAlertOnclick(className, clubName) {
+  var allButtons = document.getElementsByClassName(className);
+  for (button of allButtons) {
+      if (button.value == clubName) {
+        button.onclick = className.includes('interested') 
+            ? function() {sendJoinedAlert('interested', false, clubName)} 
+            : function() {sendJoinedAlert('joined', false, clubName)};
+      }
   }
 }
 
@@ -70,8 +83,8 @@ function editButton(club, joinedClubList, className) {
 
       // Update onclick functions
       button.onclick = className.includes('interested') 
-          ? function() {sendJoinedAlert('interested', true)} 
-          : function() {sendJoinedAlert('joined', true)};
+          ? function() {sendJoinedAlert('interested', true, club)} 
+          : function() {sendJoinedAlert('joined', true, club)};
     
       if (button.innerText == 'Join Club') {
         button.innerText = 'Joined';
@@ -90,13 +103,15 @@ function getLabelQueryString () {
   return queryString.slice(0, -1); // Takes out the last comma. 
 }
 
-function sendJoinedAlert(interestedOrJoin, alreadyJoined) {
+function sendJoinedAlert(interestedOrJoin, alreadyJoined, clubName) {
   var alertMessage = 'You have ';
   alertMessage += alreadyJoined ? 'already ' : 'successfully ';
   if (interestedOrJoin == 'interested') {
-    alertMessage += 'expressed interest in this club! You can view your interested club list on your profile page.';
+    alertMessage += 'expressed interest in insert_club! You can view your interested club list on your profile page'.replace('insert_club', clubName);
   } else {
-    alertMessage += 'joined this club! You can view your club list or leave a club on your profile page. You will receive notifications for this club.';
+    alertMessage += 'joined insert_club! You can view your club list or leave a club on your profile page. You will receive notifications for insert_club'
+        .replace('insert_club', clubName)
+        .replace('insert_club', clubName);
   }
   alert(alertMessage);
 }
