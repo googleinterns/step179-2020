@@ -104,6 +104,13 @@
         <input type="hidden" name="name" id="club-name-cal">
         <input type="submit" name="Create calendar" value="Create calendar">
       </form>
+      <div id="event-input">
+        <p>Add an event for your club by filling out the necessary information below:</p>
+        <input type="datetime-local" name="start-date">-<input type="datetime-local" name="end-date">
+        <input type="text" name="event-title" placeholder="Event title...">
+        <input type="text" name="event-description" placeholder="Event description...">
+        <input type="submit" value="Add Event">
+      </div>
     </template>
     <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">
       <button class="interested-join-button" name="interested-join" value="" formmethod="POST" onclick="sendJoinedAlert('interested', false)">Interested</button>
