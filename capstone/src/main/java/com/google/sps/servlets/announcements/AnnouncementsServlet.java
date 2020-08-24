@@ -2,6 +2,8 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -15,14 +17,14 @@ import com.google.gson.Gson;
 import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example club content */
 @WebServlet("/announcements")
-public class AnnouncementsServlet extends HttpServlet {
+public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -30,6 +32,7 @@ public class AnnouncementsServlet extends HttpServlet {
     String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
 
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)
@@ -84,6 +87,16 @@ public class AnnouncementsServlet extends HttpServlet {
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
 
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
+  }
+
   private Club getClub(DatastoreService datastore, String clubName) {
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -105,6 +118,7 @@ public class AnnouncementsServlet extends HttpServlet {
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
+        entity.getProperty(Constants.CALENDAR_PROP).toString(),
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }

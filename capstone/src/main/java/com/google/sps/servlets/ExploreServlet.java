@@ -2,6 +2,8 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -15,16 +17,17 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example club content. */
 @WebServlet("/explore")
-public class ExploreServlet extends HttpServlet {
+public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String userEmail = request.getUserPrincipal().getName();
     Gson gson = new Gson();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -47,9 +50,26 @@ public class ExploreServlet extends HttpServlet {
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
 
-    String json = gson.toJson(clubs);
+    ImmutableList<String> studentClubs =
+        getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
+    ImmutableList<String> interestedClubs =
+        getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
+
+    String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  private static ImmutableList<String> getStudentClubList(
+      String userEmail, String property, DatastoreService datastore) {
+    Query query = new Query(userEmail);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = results.asSingleEntity();
+    if (student == null) {
+      return null;
+    }
+    return ServletUtil.getPropertyList(student, property);
   }
 
   private static boolean matchesLabels(Club club, ImmutableList<String> labels) {
@@ -75,8 +95,19 @@ public class ExploreServlet extends HttpServlet {
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
+        entity.getProperty(Constants.CALENDAR_PROP).toString(),
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 
   private static Comparator<Club> getComparator(String sort) {
@@ -89,5 +120,20 @@ public class ExploreServlet extends HttpServlet {
       default:
         return Comparator.comparing(club -> club.getCreationTime());
     }
+  }
+}
+
+class ExploreInfo {
+  private ImmutableList<Club> clubs;
+  private ImmutableList<String> studentClubs;
+  private ImmutableList<String> studentInterestedClubs;
+
+  public ExploreInfo(
+      ImmutableList<Club> clubs,
+      ImmutableList<String> studentClubs,
+      ImmutableList<String> studentInterestedClubs) {
+    this.clubs = clubs;
+    this.studentClubs = studentClubs;
+    this.studentInterestedClubs = studentInterestedClubs;
   }
 }

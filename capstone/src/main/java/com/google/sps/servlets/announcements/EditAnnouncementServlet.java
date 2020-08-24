@@ -2,6 +2,8 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -10,14 +12,14 @@ import com.google.appengine.api.datastore.Query;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import java.io.IOException;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example club content */
 @WebServlet("/edit-announcement")
-public class EditAnnouncementServlet extends HttpServlet {
+public class EditAnnouncementServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
   private final String ID_PROP = "id";
 
@@ -61,5 +63,15 @@ public class EditAnnouncementServlet extends HttpServlet {
                                 + entity.getProperty(Constants.TIME_PROP).toString()))
             .collect(toImmutableList());
     return entities;
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }

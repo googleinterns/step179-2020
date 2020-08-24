@@ -31,7 +31,8 @@ async function getClubInfo() {
     if (params.get('is-invalid') == 'true') {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
-    const clubInfo = await response.json();
+    const allInfo = await response.json()
+    const clubInfo = allInfo.club;
     imageUrl = 'images/logo.png';
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
@@ -60,7 +61,16 @@ async function getClubInfo() {
     document.getElementById('website').innerHTML = clubInfo['website'];
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
+      document.getElementById('delete-button').style.display = 'inline-block';
     }
+
+    // Update join and interested buttons if needed
+    const studentClubs = allInfo.studentClubs;
+    const interestedClubs = allInfo.studentInterestedClubs;
+    document.getElementsByClassName('join-button')[0].value = clubInfo['name'];
+    document.getElementsByClassName('interested-join-button')[0].value = clubInfo['name'];
+    editButton(clubInfo['name'], studentClubs, 'join-button');
+    editButton(clubInfo['name'], interestedClubs, 'interested-join-button');
   }
 }
 
@@ -157,11 +167,11 @@ async function loadCalendar () {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/clubs?name=' + params.get('name'));
   const json = await response.json();
-  if (json['officers'].length == 0) {
-    return; //Should never get here, as all clubs must have at least one officer. 
+
+  // Check that calendar ID exists before updating iframe
+  if (json['calendar'].length != 0) {
+    document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['calendar'];
   }
-  const firstOfficer = json['officers'][0];
-  document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
   document.getElementById('club-name-cal').value = params.get('name');
 }
 
@@ -190,6 +200,7 @@ function showTab(tabName) {
   const params = new URLSearchParams(window.location.search);
   if (tabName === '#announcements') {
     template.content.querySelector('#club-name').value = params.get('name');
+    template.content.querySelector('#schedule-club-name').value = params.get('name');
   }
 
   const node = document.importNode(template.content, true);
@@ -282,4 +293,13 @@ async function getImageUrl(logoKey) {
         .then((pic) => {
           return pic.url;
         });
+}
+
+async function deleteClub() {
+  if (window.confirm('Are you sure you want to delete your club? It will be gone forever :(')) {
+    var clubName = document.getElementById('club-name').innerHTML;
+    const response = await fetch('/delete-club?name=' + clubName, {method: 'POST'});
+    window.alert('Your club has been deleted.');
+    window.location.href = "/explore.html";
+  }
 }

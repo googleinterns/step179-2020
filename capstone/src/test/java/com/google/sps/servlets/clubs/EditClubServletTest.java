@@ -74,7 +74,7 @@ public class EditClubServletTest {
     editClubServlet.doPost(request, response);
 
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
@@ -103,7 +103,7 @@ public class EditClubServletTest {
     editClubServlet.doPost(request, response);
 
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
@@ -130,7 +130,7 @@ public class EditClubServletTest {
     editClubServlet.doPost(request, response);
 
     Query query =
-        new Query("Club")
+        new Query(Constants.CLUB_ENTITY_PROP)
             .setFilter(
                 new FilterPredicate(
                     Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
@@ -173,7 +173,7 @@ public class EditClubServletTest {
 
   private void prepClubEnv() {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
-    Entity clubEntity = new Entity("Club");
+    Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
     clubEntity.setProperty(Constants.DESCRIP_PROP, SAMPLE_CLUB_DESC_1);
     clubEntity.setProperty(Constants.WEBSITE_PROP, SAMPLE_CLUB_WEB);

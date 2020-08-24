@@ -28,6 +28,7 @@
       <artifactId>gson</artifactId>
       <version>2.8.6</version>
     </dependency>
+    
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -54,6 +55,12 @@
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-testing</artifactId>
         <version>1.9.64</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit4</artifactId>
+        <version>2.12.0</version>
         <scope>test</scope>
     </dependency>
     <dependency>
@@ -86,6 +93,29 @@
     </dependency> 
     <dependency>
       <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-calendar</artifactId>
+      <version>v3-rev20200610-1.30.9</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-appengine</artifactId>
+      <version>1.36.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-appengine</artifactId>
+      <version>1.31.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-gson</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client-appengine</artifactId>
+      <version>1.30.9</version>
+    </dependency>
       <artifactId>google-api-services-gmail</artifactId>
       <version>v1-rev110-1.25.0</version>
     </dependency>
