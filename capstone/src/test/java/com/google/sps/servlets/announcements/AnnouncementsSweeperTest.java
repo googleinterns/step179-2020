@@ -74,7 +74,15 @@ public final class AnnouncementsSweeperTest {
     helper.setUp();
     MockitoAnnotations.initMocks(this);
     datastore = DatastoreServiceFactory.getDatastoreService();
+  }
 
+  @After
+  public void tearDown() {
+    helper.tearDown();
+  }
+
+  @Test
+  public void sweepAnnouncements_expectedBehavior() throws ServletException, IOException {
     Instant instant = Instant.ofEpochMilli(0);
     AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
 
@@ -110,15 +118,7 @@ public final class AnnouncementsSweeperTest {
     datastore.put(announcement2);
     datastore.put(announcement3);
     datastore.put(announcement4);
-  }
 
-  @After
-  public void tearDown() {
-    helper.tearDown();
-  }
-
-  @Test
-  public void testSweepAnnouncements() throws ServletException, IOException {
     Instant instant = Instant.ofEpochMilli(25); // So only announcements 1 and 2 should post.
     AnnouncementsSweeper.setClock(Clock.fixed(instant, ZoneId.of("Z")));
     AnnouncementsSweeper.sweepAnnouncements();

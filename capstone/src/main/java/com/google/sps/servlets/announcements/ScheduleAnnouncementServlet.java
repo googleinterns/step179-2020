@@ -31,11 +31,11 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
     final String userEmail = request.getUserPrincipal().getName();
     final String clubName = request.getParameter(Constants.PROPERTY_NAME);
     final String announcementContent = request.getParameter(Constants.CONTENT_PROP);
-    String scheduledDate = request.getParameter(Constants.SCHEDULED_DATE_PROP);
-    if (!scheduledDate.endsWith("Z")) {
-      scheduledDate += ":00.00Z";
+    String scheduledDatetime = request.getParameter(Constants.SCHEDULED_DATE_PROP);
+    if (!scheduledDatetime.endsWith("Z")) {
+      scheduledDatetime += ":00.00Z";
     }
-    Instant instant = Instant.parse(scheduledDate);
+    Instant instant = Instant.parse(scheduledDatetime);
     int timeZoneOffset =
         timeZone.getRules().getOffset(instant).getTotalSeconds()
             * 1000; // Offset returned in seconds, need milliseconds.
