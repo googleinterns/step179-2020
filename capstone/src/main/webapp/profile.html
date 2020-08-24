@@ -26,28 +26,14 @@
         </form>
         <br>
         <h2>My Interested Clubs:</h2>
-        <ul id="interested-club-content">
-          <template id="interested-list">
-            <li></li>
-          </template>
-        </ul>
+        <form name="interested-leave" action="/interested-clubs" method="GET">
+          <ul id="interested-club-content">
+            <template id="interested-list">
+              <li></li>
+            </template>
+          </ul>
         </form>
         <br>
-        <form name="edit-profile" action="/student-data" method="POST">
-          <div id="student-info">
-            <div id="email">Email: </div>
-            Grad Year: 
-            <div id="edit-year" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit" onclick="sendEditAlert('graduation year')"></i><br>
-            Major: 
-            <div id="edit-major" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit" onclick="sendEditAlert('major')"></i>
-          </div><br>
-          <button class="save-button" name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
-          <div id="update-profile">
-            <input type="hidden" name="new-year" value="">
-            <input type="hidden" name="new-major" value="">
-            <input type="hidden" name="new-name" value="">
-          </div>
-        </form>
       </div>
       <div class="split-profile right-profile">
         <h1><u>Inbox</u></h1>
@@ -65,6 +51,21 @@
           <input hidden id="submit-picture" onchange="this.form.submit()" type="file" name="upload-profile">
         </form>
         <br><br>
+        <form name="edit-profile" action="/student-data" method="POST">
+          <div id="student-info">
+            <div id="email">Email: </div>
+            Grad Year: 
+            <div id="edit-year" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i><br>
+            Major: 
+            <div id="edit-major" class="edit-profile" contenteditable="true"></div>  <i class="far fa-edit"></i>
+          </div><br>
+          <button class="save-button" name="edit-profile" onclick="saveProfileChanges()">Save Changes</button>
+          <div id="update-profile">
+            <input type="hidden" name="new-year" value="">
+            <input type="hidden" name="new-major" value="">
+            <input type="hidden" name="new-name" value="">
+          </div>
+        </form>
       </div>
     </div>
   </body>
