@@ -8,6 +8,8 @@ public final class Constants {
   public Constants() {}
 
   public static final String CLUB_PROP = "club";
+  public static final String INTERESTED_CLUB_PROP = "interestedClubs";
+  public static final String INTERESTED_JOIN_PROP = "interested-join";
   public static final String PROPERTY_NAME = "name";
   public static final String PROPERTY_EMAIL = "email";
   public static final String PROPERTY_GRADYEAR = "gradYear";
@@ -42,4 +44,6 @@ public final class Constants {
   public static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   public static final String APPLICATION_NAME = "clubhub-step-2020";
   public static final String TIME_ZONE = "America/Los_Angeles";
+  public static final String EMAIL_PATH =
+      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 }
