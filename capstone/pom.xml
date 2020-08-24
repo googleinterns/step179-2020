@@ -116,6 +116,8 @@
       <artifactId>google-api-client-appengine</artifactId>
       <version>1.30.9</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-gmail</artifactId>
       <version>v1-rev110-1.25.0</version>
     </dependency>
