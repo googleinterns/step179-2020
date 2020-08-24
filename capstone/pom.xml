@@ -40,10 +40,10 @@
       <version>1.9.59</version>
     </dependency>
     <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>2.7.2</version>
-        <scope>test</scope>
+      <groupId>org.mockito</groupId> 
+      <artifactId>mockito-core</artifactId>
+      <version>2.21.0</version> 
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -55,6 +55,12 @@
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-testing</artifactId>
         <version>1.9.64</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit4</artifactId>
+        <version>2.12.0</version>
         <scope>test</scope>
     </dependency>
     <dependency>
@@ -110,11 +116,24 @@
       <artifactId>google-api-client-appengine</artifactId>
       <version>1.30.9</version>
     </dependency>
-    <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>20180130</version>
+      <artifactId>google-api-services-gmail</artifactId>
+      <version>v1-rev110-1.25.0</version>
     </dependency>
+    <dependency>	
+      <groupId>org.json</groupId>	
+      <artifactId>json</artifactId>	
+      <version>20190722</version>	
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.6</version>
+    </dependency>
+   <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>1.1.1</version>
+   </dependency>
   </dependencies>
 
   <build>

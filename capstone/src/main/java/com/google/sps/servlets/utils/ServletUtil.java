@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public final class ServletUtil {
   static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
@@ -68,5 +69,25 @@ public final class ServletUtil {
             Constants.JSON_FACTORY,
             new InputStreamReader(ServletUtil.class.getResourceAsStream("/client_secrets.json")));
     return clientSecrets;
+  }
+  
+  public static Entity addItemToEntity(Entity entity, String itemToAdd, String property) {
+    // Create empty List if property does not exist yet
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
+    if (!generalList.contains(itemToAdd)) {
+      generalList.add(itemToAdd);
+    }
+    entity.setProperty(property, generalList);
+    return entity;
+  }
+
+  public static Entity removeItemFromEntity(Entity entity, String itemToRemove, String property) {
+    // Create empty List if property does not exist yet
+    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
+    if (generalList.contains(itemToRemove)) {
+      generalList.remove(itemToRemove);
+    }
+    entity.setProperty(property, generalList);
+    return entity;
   }
 }

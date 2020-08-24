@@ -32,7 +32,9 @@
         <p class="club-element" id="website"></p>
         <h3>Club Size:</h3>
         <p class="club-element" id="members"></p>
-        <button id="edit-button" onclick="showEdit()">Edit</button>
+        <h3>Labels:</h3>
+        <ul class="club-element" id="labels"></ul>
+        <button hidden id="edit-button" onclick="showEdit()">Edit</button>
         <form hidden method="POST" id="logo-form" enctype="multipart/form-data">
           <label for="logo">Upload new club logo:</label>
           <input type="file" name="logo" id="club-logo">
@@ -44,16 +46,23 @@
           <input type="hidden" id="new-desc" name="description">
           <input type="hidden" id="new-web" name="website">
           <input type="hidden" id="new-officers" name="officers">
+          <input type="hidden" id="new-labels" name="labels">
           <button name="edit-club" onclick="saveClubChanges()">Save Changes</button>
         </form>
       </div>
     </template>
     <template id="announcements">
       <div id="post-announcement" class="full-screen-panel" hidden>
-        <form action="/announcements" method="POST">
+        <form action="/announcements" method="POST" class="full-screen-panel">
           <input type="text" name="content" placeholder="Add announcement...">
           <input type="submit" value="Post">
           <input type="hidden" name="name" id="club-name">
+        </form>
+        <form action="/schedule-announcement" class="full-screen-panel" method="POST">
+          <input type="text" name="content" placeholder="Schedule announcement...">
+          <input type="datetime-local" name="scheduled-date">
+          <input type="submit" value="Schedule">
+          <input type="hidden" name="name" id="schedule-club-name">
         </form>
       </div>
       <div class="full-screen-panel">
@@ -90,6 +99,10 @@
     </template>
     <template id="calendar">
       <iframe id="calendar-element" title="Club Calendar"></iframe>
+      <form action="/calendar" method="POST"> 
+        <input type="hidden" name="name" id="club-name-cal">
+        <input type="submit" name="Create calendar" value="Create calendar">
+      </form>
     </template>
   </body>
 </html>

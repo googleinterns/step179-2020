@@ -9,15 +9,17 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
+import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,9 +34,14 @@ public class StudentServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get student object based on the logged in email
-    String userEmail = request.getUserPrincipal().getName();
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
     Entity currentStudent = getStudent(userEmail, datastore);
+    if (currentStudent == null) {
+      return;
+    }
 
     String profilePictureKey = "";
     if (currentStudent.getProperty(Constants.PROFILE_PIC_PROP) != null) {
@@ -64,7 +71,7 @@ public class StudentServlet extends HttpServlet {
     StudentInfo allInfo = new StudentInfo(student, announcements);
     String studentJson = convertToJsonUsingGson(allInfo);
 
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=utf-8");
     response.getWriter().println(studentJson);
   }
 
@@ -90,10 +97,12 @@ public class StudentServlet extends HttpServlet {
       if (club == null) {
         return;
       }
-      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, true);
+      club = ServletUtil.addItemToEntity(club, userEmail, Constants.MEMBER_PROP);
+      datastore.put(club);
 
       // Add new club to student's club list and update Datastore
-      addOrRemoveItemToEntity(student, datastore, clubToJoin, Constants.PROPERTY_CLUBS, true);
+      student = ServletUtil.addItemToEntity(student, clubToJoin, Constants.PROPERTY_CLUBS);
+      datastore.put(student);
       response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
     } else if (clubToRemove != null && !clubToRemove.isEmpty()) {
       // Remove member from club's member list and update Datastore
@@ -101,11 +110,13 @@ public class StudentServlet extends HttpServlet {
       if (club == null) {
         return;
       }
-      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.MEMBER_PROP, false);
-      addOrRemoveItemToEntity(club, datastore, userEmail, Constants.OFFICER_PROP, false);
+      club = ServletUtil.removeItemFromEntity(club, userEmail, Constants.MEMBER_PROP);
+      club = ServletUtil.removeItemFromEntity(club, userEmail, Constants.OFFICER_PROP);
+      datastore.put(club);
 
       // Remove club from student's club list and update Datastore
-      addOrRemoveItemToEntity(student, datastore, clubToRemove, Constants.PROPERTY_CLUBS, false);
+      student = ServletUtil.removeItemFromEntity(student, clubToRemove, Constants.PROPERTY_CLUBS);
+      datastore.put(student);
       response.sendRedirect("/profile.html");
     } else {
       response.sendRedirect("/profile.html");
@@ -128,7 +139,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  private Entity getStudent(String userEmail, DatastoreService datastore) {
+  private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -138,6 +149,7 @@ public class StudentServlet extends HttpServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
+      EmailFactory.sendWelcomeEmail(userEmail);
       results = datastore.prepare(query);
       students = ImmutableList.copyOf(results.asIterable());
     }
@@ -153,6 +165,7 @@ public class StudentServlet extends HttpServlet {
     studentEntity.setProperty(Constants.PROPERTY_MAJOR, "Enter your major here");
     studentEntity.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
     studentEntity.setProperty(Constants.PROFILE_PIC_PROP, "");
+    studentEntity.setProperty(Constants.INTERESTED_CLUB_PROP, ImmutableList.of());
     return studentEntity;
   }
 
@@ -181,7 +194,7 @@ public class StudentServlet extends HttpServlet {
     return announcements;
   }
 
-  private static String getAnnouncementAsString(Entity announcement) {
+  public static String getAnnouncementAsString(Entity announcement) {
     // Set calendar timezone and time
     TimeZone timePST = TimeZone.getTimeZone(TIMEZONE_PST);
     Calendar calendar = Calendar.getInstance(timePST);
@@ -216,25 +229,6 @@ public class StudentServlet extends HttpServlet {
       return null;
     }
     return clubs.get(0);
-  }
-
-  private static void addOrRemoveItemToEntity(
-      Entity entity,
-      DatastoreService datastore,
-      String itemToAddOrRemove,
-      String property,
-      Boolean addItem) {
-    // Create empty List if property does not exist yet
-    List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));
-    if (addItem && !generalList.contains(itemToAddOrRemove)) {
-      generalList.add(itemToAddOrRemove);
-    }
-    if (!addItem && generalList.contains(itemToAddOrRemove)) {
-      generalList.remove(itemToAddOrRemove);
-    }
-    // Add updated entity to Datastore
-    entity.setProperty(property, generalList);
-    datastore.put(entity);
   }
 }
 

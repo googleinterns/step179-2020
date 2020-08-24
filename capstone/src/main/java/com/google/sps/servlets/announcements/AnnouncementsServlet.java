@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
+import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -31,6 +32,7 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
     String userEmail = request.getUserPrincipal().getName();
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    AnnouncementsSweeper.sweepAnnouncements();
 
     Query query =
         new Query(Constants.ANNOUNCEMENT_PROP)
@@ -80,6 +82,7 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
     announcementEntity.setProperty(Constants.EDITED_PROP, false);
 
     datastore.put(announcementEntity);
+    EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
   }
@@ -116,6 +119,7 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
         entity.getProperty(Constants.CALENDAR_PROP).toString(),
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

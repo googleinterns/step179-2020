@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
@@ -31,11 +33,18 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     String sort = request.getParameter(Constants.SORT_PROP);
     Comparator<Club> comparator = getComparator(sort);
 
+    ImmutableList<String> rawLabels =
+        ImmutableList.copyOf(request.getParameter(Constants.LABELS_PROP).split(","));
+    ImmutableList<String> labels =
+        rawLabels.stream()
+            .filter(Predicates.not(Strings::isNullOrEmpty))
+            .collect(toImmutableList());
     Query query = new Query(Constants.CLUB_ENTITY_PROP);
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Club> clubs =
         Streams.stream(results.asIterable())
-            .map(entity -> createClubFromEntity(entity))
+            .map(ExploreServlet::createClubFromEntity)
+            .filter(club -> matchesLabels(club, labels))
             .sorted(comparator)
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
@@ -45,7 +54,18 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     response.getWriter().println(json);
   }
 
-  private Club createClubFromEntity(Entity entity) {
+  private static boolean matchesLabels(Club club, ImmutableList<String> labels) {
+    if (labels.isEmpty()) { // No labels means no filtering.
+      return true;
+    }
+
+    ImmutableList<String> clubLabels = club.getLabels();
+    ImmutableList<String> intersect =
+        clubLabels.stream().filter(labels::contains).collect(toImmutableList());
+    return intersect.size() == labels.size();
+  }
+
+  private static Club createClubFromEntity(Entity entity) {
     String key = "";
     if (entity.getProperty(Constants.LOGO_PROP) != null) {
       key = entity.getProperty(Constants.LOGO_PROP).toString();
@@ -58,6 +78,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
         entity.getProperty(Constants.CALENDAR_PROP).toString(),
+        ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 
@@ -71,7 +92,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     return ServletUtil.newFlow();
   }
 
-  private Comparator<Club> getComparator(String sort) {
+  private static Comparator<Club> getComparator(String sort) {
     switch (sort) {
       case Constants.ALPHA_SORT_PROP:
         return Comparator.comparing(

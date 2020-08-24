@@ -143,6 +143,34 @@ public class EditClubServletTest {
     Assert.assertEquals(SAMPLE_CLUB_WEB, clubEntity.getProperty(Constants.WEBSITE_PROP));
   }
 
+  @Test
+  public void doPost_editLabels() throws ServletException, IOException {
+    prepClubEnv();
+
+    String label1 = "ST e    M ";
+    String label2 = "HGBdi - sg ";
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn("fake-person@fake.com");
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getParameter(Constants.LABELS_PROP)).thenReturn(label1 + "," + label2);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> labels =
+        ImmutableList.copyOf((ArrayList<String>) clubEntity.getProperty(Constants.LABELS_PROP));
+
+    Assert.assertNotNull(clubEntity);
+    Assert.assertEquals(2, labels.size());
+    Assert.assertEquals(labels.get(0), "stem");
+    Assert.assertEquals(labels.get(1), "hgbdi-sg");
+  }
+
   private void prepClubEnv() {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     Entity clubEntity = new Entity("Club");

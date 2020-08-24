@@ -47,6 +47,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
           ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
       ImmutableList<String> officers =
           ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
+      ImmutableList<String> labels = ServletUtil.getPropertyList(clubEntity, Constants.LABELS_PROP);
       String description = clubEntity.getProperty(Constants.DESCRIP_PROP).toString();
       String website = clubEntity.getProperty(Constants.WEBSITE_PROP).toString();
       String logoKey = "";
@@ -57,7 +58,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       boolean isOfficer = officers.contains(userEmail);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       Club club =
-          new Club(name, members, officers, description, website, logoKey, calendar, creationTime);
+          new Club(name, members, officers, description, website, logoKey, calendar, labels, creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -110,6 +111,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       clubEntity.setProperty(Constants.WEBSITE_PROP, website);
       clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(founderEmail));
       clubEntity.setProperty(Constants.OFFICER_PROP, ImmutableList.of(founderEmail));
+      clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
       clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
