@@ -169,8 +169,8 @@ async function loadCalendar () {
   const json = await response.json();
 
   // Check that calendar ID exists before updating iframe
-  if (json['calendar'].length != 0) {
-    document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['calendar'];
+  if (json['club']['calendar'].length != 0) {
+    document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['club']['calendar'];
   }
   document.getElementById('club-name-cal').value = params.get('name');
 }
