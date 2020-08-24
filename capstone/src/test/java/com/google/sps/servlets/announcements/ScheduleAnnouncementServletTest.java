@@ -82,6 +82,7 @@ public final class ScheduleAnnouncementServletTest {
     clubEntity.setProperty(Constants.MEMBER_PROP, ImmutableList.of(TEST_EMAIL));
     clubEntity.setProperty(Constants.DESCRIP_PROP, "");
     clubEntity.setProperty(Constants.WEBSITE_PROP, "");
+    clubEntity.setProperty(Constants.CALENDAR_PROP, "");
     clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
     clubEntity.setProperty(Constants.TIME_PROP, 0);
     datastore.put(clubEntity);

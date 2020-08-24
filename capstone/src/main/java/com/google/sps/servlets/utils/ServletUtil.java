@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public final class ServletUtil {
   static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
@@ -49,7 +49,8 @@ public final class ServletUtil {
     // Authorized URIs.
     // return
     // "https://8080-4417b0ad-e7ff-4d2f-acc8-c9ddcf7b56d9.us-west1.cloudshell.dev/oauth2callback";
-    return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    // return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    return "https://8080-4afd6625-e4a1-43f4-8d79-fc4c0cf1c87d.us-west1.cloudshell.dev/oauth2callback";
   }
 
   public static GoogleAuthorizationCodeFlow newFlow() throws IOException {
@@ -70,7 +71,7 @@ public final class ServletUtil {
             new InputStreamReader(ServletUtil.class.getResourceAsStream("/client_secrets.json")));
     return clientSecrets;
   }
-  
+
   public static Entity addItemToEntity(Entity entity, String itemToAdd, String property) {
     // Create empty List if property does not exist yet
     List<String> generalList = new ArrayList<String>(ServletUtil.getPropertyList(entity, property));

@@ -63,7 +63,16 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       boolean isOfficer = officers.contains(userEmail);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       Club club =
-          new Club(name, members, officers, description, website, logoKey, calendar, labels, creationTime);
+          new Club(
+              name,
+              members,
+              officers,
+              description,
+              website,
+              logoKey,
+              calendar,
+              labels,
+              creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -175,7 +184,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     com.google.api.services.calendar.model.Calendar calendar =
         new com.google.api.services.calendar.model.Calendar()
             .setSummary(clubName + " Calendar")
-            .setTimeZone(Constants.PST_TIMEZONE);
+            .setTimeZone(Constants.TIME_ZONE);
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
     return createdCalendarId;
   }
