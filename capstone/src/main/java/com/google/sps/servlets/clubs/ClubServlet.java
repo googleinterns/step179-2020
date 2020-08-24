@@ -1,5 +1,11 @@
 package com.google.sps.servlets;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.services.calendar.Calendar;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -14,16 +20,20 @@ import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /* Servlet that stores and returns data relating to clubs. */
 @WebServlet("/clubs")
-public class ClubServlet extends HttpServlet {
+public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
+  private final String SCOPE_TYPE = "user";
+  private final String USER_CALENDAR_PERMISSIONS = "reader";
+  private static final HttpTransport HTTP_TRANSPORT = UrlFetchTransport.getDefaultInstance();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,11 +54,11 @@ public class ClubServlet extends HttpServlet {
       if (clubEntity.getProperty(Constants.LOGO_PROP) != null) {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
+      String calendar = clubEntity.getProperty(Constants.CALENDAR_PROP).toString();
       boolean isOfficer = officers.contains(userEmail);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       Club club =
-          new Club(name, members, officers, description, website, logoKey, labels, creationTime);
-
+          new Club(name, members, officers, description, website, logoKey, calendar, labels, creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
@@ -63,18 +73,25 @@ public class ClubServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    doPostHelper(request, response, datastore);
+    try {
+      Calendar service = getCalendarService();
+      doPostHelper(request, response, datastore, service);
+    } catch (GeneralSecurityException calendarError) {
+      response.getWriter().println(calendarError);
+    }
   }
 
   public void doPostHelper(
-      HttpServletRequest request, HttpServletResponse response, DatastoreService datastore)
+      HttpServletRequest request,
+      HttpServletResponse response,
+      DatastoreService datastore,
+      Calendar service)
       throws IOException {
     // Must use UserService to access logged in user here
     UserService userService = UserServiceFactory.getUserService();
     String founderEmail = userService.getCurrentUser().getEmail();
 
     // Check if club name is valid
-
     PreparedQuery prepared = retrieveClub(request, datastore);
     boolean isValid = Iterables.isEmpty(prepared.asIterable());
 
@@ -82,6 +99,12 @@ public class ClubServlet extends HttpServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
+      String calendarId = "";
+      try {
+        calendarId = createCalendar(clubName, service);
+      } catch (Exception entityError) {
+        response.getWriter().println("Error");
+      }
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
       clubEntity.setProperty(Constants.DESCRIP_PROP, description);
@@ -91,8 +114,8 @@ public class ClubServlet extends HttpServlet {
       clubEntity.setProperty(Constants.LABELS_PROP, ImmutableList.of());
       clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
+      clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
       datastore.put(clubEntity);
-
       addClubToFoundersClubList(datastore, founderEmail, clubName);
     }
     response.sendRedirect("/registration-msg.html?is-valid=" + isValid);
@@ -127,5 +150,34 @@ public class ClubServlet extends HttpServlet {
                     request.getParameter(Constants.PROPERTY_NAME)));
     PreparedQuery prepared = datastore.prepare(query);
     return prepared;
+  }
+
+  /** Return the Calendar ID after creating a calendar for the given club name. */
+  private String createCalendar(String clubName, Calendar service)
+      throws IOException, GeneralSecurityException {
+    com.google.api.services.calendar.model.Calendar calendar =
+        new com.google.api.services.calendar.model.Calendar()
+            .setSummary(clubName + " Calendar")
+            .setTimeZone(Constants.PST_TIMEZONE);
+    String createdCalendarId = service.calendars().insert(calendar).execute().getId();
+    return createdCalendarId;
+  }
+
+  private Calendar getCalendarService() throws IOException, GeneralSecurityException {
+    String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    Credential credential = ServletUtil.newFlow().loadCredential(userId);
+    return new Calendar.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
+        .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
+        .build();
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }

@@ -1,4 +1,5 @@
 target/
 .idea
 appengine-generated/
+client_secrets.json
 credentials.json

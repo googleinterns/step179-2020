@@ -157,11 +157,11 @@ async function loadCalendar () {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/clubs?name=' + params.get('name'));
   const json = await response.json();
-  if (json['officers'].length == 0) {
-    return; //Should never get here, as all clubs must have at least one officer. 
+
+  // Check that calendar ID exists before updating iframe
+  if (json['calendar'].length != 0) {
+    document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['calendar'];
   }
-  const firstOfficer = json['officers'][0];
-  document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + firstOfficer;
   document.getElementById('club-name-cal').value = params.get('name');
 }
 

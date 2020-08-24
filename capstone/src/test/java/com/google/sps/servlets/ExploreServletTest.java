@@ -92,6 +92,9 @@ public final class ExploreServletTest {
     String BLOB_KEY_1 = "fake blob key";
     String BLOB_KEY_2 = "another fake blob key";
 
+    String CALENDAR_ID_1 = "calendar 1";
+    String CALENDAR_ID_2 = "calendar 2";
+
     long TIME_1 = 10;
     long TIME_2 = 20;
 
@@ -106,6 +109,7 @@ public final class ExploreServletTest {
     club1.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_1);
     club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
     club1.setProperty(Constants.LOGO_PROP, BLOB_KEY_1);
+    club1.setProperty(Constants.CALENDAR_PROP, CALENDAR_ID_1);
     club1.setProperty(Constants.TIME_PROP, TIME_1);
 
     Entity club2 = new Entity(Constants.CLUB_ENTITY_PROP);
@@ -115,6 +119,7 @@ public final class ExploreServletTest {
     club2.setProperty(Constants.DESCRIP_PROP, DESCRIPTION_2);
     club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
     club2.setProperty(Constants.LOGO_PROP, BLOB_KEY_2);
+    club2.setProperty(Constants.CALENDAR_PROP, CALENDAR_ID_2);
     club2.setProperty(Constants.TIME_PROP, TIME_2);
 
     this.datastore.put(club1);
@@ -144,6 +149,7 @@ public final class ExploreServletTest {
     Assert.assertEquals(object0.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_1);
     Assert.assertEquals(object0.get(Constants.WEBSITE_PROP).getAsString(), SITE_1);
     Assert.assertEquals(object0.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_1);
+    Assert.assertEquals(object0.get(Constants.CALENDAR_PROP).getAsString(), CALENDAR_ID_1);
     Assert.assertEquals(object0.get(Constants.TIME_PROP).getAsLong(), TIME_1);
 
     JsonElement element1 = response.get(1);
@@ -165,6 +171,7 @@ public final class ExploreServletTest {
     Assert.assertEquals(object1.get(Constants.DESCRIP_PROP).getAsString(), DESCRIPTION_2);
     Assert.assertEquals(object1.get(Constants.WEBSITE_PROP).getAsString(), SITE_2);
     Assert.assertEquals(object1.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_2);
+    Assert.assertEquals(object1.get(Constants.CALENDAR_PROP).getAsString(), CALENDAR_ID_2);
     Assert.assertEquals(object1.get(Constants.TIME_PROP).getAsLong(), TIME_2);
   }
 

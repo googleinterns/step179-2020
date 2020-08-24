@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta name="google-signin-client_id" content="264953829929-ffv5q12afu4a7bm3vd7pnlfg8d96tlom.apps.googleusercontent.com" charset="UTF-8">
     <title>Club Registration</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
@@ -9,7 +9,7 @@
   <body>
     <div id="navbar"></div>
     <h2>Club Registration</h2>
-    <form id="club-form" action="/clubs" class="full-screen-panel" method="POST">
+    <form id="club-form" action="/clubs?response_mode=form_post" class="full-screen-panel" method="POST">
       <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" name="name" id="club-name">
