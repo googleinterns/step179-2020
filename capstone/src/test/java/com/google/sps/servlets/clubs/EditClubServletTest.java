@@ -61,7 +61,8 @@ public class EditClubServletTest {
 
   @Test
   public void doPost_editClubAllValidOfficers() throws ServletException, IOException {
-    prepClubEnv();
+    Entity startingEntity = makeClubEntity();
+    datastore.put(startingEntity);
     String newDescription = "new test description";
     String newWebsite = "new-website.com";
     String newOfficer = "kakm@google.com";
@@ -92,7 +93,8 @@ public class EditClubServletTest {
 
   @Test
   public void doPost_editClubSomeValidOfficers() throws ServletException, IOException {
-    prepClubEnv();
+    Entity startingEntity = makeClubEntity();
+    datastore.put(startingEntity);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.OFFICER_PROP))
         .thenReturn("fake-person@fake.com," + TEST_EMAIL);
@@ -120,7 +122,8 @@ public class EditClubServletTest {
 
   @Test
   public void doPost_editClubNoValidOfficers() throws ServletException, IOException {
-    prepClubEnv();
+    Entity startingEntity = makeClubEntity();
+    datastore.put(startingEntity);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn("fake-person@fake.com");
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
@@ -145,8 +148,8 @@ public class EditClubServletTest {
 
   @Test
   public void doPost_editLabels() throws ServletException, IOException {
-    prepClubEnv();
-
+    Entity startingEntity = makeClubEntity();
+    datastore.put(startingEntity);
     String label1 = "ST e    M ";
     String label2 = "HGBdi - sg ";
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
@@ -171,7 +174,61 @@ public class EditClubServletTest {
     Assert.assertEquals(labels.get(1), "hgbdi-sg");
   }
 
-  private void prepClubEnv() {
+  @Test
+  public void doPost_makeClubExclusive() throws ServletException, IOException {
+    Entity startingEntity = makeClubEntity();
+    startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
+    datastore.put(startingEntity);
+    String newDescription = "new test description";
+    String newWebsite = "new-website.com";
+    String newOfficer = "kakm@google.com";
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Assert.assertNotNull(clubEntity);
+    Assert.assertTrue((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
+  }
+
+  @Test
+  public void doPost_makeClubInclusive() throws ServletException, IOException {
+    Entity startingEntity = makeClubEntity();
+    startingEntity.setProperty(Constants.EXCLUSIVE_PROP, true);
+    datastore.put(startingEntity);
+    String newDescription = "new test description";
+    String newWebsite = "new-website.com";
+    String newOfficer = "kakm@google.com";
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(null);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    Assert.assertNotNull(clubEntity);
+    Assert.assertFalse((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
+  }
+
+  private Entity makeClubEntity() {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
@@ -181,6 +238,6 @@ public class EditClubServletTest {
     clubEntity.setProperty(
         Constants.MEMBER_PROP,
         ImmutableList.of(TEST_EMAIL, "meganshi@google.com", "kakm@google.com", "kshao@google.com"));
-    datastore.put(clubEntity);
+    return clubEntity;
   }
 }
