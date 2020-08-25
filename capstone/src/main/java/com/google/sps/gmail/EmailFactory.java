@@ -81,21 +81,17 @@ public class EmailFactory {
 
   private static String getHTMLAsString(String path) throws IOException {
     // Load HTML file and convert to String
-    InputStream is = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
+    InputStream inputStream = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
     ByteSource byteSource =
         new ByteSource() {
           @Override
           public InputStream openStream() throws IOException {
-            return is;
+            return inputStream;
           }
         };
 
-    String text = byteSource.asCharSource(Charsets.UTF_8).read();
-    return text;
-    // String fullPath = new File(".").getCanonicalPath() + Constants.EMAIL_PATH + path;
-    // File htmlTemplate = new File(fullPath);
-    // String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
-    // return emailBody;
+    String emailBody = byteSource.asCharSource(Charsets.UTF_8).read();
+    return emailBody;
   }
 
   public static void sendWelcomeEmail(String recipientEmail) throws IOException {

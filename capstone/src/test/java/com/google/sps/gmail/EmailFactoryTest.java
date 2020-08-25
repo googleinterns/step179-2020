@@ -164,21 +164,16 @@ public class EmailFactoryTest {
   }
 
   private String getEmailBody(String path) throws IOException {
-    // String fullPath = new File(".").getCanonicalPath() + Constants.EMAIL_PATH + path;
-    // File htmlTemplate = new File(fullPath);
-    // String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
-    // return emailBody;
-
-    InputStream is = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
+    InputStream inputStream = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
     ByteSource byteSource =
         new ByteSource() {
           @Override
           public InputStream openStream() throws IOException {
-            return is;
+            return inputStream;
           }
         };
 
-    String text = byteSource.asCharSource(Charsets.UTF_8).read();
-    return text;
+    String emailBody = byteSource.asCharSource(Charsets.UTF_8).read();
+    return emailBody;
   }
 }

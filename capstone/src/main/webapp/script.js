@@ -179,8 +179,14 @@ async function loadScheduledAnnouncements() {
   var evenOdd = true;
   for (var announcement of json) {
     const pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
-    console.log(announcement.picture);
-    template.content.querySelector('img').src = announcement.picture ? pictureSrc.url: 'images/profile.jpeg';
+    var pictureSrc;
+    if (announcement.picture) {
+        pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+        pictureSrc = pictureSrc.url;
+    } else {
+        pictureSrc = 'images/profile.jpeg';
+    }
+    template.content.querySelector('img').src = pictureSrc;
     template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
     template.content.querySelector('.announcement-content').innerHTML = announcement.content;
     const dateString = new Date(announcement.time).toLocaleDateString("en-US");
