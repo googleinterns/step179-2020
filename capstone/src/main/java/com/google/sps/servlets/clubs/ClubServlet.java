@@ -77,7 +77,9 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
       boolean isOfficer = officers.contains(userEmail);
+      boolean viewable = members.contains(userEmail) || !isExclusive;
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
+      jsonElement.getAsJsonObject().addProperty("viewable", viewable);
       ClubInfo clubInfo = new ClubInfo(jsonElement, studentClubs, interestedClubs);
       String json = gson.toJson(clubInfo);
       response.setContentType("text/html;");

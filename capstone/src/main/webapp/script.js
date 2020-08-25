@@ -33,6 +33,10 @@ async function getClubInfo() {
     }
     const allInfo = await response.json()
     const clubInfo = allInfo.club;
+    if (!clubInfo['viewable']) {
+      alert("Uh oh! You are not a member of this exclusive club. Please join the club to view club info!");
+      window.location.replace("explore.html");
+    }
     imageUrl = 'images/logo.png';
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
