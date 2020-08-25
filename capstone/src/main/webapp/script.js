@@ -250,6 +250,7 @@ function showEdit() {
   document.getElementById('website').contentEditable = 'true';
   document.getElementById('officers-list').contentEditable = 'true';
   document.getElementById('edit-button').style.display = 'none';
+  document.getElementById('delete-button').style.display = 'none';
   document.getElementById('labels').contentEditable = 'true';
   document.getElementById('labels').innerHTML += '<li></li>';
   document.getElementById('edit-form').removeAttribute('hidden');

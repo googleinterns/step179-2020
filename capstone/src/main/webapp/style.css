@@ -296,6 +296,10 @@ button:hover {
   display: none; 
 }
 
+#delete-button {
+    display: none;
+}
+
 #club-join-container,
 #interested-club-container {
   display: inline;

@@ -114,6 +114,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
+      boolean isExclusive = request.getParameter("exclusive") != null;
       String calendarId = "";
       try {
         calendarId = createCalendar(clubName, service);
@@ -130,6 +131,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
+      clubEntity.setProperty("isExclusive", isExclusive);
       datastore.put(clubEntity);
       addClubToFoundersClubList(datastore, founderEmail, clubName);
     }
