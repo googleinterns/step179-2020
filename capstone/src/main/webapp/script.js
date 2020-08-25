@@ -69,6 +69,8 @@ async function getClubInfo() {
     const interestedClubs = allInfo.studentInterestedClubs;
     document.getElementsByClassName('join-button')[0].value = clubInfo['name'];
     document.getElementsByClassName('interested-join-button')[0].value = clubInfo['name'];
+    addAlertOnclick('join-button', clubInfo['name']);
+    addAlertOnclick('interested-join-button', clubInfo['name']);
     editButton(clubInfo['name'], studentClubs, 'join-button');
     editButton(clubInfo['name'], interestedClubs, 'interested-join-button');
   }
