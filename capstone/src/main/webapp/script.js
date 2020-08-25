@@ -66,7 +66,8 @@ async function getClubInfo() {
     } else {
       membersElement.innerHTML = 'There are ' + clubInfo['members'].length + ' members in this club.';
     }
-    document.getElementById('website').innerHTML = clubInfo['website'];
+    var websiteElement = document.getElementById('website');
+    websiteElement.setAttribute('href', clubInfo['website']);
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
     }
