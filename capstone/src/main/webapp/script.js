@@ -101,7 +101,8 @@ async function loadAnnouncements () {
   for (var announcement of json) {
     const id = announcement.author + announcement.content + announcement.time; // Unique string to identiy this announcement.
 
-    template.content.querySelector('img').src = 'images/profile.jpeg';
+    const pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+    template.content.querySelector('img').src = pictureSrc.url ? pictureSrc.url: 'images/profile.jpeg';
     template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
     template.content.querySelector('.announcement-content').innerHTML = announcement.content;
     if (JSON.parse(announcement.edited)) {
