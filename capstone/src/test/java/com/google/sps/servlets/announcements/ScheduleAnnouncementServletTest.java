@@ -100,6 +100,7 @@ public final class ScheduleAnnouncementServletTest {
 
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.TIMEZONE_PROP)).thenReturn("America/Los_Angeles");
 
     when(request.getParameter(Constants.SCHEDULED_DATE_PROP)).thenReturn("2016-01-23T12:35");
     when(request.getUserPrincipal()).thenReturn(principal);

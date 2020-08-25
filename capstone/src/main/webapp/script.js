@@ -201,6 +201,7 @@ function showTab(tabName) {
   if (tabName === '#announcements') {
     template.content.querySelector('#club-name').value = params.get('name');
     template.content.querySelector('#schedule-club-name').value = params.get('name');
+    template.content.querySelector('#timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
   const node = document.importNode(template.content, true);
