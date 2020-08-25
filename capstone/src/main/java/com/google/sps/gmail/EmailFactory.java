@@ -9,14 +9,16 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
+import com.google.common.io.ByteSource;
 import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import com.google.sps.servlets.StudentServlet;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
@@ -24,7 +26,6 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 
 public class EmailFactory {
   // The special value "me" can be used to indicate the authenticated user
@@ -80,10 +81,21 @@ public class EmailFactory {
 
   private static String getHTMLAsString(String path) throws IOException {
     // Load HTML file and convert to String
-    String fullPath = Constants.EMAIL_PATH + path;
-    File htmlTemplate = new File(fullPath);
-    String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
-    return emailBody;
+    InputStream is = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
+    ByteSource byteSource =
+        new ByteSource() {
+          @Override
+          public InputStream openStream() throws IOException {
+            return is;
+          }
+        };
+
+    String text = byteSource.asCharSource(Charsets.UTF_8).read();
+    return text;
+    // String fullPath = new File(".").getCanonicalPath() + Constants.EMAIL_PATH + path;
+    // File htmlTemplate = new File(fullPath);
+    // String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
+    // return emailBody;
   }
 
   public static void sendWelcomeEmail(String recipientEmail) throws IOException {

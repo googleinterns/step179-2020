@@ -13,11 +13,12 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -28,7 +29,6 @@ import java.util.TimeZone;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -164,9 +164,21 @@ public class EmailFactoryTest {
   }
 
   private String getEmailBody(String path) throws IOException {
-    String fullPath = Constants.EMAIL_PATH + path;
-    File htmlTemplate = new File(fullPath);
-    String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
-    return emailBody;
+    // String fullPath = new File(".").getCanonicalPath() + Constants.EMAIL_PATH + path;
+    // File htmlTemplate = new File(fullPath);
+    // String emailBody = FileUtils.readFileToString(htmlTemplate, "utf-8");
+    // return emailBody;
+
+    InputStream is = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
+    ByteSource byteSource =
+        new ByteSource() {
+          @Override
+          public InputStream openStream() throws IOException {
+            return is;
+          }
+        };
+
+    String text = byteSource.asCharSource(Charsets.UTF_8).read();
+    return text;
   }
 }

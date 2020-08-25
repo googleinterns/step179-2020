@@ -48,6 +48,6 @@ public final class Constants {
   public static final String APPLICATION_NAME = "clubhub-step-2020";
   public static final String TIME_ZONE = "America/Los_Angeles";
   public static final String TIMEZONE_PROP = "timezone";
-  public static final String EMAIL_PATH =
-      System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
+  public static final String EMAIL_PATH = "/emailTemplates/";
+  // System.getProperty("user.home") + "/step179-2020/capstone/src/main/webapp/emailTemplates";
 }
