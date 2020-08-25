@@ -43,6 +43,13 @@ async function loadListings (clubs, studentClubs, interestedClubs) {
     template.content.querySelector('#club-name').innerHTML = club.name;
     template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;
+    console.log(club.exclusive);
+    if (club['exclusive']) {
+      console.log(club.name + ' is exclusive is ' + club.exclusive);
+      template.content.querySelector('#exclusive').innerHTML = 'Exclusive';
+    } else {
+      template.content.querySelector('#exclusive').innerHTML = '';
+    }
     template.content.querySelector('#members').innerHTML = club.members.length + ' members';
     template.content.querySelector('.join-button').value = club.name;
     template.content.querySelector('.interested-join-button').value = club.name;

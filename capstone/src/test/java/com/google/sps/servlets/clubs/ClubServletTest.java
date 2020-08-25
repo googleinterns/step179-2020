@@ -148,6 +148,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
     clubEntity.setProperty(Constants.CALENDAR_PROP, SAMPLE_CAL_ID);
+    clubEntity.setProperty(Constants.EXCLUSIVE_PROP, true);
     clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
@@ -170,6 +171,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
     Assert.assertEquals(SAMPLE_CAL_ID, response.get(Constants.CALENDAR_PROP).getAsString());
+    // TODO: Assert.assertTrue(response.get(Constants.EXCLUSIVE_PROP));
     Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 

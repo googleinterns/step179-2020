@@ -60,7 +60,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
         logoKey = clubEntity.getProperty(Constants.LOGO_PROP).toString();
       }
       String calendar = clubEntity.getProperty(Constants.CALENDAR_PROP).toString();
-      boolean isOfficer = officers.contains(userEmail);
+      boolean isExclusive = (Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       Club club =
           new Club(
@@ -72,9 +72,11 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
               logoKey,
               calendar,
               labels,
+              isExclusive,
               creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
+      boolean isOfficer = officers.contains(userEmail);
       jsonElement.getAsJsonObject().addProperty("isOfficer", isOfficer);
       ClubInfo clubInfo = new ClubInfo(jsonElement, studentClubs, interestedClubs);
       String json = gson.toJson(clubInfo);
@@ -114,7 +116,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       String clubName = request.getParameter(Constants.PROPERTY_NAME);
       String description = request.getParameter(Constants.DESCRIP_PROP);
       String website = request.getParameter(Constants.WEBSITE_PROP);
-      boolean isExclusive = request.getParameter("exclusive") != null;
+      boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
       String calendarId = "";
       try {
         calendarId = createCalendar(clubName, service);
@@ -131,7 +133,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       clubEntity.setProperty(Constants.TIME_PROP, System.currentTimeMillis());
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
-      clubEntity.setProperty("isExclusive", isExclusive);
+      clubEntity.setProperty(Constants.EXCLUSIVE_PROP, isExclusive);
       datastore.put(clubEntity);
       addClubToFoundersClubList(datastore, founderEmail, clubName);
     }
