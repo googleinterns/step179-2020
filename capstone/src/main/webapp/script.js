@@ -41,6 +41,10 @@ async function getClubInfo() {
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
     }
+
+    if (clubInfo['exclusive']) {
+      document.getElementById('makeExclusive').checked = true;
+    }
     document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
     document.getElementById('description').innerHTML = clubInfo['description'];
@@ -65,7 +69,6 @@ async function getClubInfo() {
     document.getElementById('website').innerHTML = clubInfo['website'];
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
-      document.getElementById('delete-button').style.display = 'inline-block';
     }
 
     // Update join and interested buttons if needed
@@ -259,6 +262,7 @@ function showEdit() {
   document.getElementById('labels').innerHTML += '<li></li>';
   document.getElementById('edit-form').removeAttribute('hidden');
   document.getElementById('logo-form').removeAttribute('hidden');
+  document.getElementById('delete-button').style.display = 'inline-block';
   document.getElementById('logo-club-name').value = document.getElementById('club-name').innerHTML;
   fetchBlobstoreUrl();
 }
