@@ -21,25 +21,18 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet for obtaining the Calendar ID of a group and adding or obtaining events */
 @WebServlet("/add-event")
 public class AddEventsServlet extends HttpServlet {
-  public static final String TIMEZONE_OFFSET = ":00.000-07:00";
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String startTime = request.getParameter("start-time");
-    String endTime = request.getParameter("end-time");
-    String title = request.getParameter("event-title");
-    String description = request.getParameter("event-description");
-    String clubName = request.getParameter("club-name");
+    String startTime = request.getParameter(Constants.START_TIME_PROP) + Constants.TIMEZONE_OFFSET;
+    String endTime = request.getParameter(Constants.END_TIME_PROP) + Constants.TIMEZONE_OFFSET;
+    String title = request.getParameter(Constants.EVENT_TITLE_PROP);
+    String description = request.getParameter(Constants.EVENT_DESCRIPTION_PROP);
+    String clubName = request.getParameter(Constants.CLUB_PROP);
     String calendarId = getCalendarId(clubName);
 
+    // Add event to calendar and return event information
     try {
-      Event event =
-          addEvent(
-              calendarId,
-              title,
-              description,
-              startTime + TIMEZONE_OFFSET,
-              endTime + TIMEZONE_OFFSET);
+      Event event = addEventToCalendar(calendarId, title, description, startTime, endTime);
       response.setContentType("application/json");
       response.getWriter().println(event.toString());
     } catch (Exception error) {
@@ -62,7 +55,7 @@ public class AddEventsServlet extends HttpServlet {
     return null;
   }
 
-  public Event addEvent(
+  private Event addEventToCalendar(
       String calendarId,
       String eventTitle,
       String eventDescription,
@@ -77,8 +70,8 @@ public class AddEventsServlet extends HttpServlet {
   }
 
   private Event createEvent(String title, String description, String start, String end) {
-    EventDateTime startTime = createEventDateTime(start);
-    EventDateTime endTime = createEventDateTime(end);
+    EventDateTime startTime = getEventDateTime(start);
+    EventDateTime endTime = getEventDateTime(end);
 
     return new Event()
         .setSummary(title)
@@ -87,7 +80,7 @@ public class AddEventsServlet extends HttpServlet {
         .setEnd(endTime);
   }
 
-  private EventDateTime createEventDateTime(String time) {
-    return new EventDateTime().setDateTime(new DateTime(time)).setTimeZone("America/Los_Angeles");
+  private EventDateTime getEventDateTime(String time) {
+    return new EventDateTime().setDateTime(new DateTime(time)).setTimeZone(Constants.TIME_ZONE);
   }
 }
