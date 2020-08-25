@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet for obtaining the Calendar ID of a group and adding or obtaining events */
+/** Servlet for adding events to a club's calendar */
 @WebServlet("/add-event")
 public class AddEventsServlet extends HttpServlet {
   @Override
@@ -55,7 +55,7 @@ public class AddEventsServlet extends HttpServlet {
     return null;
   }
 
-  private Event addEventToCalendar(
+  public Event addEventToCalendar(
       String calendarId,
       String eventTitle,
       String eventDescription,
@@ -63,7 +63,6 @@ public class AddEventsServlet extends HttpServlet {
       String eventEnd)
       throws IOException, GeneralSecurityException {
     Event event = createEvent(eventTitle, eventDescription, eventStart, eventEnd);
-
     Calendar service = ClubServlet.getCalendarService();
     service.events().insert(calendarId, event).execute();
     return event;
