@@ -19,14 +19,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet for adding events to a club's calendar */
+/** Servlet for obtaining the Calendar ID of a group and adding or obtaining events */
 @WebServlet("/add-event")
 public class AddEventsServlet extends HttpServlet {
   private ZoneId timeZone = ZoneId.of(Constants.TIME_ZONE);
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.sendRedirect(request.getHeader("referer"));
     String startTime = request.getParameter(Constants.START_TIME_PROP) + Constants.TIMEZONE_OFFSET;
     String endTime = request.getParameter(Constants.END_TIME_PROP) + Constants.TIMEZONE_OFFSET;
     String title = request.getParameter(Constants.EVENT_TITLE_PROP);
@@ -49,6 +48,7 @@ public class AddEventsServlet extends HttpServlet {
     } catch (Exception error) {
       System.out.println("Error: " + error);
     }
+    response.sendRedirect(request.getHeader("referer"));
   }
 
   private String getCalendarId(String clubName) {
@@ -73,6 +73,7 @@ public class AddEventsServlet extends HttpServlet {
       String eventEnd)
       throws IOException, GeneralSecurityException {
     Event event = createEvent(eventTitle, eventDescription, eventStart, eventEnd);
+
     Calendar service = ClubServlet.getCalendarService();
     service.events().insert(calendarId, event).execute();
     return event;
