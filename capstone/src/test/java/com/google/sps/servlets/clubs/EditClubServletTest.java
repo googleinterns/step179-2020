@@ -202,7 +202,7 @@ public class EditClubServletTest {
   }
 
   @Test
-  public void doPost_makeClubInclusive() throws ServletException, IOException {
+  public void doPost_makeClubNotExclusive() throws ServletException, IOException {
     Entity startingEntity = makeClubEntity();
     startingEntity.setProperty(Constants.EXCLUSIVE_PROP, true);
     datastore.put(startingEntity);
