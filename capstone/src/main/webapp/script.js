@@ -25,10 +25,10 @@ async function getClubInfo() {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/clubs?name=' + params.get('name'));
   if (response.status == 400) {
-    alert("Invalid club! Returning to Explore.");
+    alert('Invalid club! Returning to Explore.');
     window.location.replace("explore.html");
   } else if (response.status == 401) {
-      alert("Uh oh! You are not a member of this exclusive club. Please join the club to view club info!");
+      alert('Uh oh! You are not a member of this exclusive club. Please join the club to view club info!');
       window.location.replace("explore.html");  
   } else {
     if (params.get('is-invalid') == 'true') {
