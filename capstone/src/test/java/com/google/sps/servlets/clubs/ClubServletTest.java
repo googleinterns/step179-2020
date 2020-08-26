@@ -85,6 +85,7 @@ public class ClubServletTest {
   public void doPost_registerNewValidClub() throws ServletException, IOException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(null);
 
     doPost_helper();
     clubServlet.doPostHelper(request, response, datastore, calendarService);
@@ -104,7 +105,31 @@ public class ClubServletTest {
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.MEMBER_PROP));
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
     Assert.assertEquals(SAMPLE_CAL_ID, clubEntity.getProperty(Constants.CALENDAR_PROP));
+    Assert.assertFalse((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
 
+    Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
+  }
+
+  @Test
+  public void doPost_registerNewValidExclusiveClub() throws ServletException, IOException {
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn("test-email@gmail.com");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+
+    doPost_helper();
+    clubServlet.doPostHelper(request, response, datastore, calendarService);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME,
+                    FilterOperator.EQUAL,
+                    request.getParameter(Constants.PROPERTY_NAME)));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+
+    Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
+    Assert.assertTrue((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
 
@@ -148,6 +173,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.WEBSITE_PROP, "website.com");
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
     clubEntity.setProperty(Constants.CALENDAR_PROP, SAMPLE_CAL_ID);
+    clubEntity.setProperty(Constants.EXCLUSIVE_PROP, true);
     clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
@@ -170,6 +196,7 @@ public class ClubServletTest {
     Assert.assertEquals(expectedOfficers, actualOfficers);
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
     Assert.assertEquals(SAMPLE_CAL_ID, response.get(Constants.CALENDAR_PROP).getAsString());
+    Assert.assertTrue(response.get(Constants.EXCLUSIVE_PROP).getAsBoolean());
     Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 

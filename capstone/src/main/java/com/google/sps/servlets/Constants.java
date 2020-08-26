@@ -47,6 +47,7 @@ public final class Constants {
   public static final String SCHEDULED_DATE_PROP = "scheduled-date";
   public static final String APPLICATION_NAME = "clubhub-step-2020";
   public static final String TIME_ZONE = "America/Los_Angeles";
+  public static final String EXCLUSIVE_PROP = "exclusive";
   public static final String START_TIME_PROP = "start-time";
   public static final String END_TIME_PROP = "end-time";
   public static final String EVENT_TITLE_PROP = "event-title";

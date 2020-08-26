@@ -25,17 +25,25 @@ async function getClubInfo() {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/clubs?name=' + params.get('name'));
   if (response.status == 400) {
-    alert("Invalid club! Returning to Explore.");
+    alert('Invalid club! Returning to Explore.');
     window.location.replace("explore.html");
+  } else if (response.status == 401) {
+      alert('Uh oh! You are not a member of this exclusive club. Please join the club to view club info!');
+      window.location.replace("explore.html");  
   } else {
     if (params.get('is-invalid') == 'true') {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
     const allInfo = await response.json()
     const clubInfo = allInfo.club;
+    
     imageUrl = 'images/logo.png';
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
+    }
+
+    if (clubInfo['exclusive']) {
+      document.getElementById('makeExclusive').checked = true;
     }
     document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
@@ -58,10 +66,10 @@ async function getClubInfo() {
     } else {
       membersElement.innerHTML = 'There are ' + clubInfo['members'].length + ' members in this club.';
     }
-    document.getElementById('website').innerHTML = clubInfo['website'];
+    var websiteElement = document.getElementById('website');
+    websiteElement.setAttribute('href', clubInfo['website']);
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
-      document.getElementById('delete-button').style.display = 'inline-block';
     }
 
     // Update join and interested buttons if needed
@@ -311,10 +319,12 @@ function showEdit() {
   document.getElementById('website').contentEditable = 'true';
   document.getElementById('officers-list').contentEditable = 'true';
   document.getElementById('edit-button').style.display = 'none';
+  document.getElementById('delete-button').style.display = 'none';
   document.getElementById('labels').contentEditable = 'true';
   document.getElementById('labels').innerHTML += '<li></li>';
   document.getElementById('edit-form').removeAttribute('hidden');
   document.getElementById('logo-form').removeAttribute('hidden');
+  document.getElementById('delete-button').style.display = 'inline-block';
   document.getElementById('logo-club-name').value = document.getElementById('club-name').innerHTML;
   fetchBlobstoreUrl();
 }

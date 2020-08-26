@@ -43,6 +43,7 @@ async function loadListings (clubs, studentClubs, interestedClubs) {
     template.content.querySelector('#club-name').innerHTML = club.name;
     template.content.querySelector('#club-name').href = 'about-us.html?name=' + club.name;
     template.content.querySelector('#description').innerHTML = club.description;
+    template.content.querySelector('#exclusive').innerHTML = club['exclusive'] ? 'Exclusive' : '';
     template.content.querySelector('#members').innerHTML = club.members.length + ' members';
     template.content.querySelector('.join-button').value = club.name;
     template.content.querySelector('.interested-join-button').value = club.name;
