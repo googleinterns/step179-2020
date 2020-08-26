@@ -226,6 +226,11 @@ async function loadCalendar () {
   if (json['club']['calendar'].length != 0) {
     document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['club']['calendar'];
   }
+  if(json['club']['isOfficer']) {
+    document.getElementById('event-input').style.visibility = 'visible';
+    document.getElementById('club-name-input').value = json['club']['name'];
+  }
+  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   document.getElementById('club-name-cal').value = params.get('name');
 }
 

@@ -47,6 +47,11 @@ public final class Constants {
   public static final String SCHEDULED_DATE_PROP = "scheduled-date";
   public static final String APPLICATION_NAME = "clubhub-step-2020";
   public static final String TIME_ZONE = "America/Los_Angeles";
+  public static final String START_TIME_PROP = "start-time";
+  public static final String END_TIME_PROP = "end-time";
+  public static final String EVENT_TITLE_PROP = "event-title";
+  public static final String EVENT_DESCRIPTION_PROP = "event-description";
+  public static final String TIMEZONE_OFFSET = ":00.000-07:00";
   public static final String TIMEZONE_PROP = "timezone";
   public static final String EMAIL_PATH = "/emailTemplates/";
 }

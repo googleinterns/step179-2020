@@ -304,7 +304,8 @@ button:hover {
   border: 0;
   width: 800px;
   height: 600px;
-  display:inline-block;
+  display: inline-block;
+  padding: 20px;
 }
 
 #row {
@@ -330,4 +331,8 @@ button:hover {
 
 #hidden-input {
   all: revert;
+}
+
+#event-input {
+  visibility: hidden;
 }

@@ -118,7 +118,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       try {
         calendarId = createCalendar(clubName, service);
       } catch (Exception entityError) {
-        response.getWriter().println("Error");
+        response.getWriter().println("Error: " + entityError);
       }
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);
@@ -189,7 +189,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     return createdCalendarId;
   }
 
-  private Calendar getCalendarService() throws IOException, GeneralSecurityException {
+  public static Calendar getCalendarService() throws IOException, GeneralSecurityException {
     String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
     Credential credential = ServletUtil.newFlow().loadCredential(userId);
     return new Calendar.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
