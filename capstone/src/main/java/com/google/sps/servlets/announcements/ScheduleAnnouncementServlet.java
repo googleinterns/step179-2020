@@ -1,11 +1,17 @@
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
@@ -24,6 +30,39 @@ public class ScheduleAnnouncementServlet extends HttpServlet {
 
   protected void setClock(Clock clock) {
     this.clock = clock;
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String userEmail = request.getUserPrincipal().getName();
+    String clubName = request.getParameter(Constants.PROPERTY_NAME);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query(Constants.FUTURE_ANNOUNCEMENT_PROP)
+            .setFilter(new FilterPredicate(Constants.CLUB_PROP, FilterOperator.EQUAL, clubName));
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Announcement> announcements =
+        Streams.stream(results.asIterable())
+            .limit(Constants.LOAD_LIMIT)
+            .map(
+                entity ->
+                    new Announcement(
+                        entity.getProperty(Constants.AUTHOR_PROP).toString(),
+                        entity.getProperty(Constants.CLUB_PROP).toString(),
+                        Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()),
+                        entity.getProperty(Constants.CONTENT_PROP).toString(),
+                        userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
+                        ServletUtil.getNameByEmail(
+                            entity.getProperty(Constants.AUTHOR_PROP).toString()),
+                        Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString()),
+                        ServletUtil.getPictureByEmail(
+                            entity.getProperty(Constants.AUTHOR_PROP).toString())))
+            .collect(toImmutableList());
+
+    Gson gson = new Gson();
+    String json = gson.toJson(announcements);
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
   }
 
   @Override

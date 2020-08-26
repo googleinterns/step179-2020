@@ -8,6 +8,7 @@ public class Announcement {
   private boolean isAuthor;
   private String authorName;
   private boolean edited;
+  private String picture;
 
   public Announcement(
       String author,
@@ -16,7 +17,8 @@ public class Announcement {
       String content,
       boolean isAuthor,
       String authorName,
-      boolean edited) {
+      boolean edited,
+      String picture) {
     this.author = author;
     this.club = club;
     this.time = time;
@@ -24,5 +26,6 @@ public class Announcement {
     this.isAuthor = isAuthor;
     this.authorName = authorName;
     this.edited = edited;
+    this.picture = picture;
   }
 }

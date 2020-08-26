@@ -90,6 +90,16 @@ public final class ServletUtilTest {
   }
 
   @Test
+  public void getPictureByEmail_desiredBehavior() throws ServletException, IOException {
+    studentMegan.setProperty(Constants.PROFILE_PIC_PROP, "url.png");
+    datastore.put(studentMegan);
+
+    Assert.assertEquals(
+        studentMegan.getProperty(Constants.PROFILE_PIC_PROP),
+        ServletUtil.getPictureByEmail(MEGAN_EMAIL));
+  }
+
+  @Test
   public void addItemToEntity_listIsInitiallyEmpty() throws ServletException, IOException {
     datastore.put(studentMegan);
     Entity student = getEntityFromDatastore(MEGAN_EMAIL);
