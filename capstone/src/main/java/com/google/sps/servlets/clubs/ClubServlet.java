@@ -119,6 +119,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
         calendarId = createCalendar(clubName, service);
       } catch (Exception entityError) {
         response.getWriter().println("Error");
+        System.out.println("Error: " + entityError);
       }
       Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP, clubName);
       clubEntity.setProperty(Constants.PROPERTY_NAME, clubName);

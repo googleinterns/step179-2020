@@ -176,6 +176,7 @@ async function loadCalendar () {
     document.getElementById('event-input').style.visibility = 'visible';
     document.getElementById('club-name-input').value = json['club']['name'];
   }
+  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   document.getElementById('club-name-cal').value = params.get('name');
 }
 

@@ -99,7 +99,10 @@
       </div>
     </template>
     <template id="calendar">
-      <iframe id="calendar-element" title="Club Calendar"></iframe>
+      <iframe id="calendar-element" title="Club Calendar" src=""></iframe>
+      <form action="/calendar" method="POST"> 
+        <input type="hidden" name="name" id="club-name-cal">
+      </form>
       <div id="event-input">
         <p>Add an event for your club by filling out the necessary information below:</p>
         <form action="/add-event" method="POST">
@@ -107,6 +110,7 @@
           From <input type="datetime-local" name="start-time" required> To <input type="datetime-local" name="end-time" required>
           <input type="text" name="event-title" placeholder="Event title..." required>
           <input type="text" name="event-description" placeholder="Event description...">
+          <input type="hidden" name="timezone" id="timezone">
           <input type="submit" value="Add Event">
         </form>
       </div>

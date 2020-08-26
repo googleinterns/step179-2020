@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.ZoneId;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,14 +22,24 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet for adding events to a club's calendar */
 @WebServlet("/add-event")
 public class AddEventsServlet extends HttpServlet {
+  private ZoneId timeZone = ZoneId.of(Constants.TIME_ZONE);
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.sendRedirect(request.getHeader("referer"));
     String startTime = request.getParameter(Constants.START_TIME_PROP) + Constants.TIMEZONE_OFFSET;
     String endTime = request.getParameter(Constants.END_TIME_PROP) + Constants.TIMEZONE_OFFSET;
     String title = request.getParameter(Constants.EVENT_TITLE_PROP);
     String description = request.getParameter(Constants.EVENT_DESCRIPTION_PROP);
     String clubName = request.getParameter(Constants.CLUB_PROP);
     String calendarId = getCalendarId(clubName);
+    if (calendarId == null) {
+      return;
+    }
+    String clientTimezone = request.getParameter(Constants.TIMEZONE_PROP);
+    if (clientTimezone != null) {
+      timeZone = ZoneId.of(clientTimezone);
+    }
 
     // Add event to calendar and return event information
     try {
@@ -38,7 +49,6 @@ public class AddEventsServlet extends HttpServlet {
     } catch (Exception error) {
       System.out.println("Error: " + error);
     }
-    response.sendRedirect(request.getHeader("referer"));
   }
 
   private String getCalendarId(String clubName) {
@@ -80,6 +90,6 @@ public class AddEventsServlet extends HttpServlet {
   }
 
   private EventDateTime getEventDateTime(String time) {
-    return new EventDateTime().setDateTime(new DateTime(time)).setTimeZone(Constants.TIME_ZONE);
+    return new EventDateTime().setDateTime(new DateTime(time)).setTimeZone(timeZone.toString());
   }
 }
