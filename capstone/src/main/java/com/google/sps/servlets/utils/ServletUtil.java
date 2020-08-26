@@ -42,13 +42,23 @@ public final class ServletUtil {
     return entity.getProperty(Constants.PROPERTY_NAME).toString();
   }
 
+  public static String getPictureByEmail(String email) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query(email);
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return null;
+    }
+    return entity.getProperty(Constants.PROFILE_PIC_PROP).toString();
+  }
+
   public static String getRedirectUri(HttpServletRequest req) {
     // TODO: change redirect URI when web app is deployed.
     // If you want to run this locally, you will need to replace this with your dev server URI
     // - then add "/oauth2callback" to the end of it and add that to you API console under
     // Authorized URIs.
-    // return "https://clubhub-step-2020.googleplex.com/oauth2callback";
-    return "https://8080-4417b0ad-e7ff-4d2f-acc8-c9ddcf7b56d9.us-west1.cloudshell.dev/oauth2callback";
+    return "https://clubhub-step-2020.googleplex.com/oauth2callback";
   }
 
   public static GoogleAuthorizationCodeFlow newFlow() throws IOException {

@@ -51,7 +51,9 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
                         userEmail.equals(entity.getProperty(Constants.AUTHOR_PROP).toString()),
                         ServletUtil.getNameByEmail(
                             entity.getProperty(Constants.AUTHOR_PROP).toString()),
-                        Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString())))
+                        Boolean.parseBoolean(entity.getProperty(Constants.EDITED_PROP).toString()),
+                        ServletUtil.getPictureByEmail(
+                            entity.getProperty(Constants.AUTHOR_PROP).toString())))
             .collect(toImmutableList())
             .reverse();
 

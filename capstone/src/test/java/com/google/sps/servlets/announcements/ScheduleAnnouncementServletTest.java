@@ -27,7 +27,13 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.security.Principal;
 import java.time.Clock;
 import java.time.Instant;
@@ -95,12 +101,54 @@ public final class ScheduleAnnouncementServletTest {
   }
 
   @Test
+  public void doGet_desiredBehavior() throws IOException {
+    helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+
+    Entity announcement1 = new Entity(Constants.FUTURE_ANNOUNCEMENT_PROP);
+    announcement1.setProperty(Constants.AUTHOR_PROP, TEST_EMAIL);
+    announcement1.setProperty(Constants.CLUB_PROP, SAMPLE_CLUB_NAME);
+    announcement1.setProperty(Constants.CONTENT_PROP, SAMPLE_NEW_CONTENT);
+    announcement1.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
+    announcement1.setProperty(Constants.EDITED_PROP, false);
+    this.datastore.put(announcement1);
+
+    JsonArray response = getServletResponse(servlet);
+
+    int expectedSize = 1;
+    Assert.assertEquals(expectedSize, response.size());
+
+    JsonObject announcement = response.get(0).getAsJsonObject();
+    Assert.assertEquals(TEST_EMAIL, announcement.get(Constants.AUTHOR_PROP).getAsString());
+    Assert.assertEquals(SAMPLE_CLUB_NAME, announcement.get(Constants.CLUB_PROP).getAsString());
+    Assert.assertEquals(SAMPLE_NEW_CONTENT, announcement.get(Constants.CONTENT_PROP).getAsString());
+    Assert.assertEquals(SAMPLE_TIME, announcement.get(Constants.TIME_PROP).getAsLong());
+    Assert.assertFalse(announcement.get(Constants.EDITED_PROP).getAsBoolean());
+  }
+
+  private JsonArray getServletResponse(ScheduleAnnouncementServlet servlet) throws IOException {
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(printWriter);
+
+    servlet.doGet(request, response);
+
+    String responseStr = stringWriter.toString().trim();
+    JsonElement responseJsonElement = new JsonParser().parse(responseStr);
+
+    return responseJsonElement.getAsJsonArray();
+  }
+
+  @Test
   public void scheduleAnnouncement() throws ServletException, IOException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     ZoneId zone = ZoneId.of(Constants.TIME_ZONE);
 
     when(request.getParameter(Constants.CONTENT_PROP)).thenReturn(SAMPLE_NEW_CONTENT);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.TIMEZONE_PROP)).thenReturn("America/Los_Angeles");
 
     when(request.getParameter(Constants.SCHEDULED_DATE_PROP)).thenReturn("2016-01-23T12:35");
     when(request.getUserPrincipal()).thenReturn(principal);

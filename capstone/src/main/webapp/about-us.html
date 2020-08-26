@@ -67,11 +67,17 @@
           <input type="datetime-local" name="scheduled-date">
           <input type="submit" value="Schedule">
           <input type="hidden" name="name" id="schedule-club-name">
+          <input type="hidden" name="timezone" id="timezone">
         </form>
       </div>
       <div class="full-screen-panel">
+        <h1>Scheduled Announcements</h1>
+        <div id="scheduled-announcements" class="full-screen-panel" hidden></div>
+      </div>
+
+      <div class="full-screen-panel">
         <h1>Announcements</h1>
-        <ul id="announcements-display">
+        <div id="announcements-display">
           <template id="announcement-element">
             <div id="announcement-container">
               <img id="announcement-profile-picture">
@@ -98,15 +104,25 @@
               </div>
             </div>
           </template>
-        </ul>
+        </div>
       </div>
     </template>
     <template id="calendar">
-      <iframe id="calendar-element" title="Club Calendar"></iframe>
+      <iframe id="calendar-element" title="Club Calendar" src=""></iframe>
       <form action="/calendar" method="POST"> 
         <input type="hidden" name="name" id="club-name-cal">
-        <input type="submit" name="Create calendar" value="Create calendar">
       </form>
+      <div id="event-input">
+        <p>Add an event for your club by filling out the necessary information below:</p>
+        <form action="/add-event" method="POST">
+          <input id="club-name-input" type="hidden" name="club" value="">
+          From <input type="datetime-local" name="start-time" required> To <input type="datetime-local" name="end-time" required>
+          <input type="text" name="event-title" placeholder="Event title..." required>
+          <input type="text" name="event-description" placeholder="Event description...">
+          <input type="hidden" name="timezone" id="timezone">
+          <input type="submit" value="Add Event">
+        </form>
+      </div>
     </template>
     <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">
       <button class="interested-join-button" name="interested-join" value="" formmethod="POST" onclick="sendJoinedAlert('interested', false)">Interested</button>
