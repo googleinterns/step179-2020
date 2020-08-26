@@ -64,11 +64,17 @@
           <input type="datetime-local" name="scheduled-date">
           <input type="submit" value="Schedule">
           <input type="hidden" name="name" id="schedule-club-name">
+          <input type="hidden" name="timezone" id="timezone">
         </form>
       </div>
       <div class="full-screen-panel">
+        <h1>Scheduled Announcements</h1>
+        <div id="scheduled-announcements" class="full-screen-panel" hidden></div>
+      </div>
+
+      <div class="full-screen-panel">
         <h1>Announcements</h1>
-        <ul id="announcements-display">
+        <div id="announcements-display">
           <template id="announcement-element">
             <div id="announcement-container">
               <img id="announcement-profile-picture">
@@ -95,7 +101,7 @@
               </div>
             </div>
           </template>
-        </ul>
+        </div>
       </div>
     </template>
     <template id="calendar">

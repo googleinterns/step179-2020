@@ -69,6 +69,8 @@ async function getClubInfo() {
     const interestedClubs = allInfo.studentInterestedClubs;
     document.getElementsByClassName('join-button')[0].value = clubInfo['name'];
     document.getElementsByClassName('interested-join-button')[0].value = clubInfo['name'];
+    addAlertOnclick('join-button', clubInfo['name']);
+    addAlertOnclick('interested-join-button', clubInfo['name']);
     editButton(clubInfo['name'], studentClubs, 'join-button');
     editButton(clubInfo['name'], interestedClubs, 'interested-join-button');
   }
@@ -82,6 +84,7 @@ async function showHidePostAnnouncement () {
   const text = await response.text();
   if (JSON.parse(text)) {
     document.getElementById('post-announcement').removeAttribute('hidden');
+    document.getElementById('scheduled-announcements').removeAttribute('hidden');
   }
 }
 
@@ -101,7 +104,14 @@ async function loadAnnouncements () {
   for (var announcement of json) {
     const id = announcement.author + announcement.content + announcement.time; // Unique string to identiy this announcement.
 
-    template.content.querySelector('img').src = 'images/profile.jpeg';
+    var pictureSrc;
+    if (announcement.picture) {
+        pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+        pictureSrc = pictureSrc.url;
+    } else {
+        pictureSrc = 'images/profile.jpeg';
+    }
+    template.content.querySelector('img').src = pictureSrc;
     template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
     template.content.querySelector('.announcement-content').innerHTML = announcement.content;
     if (JSON.parse(announcement.edited)) {
@@ -147,6 +157,50 @@ async function loadAnnouncements () {
         saveAnnouncement(id);
       };
     }
+  }
+}
+
+/** Accesses and displays club announcement data from servlet. */
+async function loadScheduledAnnouncements() {
+  var params = new URLSearchParams(window.location.search);
+  const isOfficerQuery = '/officer?name=' + params.get('name');
+  const isOfficerResponse = await fetch(isOfficerQuery);
+  const isOfficer = await isOfficerResponse.text();
+  if (!JSON.parse(isOfficer)) {
+    return; // Not an officer, don't load scheduled announcements. Servlet won't give anything anyway. 
+  }    
+
+  const query = '/schedule-announcement?name=' + params.get('name');
+  const response = await fetch(query);
+  const json = await response.json();
+  const template = document.querySelector('#announcement-element');
+
+  var backgroundColor;
+  const color1 = '#AAA';
+  const color2 = '#BBB';
+  var evenOdd = true;
+  for (var announcement of json) {
+    const pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+    var pictureSrc;
+    if (announcement.picture) {
+        pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+        pictureSrc = pictureSrc.url;
+    } else {
+        pictureSrc = 'images/profile.jpeg';
+    }
+    template.content.querySelector('img').src = pictureSrc;
+    template.content.querySelector('.announcement-author').innerHTML = announcement.authorName;
+    template.content.querySelector('.announcement-content').innerHTML = announcement.content;
+    const dateString = new Date(announcement.time).toLocaleDateString("en-US");
+    const timeString = new Date(announcement.time).toLocaleTimeString("en-US");
+    template.content.querySelector('.announcement-time').innerHTML = timeString + " on " + dateString;
+
+    backgroundColor = evenOdd ? color1 : color2; // In order to switch background colors every announcement
+    template.content.querySelector('#announcement-container').style.backgroundColor = backgroundColor;
+    evenOdd = !evenOdd;
+
+    var clone = document.importNode(template.content, true);
+    document.getElementById('scheduled-announcements').appendChild(clone);
 
   }
 }
@@ -206,6 +260,7 @@ function showTab(tabName) {
   if (tabName === '#announcements') {
     template.content.querySelector('#club-name').value = params.get('name');
     template.content.querySelector('#schedule-club-name').value = params.get('name');
+    template.content.querySelector('#timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
   const node = document.importNode(template.content, true);
@@ -218,6 +273,7 @@ function showTab(tabName) {
     getClubInfo();
     loadAnnouncements();
     showHidePostAnnouncement();
+    loadScheduledAnnouncements();
   } else if (tabName === '#calendar') {
     loadCalendar();
   }
