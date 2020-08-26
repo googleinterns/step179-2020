@@ -27,16 +27,16 @@ async function getClubInfo() {
   if (response.status == 400) {
     alert("Invalid club! Returning to Explore.");
     window.location.replace("explore.html");
+  } else if (response.status == 401) {
+      alert("Uh oh! You are not a member of this exclusive club. Please join the club to view club info!");
+      window.location.replace("explore.html");  
   } else {
     if (params.get('is-invalid') == 'true') {
       alert('Unable to update officers list: no officer was a member of the club.');
     }
     const allInfo = await response.json()
     const clubInfo = allInfo.club;
-    if (!clubInfo['viewable']) {
-      alert("Uh oh! You are not a member of this exclusive club. Please join the club to view club info!");
-      window.location.replace("explore.html");
-    }
+    
     imageUrl = 'images/logo.png';
     if (clubInfo['logo'] != '') {
       imageUrl = await getImageUrl(clubInfo['logo']);
