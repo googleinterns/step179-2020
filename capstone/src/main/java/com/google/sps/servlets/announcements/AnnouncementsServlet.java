@@ -3,7 +3,12 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -11,12 +16,15 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -87,6 +95,32 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
     EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
+  }
+
+  public static Gmail getGmailService() throws IOException, GeneralSecurityException {
+    final NetHttpTransport GMAIL_HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+    String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    System.out.println("userId: " + userId);
+    Credential credential = ServletUtil.newFlow().loadCredential(userId);
+    System.out.println("credential: " + credential.toString());
+    return new Gmail.Builder(GMAIL_HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
+        .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
+        .build();
+  }
+
+  public static void sendEmail(String recipientEmail, String body, String subject) {
+    try {
+      System.out.println("here i am");
+      // Set up Gmail service if necessary and send email
+      Gmail service = getGmailService();
+      System.out.println("service: " + service);
+      MimeMessage email = EmailFactory.createEmail(recipientEmail, subject, body);
+      Message message = EmailFactory.createMessageWithEmail(email);
+      service.users().messages().send("me", message).execute();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

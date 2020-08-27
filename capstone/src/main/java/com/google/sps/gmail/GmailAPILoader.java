@@ -1,12 +1,17 @@
 package com.google.sps.gmail;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.gmail.Gmail;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.Streams;
 import com.google.sps.servlets.Constants;
+import com.google.sps.servlets.ServletUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,10 +24,11 @@ import java.security.GeneralSecurityException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
 
-public class GmailAPILoader {
+public class GmailAPILoader extends AbstractAppEngineAuthorizationCodeServlet {
   private static final String CREDENTIALS_PATH =
       System.getProperty("user.home")
           + "/step179-2020/capstone/src/main/java/com/google/sps/gmail/credentials.json";
@@ -33,9 +39,63 @@ public class GmailAPILoader {
   public static Gmail getGmailService()
       throws IOException, GeneralSecurityException, ParseException {
     // Use credentials.json to access secret keys
+    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     CLIENT_ID = getSecretValue("client_id");
     CLIENT_SECRET = getSecretValue("client_secret");
     REFRESH_TOKEN = getSecretValue("refresh_token");
+
+    // Add credentials for using API
+    // Credential authorize =
+    //     new GoogleCredential.Builder()
+    //         .setTransport(GoogleNetHttpTransport.newTrustedTransport())
+    //         .setJsonFactory(Constants.JSON_FACTORY)
+    //         .setClientSecrets(CLIENT_ID, CLIENT_SECRET)
+    //         .build()
+    //         .setRefreshToken(REFRESH_TOKEN)
+    //         .setAccessToken(getAccessToken());
+
+    String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    System.out.println("user: " + userId);
+    // Credential credential = ServletUtil.newGmailFlow(REFRESH_TOKEN).loadCredential(userId);
+
+    // Create Gmail API Service
+    // Credential credential = ServletUtil.newGmailFlow().loadCredential("kakm@google.com");
+
+    GoogleClientSecrets clientSecrets =
+        GoogleClientSecrets.load(
+            Constants.JSON_FACTORY,
+            new InputStreamReader(ServletUtil.class.getResourceAsStream("/client_secrets.json")));
+    System.out.println("client-secrets: " + clientSecrets);
+
+    // GoogleAuthorizationCodeFlow flow =
+    //     new GoogleAuthorizationCodeFlow.Builder(
+    //             HTTP_TRANSPORT,
+    //             Constants.JSON_FACTORY,
+    //             clientSecrets,
+    //             Collections.singleton(GmailScopes.MAIL_GOOGLE_COM))
+    //         .setDataStoreFactory(new FileDataStoreFactory(new File("tokens")))
+    //         .setAccessType("offline")
+    //         .build();
+    // LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8000).build();
+    // Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("me");
+    // String authCode = receiver.getRedirectUri();
+    // System.out.println("here: " + authCode);
+
+    // GoogleTokenResponse tokenResponse =
+    //     new GoogleAuthorizationCodeTokenRequest(
+    //             new NetHttpTransport(),
+    //             JacksonFactory.getDefaultInstance(),
+    //             "https://oauth2.googleapis.com/token",
+    //             clientSecrets.getDetails().getClientId(),
+    //             clientSecrets.getDetails().getClientSecret(),
+    //             authCode,
+    //
+    // "https://8080-4afd6625-e4a1-43f4-8d79-fc4c0cf1c87d.us-west1.cloudshell.dev/oauth2callback")
+    //         .execute();
+    // System.out.println("tokenResponse: " + tokenResponse);
+
+    // String accessToken = tokenResponse.getAccessToken();
+    // System.out.println("accessToken: " + accessToken);
 
     // Add credentials for using API
     Credential authorize =
@@ -43,12 +103,12 @@ public class GmailAPILoader {
             .setTransport(GoogleNetHttpTransport.newTrustedTransport())
             .setJsonFactory(Constants.JSON_FACTORY)
             .setClientSecrets(CLIENT_ID, CLIENT_SECRET)
-            .build()
-            .setRefreshToken(REFRESH_TOKEN)
-            .setAccessToken(getAccessToken());
+            .build();
 
-    // Create Gmail API Service
-    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+    // Use access token to call API
+    // credential = new GoogleCredential().setAccessToken(accessToken);
+    System.out.println("credential: " + authorize);
+
     Gmail service =
         new Gmail.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, authorize)
             .setApplicationName(Constants.APPLICATION_NAME)
@@ -113,5 +173,15 @@ public class GmailAPILoader {
     JSONObject credentialsJson = new JSONObject(json);
     String secretValue = credentialsJson.get(key).toString();
     return secretValue;
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }

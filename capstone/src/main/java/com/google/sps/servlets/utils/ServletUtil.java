@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.gmail.GmailScopes;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -15,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,7 +58,8 @@ public final class ServletUtil {
     // If you want to run this locally, you will need to replace this with your dev server URI
     // - then add "/oauth2callback" to the end of it and add that to you API console under
     // Authorized URIs.
-    return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    // return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    return "https://8080-4afd6625-e4a1-43f4-8d79-fc4c0cf1c87d.us-west1.cloudshell.dev/oauth2callback";
   }
 
   public static GoogleAuthorizationCodeFlow newFlow() throws IOException {
@@ -66,7 +67,11 @@ public final class ServletUtil {
             HTTP_TRANSPORT,
             Constants.JSON_FACTORY,
             getClientCredential(),
-            Collections.singleton(CalendarScopes.CALENDAR))
+            ImmutableList.of(
+                CalendarScopes.CALENDAR,
+                GmailScopes.MAIL_GOOGLE_COM,
+                GmailScopes.GMAIL_INSERT,
+                GmailScopes.GMAIL_SEND))
         .setDataStoreFactory(AppEngineDataStoreFactory.getDefaultInstance())
         .setAccessType(OFFLINE_ACCESS_TYPE)
         .build();

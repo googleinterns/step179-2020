@@ -13,6 +13,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.common.io.ByteSource;
+import com.google.sps.servlets.AnnouncementsServlet;
 import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import com.google.sps.servlets.StudentServlet;
@@ -38,7 +39,7 @@ public class EmailFactory {
     this.service = service;
   }
 
-  private static Message createMessageWithEmail(MimeMessage emailContent)
+  public static Message createMessageWithEmail(MimeMessage emailContent)
       throws MessagingException, IOException {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     emailContent.writeTo(buffer);
@@ -50,7 +51,7 @@ public class EmailFactory {
     return message;
   }
 
-  private static MimeMessage createEmail(String recipientEmail, String subject, String body)
+  public static MimeMessage createEmail(String recipientEmail, String subject, String body)
       throws MessagingException {
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
@@ -64,20 +65,20 @@ public class EmailFactory {
     return email;
   }
 
-  private static void sendEmail(String recipientEmail, String body, String subject) {
-    try {
-      // Set up Gmail service if necessary and send email
-      if (service == null) {
-        service = GmailAPILoader.getGmailService();
-      }
-      MimeMessage email = createEmail(recipientEmail, subject, body);
-      Message message = createMessageWithEmail(email);
-      service.users().messages().send(AUTH_USER, message).execute();
+  //   private static void sendEmail(String recipientEmail, String body, String subject) {
+  //     try {
+  //       // Set up Gmail service if necessary and send email
+  //       if (service == null) {
+  //         service = AnnouncementsServlet.getGmailService();
+  //       }
+  //       MimeMessage email = createEmail(recipientEmail, subject, body);
+  //       Message message = createMessageWithEmail(email);
+  //       service.users().messages().send(AUTH_USER, message).execute();
 
-    } catch (Exception e) {
-      System.out.println("ERROR: Unable to send message : " + e.toString());
-    }
-  }
+  //     } catch (Exception e) {
+  //       System.out.println("ERROR: Unable to send message : " + e.toString());
+  //     }
+  //   }
 
   private static String getHTMLAsString(String path) throws IOException {
     // Load HTML file and convert to String
@@ -98,7 +99,7 @@ public class EmailFactory {
     // Prepare welcome email content and send
     String subject = String.format("Welcome to ClubHub!");
     String emailBody = getHTMLAsString("/welcome-email.html");
-    sendEmail(recipientEmail, emailBody, subject);
+    AnnouncementsServlet.sendEmail(recipientEmail, emailBody, subject);
   }
 
   public static void sendEmailToAllMembers(String clubName, Entity announcement)
@@ -122,6 +123,7 @@ public class EmailFactory {
     String subject = String.format("ClubHub: New announcement from %s!", clubName);
 
     // Send email to all members of the club
-    Streams.stream(members).forEach(memberEmail -> sendEmail(memberEmail, emailBody, subject));
+    Streams.stream(members)
+        .forEach(memberEmail -> AnnouncementsServlet.sendEmail(memberEmail, emailBody, subject));
   }
 }

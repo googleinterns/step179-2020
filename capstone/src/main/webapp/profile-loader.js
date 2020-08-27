@@ -100,6 +100,6 @@ function fetchBlobstoreProfileUrl() {
 }
 
 /** Direct to Explore page once logged in */
-function onSignIn() {
+function onSignIn(googleUser) {
   window.location.href = '/explore.html';
 }

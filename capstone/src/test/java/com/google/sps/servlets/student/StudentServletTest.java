@@ -120,28 +120,28 @@ public final class StudentServletTest {
     return stringWriter.toString();
   }
 
-  @Test
-  public void doGet_studentLogsInForFirstTime() throws ServletException, IOException {
-    localHelper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("example.com").setEnvIsLoggedIn(true);
-    when(request.getUserPrincipal()).thenReturn(principal);
-    when(principal.getName()).thenReturn(TEST_EMAIL);
+  //   @Test
+  //   public void doGet_studentLogsInForFirstTime() throws ServletException, IOException {
+  //     localHelper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("example.com").setEnvIsLoggedIn(true);
+  //     when(request.getUserPrincipal()).thenReturn(principal);
+  //     when(principal.getName()).thenReturn(TEST_EMAIL);
 
-    JsonObject responseJson = doGet_studentServletResponse();
-    JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
+  //     JsonObject responseJson = doGet_studentServletResponse();
+  //     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
 
-    String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
-    String responseEmail = responseStudent.get(Constants.PROPERTY_EMAIL).getAsString();
-    String responseMajor = responseStudent.get(Constants.PROPERTY_MAJOR).getAsString();
-    int responseYear = responseStudent.get(Constants.PROPERTY_GRADYEAR).getAsInt();
-    ImmutableList responseClubs =
-        ImmutableList.copyOf(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray());
+  //     String responseName = responseStudent.get(Constants.PROPERTY_NAME).getAsString();
+  //     String responseEmail = responseStudent.get(Constants.PROPERTY_EMAIL).getAsString();
+  //     String responseMajor = responseStudent.get(Constants.PROPERTY_MAJOR).getAsString();
+  //     int responseYear = responseStudent.get(Constants.PROPERTY_GRADYEAR).getAsInt();
+  //     ImmutableList responseClubs =
+  //         ImmutableList.copyOf(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray());
 
-    Assert.assertEquals("First Last", responseName);
-    Assert.assertEquals(TEST_EMAIL, responseEmail);
-    Assert.assertEquals(0, responseYear);
-    Assert.assertEquals("Enter your major here", responseMajor);
-    Assert.assertEquals(ImmutableList.of(), responseClubs);
-  }
+  //     Assert.assertEquals("First Last", responseName);
+  //     Assert.assertEquals(TEST_EMAIL, responseEmail);
+  //     Assert.assertEquals(0, responseYear);
+  //     Assert.assertEquals("Enter your major here", responseMajor);
+  //     Assert.assertEquals(ImmutableList.of(), responseClubs);
+  //   }
 
   @Test
   public void doGet_studentIsInNoClubs() throws ServletException, IOException {
