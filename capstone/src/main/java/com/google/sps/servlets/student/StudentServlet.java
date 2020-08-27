@@ -4,7 +4,6 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
-import com.google.api.services.gmail.Gmail;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -34,13 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
   private static String TIMEZONE_PST = "PST";
 
-  // Add Gmail service for testing purposes only
-  private static Gmail service;
-
-  public StudentServlet(Gmail service) {
-    this.service = service;
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get student object based on the logged in email
@@ -48,7 +40,7 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
     String userEmail = userService.getCurrentUser().getEmail();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     AnnouncementsSweeper.sweepAnnouncements();
-    Entity currentStudent = getStudent(userEmail, datastore);
+    Entity currentStudent = getStudent(request, userEmail, datastore);
     if (currentStudent == null) {
       return;
     }
@@ -96,7 +88,7 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
     // Get student object based on the logged in email
     String userEmail = request.getUserPrincipal().getName();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity student = getStudent(userEmail, datastore);
+    Entity student = getStudent(request, userEmail, datastore);
 
     String clubToJoin = request.getParameter(Constants.JOIN_CLUB_PROP);
     String clubToRemove = request.getParameter(Constants.LEAVE_CLUB_PROP);
@@ -149,7 +141,8 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
     }
   }
 
-  public static Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
+  public static Entity getStudent(
+      HttpServletRequest request, String userEmail, DatastoreService datastore) throws IOException {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -159,10 +152,9 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
-      if (service != null) {
-        EmailFactory testEmailFactory = new EmailFactory(service);
-        testEmailFactory.sendWelcomeEmail(userEmail);
-      } else {
+
+      // Test for sending welcome email is in EmailFactoryTest
+      if (request.getParameter(Constants.SERVICE_PROP) == null) {
         EmailFactory.sendWelcomeEmail(userEmail);
       }
       results = datastore.prepare(query);
