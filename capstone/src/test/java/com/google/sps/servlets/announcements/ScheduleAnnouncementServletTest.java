@@ -115,9 +115,7 @@ public final class ScheduleAnnouncementServletTest {
     this.datastore.put(announcement1);
 
     JsonArray response = getServletResponse(servlet);
-
-    int expectedSize = 1;
-    Assert.assertEquals(expectedSize, response.size());
+    Assert.assertEquals(1, response.size());
 
     JsonObject announcement = response.get(0).getAsJsonObject();
     Assert.assertEquals(TEST_EMAIL, announcement.get(Constants.AUTHOR_PROP).getAsString());

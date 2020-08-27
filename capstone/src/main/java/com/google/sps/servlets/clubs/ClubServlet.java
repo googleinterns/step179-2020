@@ -189,7 +189,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     return createdCalendarId;
   }
 
-  private Calendar getCalendarService() throws IOException, GeneralSecurityException {
+  public static Calendar getCalendarService() throws IOException, GeneralSecurityException {
     String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
     Credential credential = ServletUtil.newFlow().loadCredential(userId);
     return new Calendar.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
