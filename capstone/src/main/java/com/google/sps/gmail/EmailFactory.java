@@ -29,8 +29,6 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.codec.binary.Base64;
 
 public class EmailFactory {
-  // The special value "me" can be used to indicate the authenticated user
-  private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
       "kakm+clubhub@google.com"; // TODO: create dummy email to send email notifications from
   private static Gmail service;
@@ -65,21 +63,6 @@ public class EmailFactory {
     return email;
   }
 
-  //   private static void sendEmail(String recipientEmail, String body, String subject) {
-  //     try {
-  //       // Set up Gmail service if necessary and send email
-  //       if (service == null) {
-  //         service = AnnouncementsServlet.getGmailService();
-  //       }
-  //       MimeMessage email = createEmail(recipientEmail, subject, body);
-  //       Message message = createMessageWithEmail(email);
-  //       service.users().messages().send(AUTH_USER, message).execute();
-
-  //     } catch (Exception e) {
-  //       System.out.println("ERROR: Unable to send message : " + e.toString());
-  //     }
-  //   }
-
   private static String getHTMLAsString(String path) throws IOException {
     // Load HTML file and convert to String
     InputStream inputStream = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
@@ -99,7 +82,7 @@ public class EmailFactory {
     // Prepare welcome email content and send
     String subject = String.format("Welcome to ClubHub!");
     String emailBody = getHTMLAsString("/welcome-email.html");
-    AnnouncementsServlet.sendEmail(recipientEmail, emailBody, subject);
+    AnnouncementsServlet.sendEmail(service, recipientEmail, emailBody, subject);
   }
 
   public static void sendEmailToAllMembers(String clubName, Entity announcement)
@@ -124,6 +107,8 @@ public class EmailFactory {
 
     // Send email to all members of the club
     Streams.stream(members)
-        .forEach(memberEmail -> AnnouncementsServlet.sendEmail(memberEmail, emailBody, subject));
+        .forEach(
+            memberEmail ->
+                AnnouncementsServlet.sendEmail(service, memberEmail, emailBody, subject));
   }
 }

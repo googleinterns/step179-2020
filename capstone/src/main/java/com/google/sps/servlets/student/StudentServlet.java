@@ -2,6 +2,8 @@ package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -21,14 +23,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns a student's profile content */
 @WebServlet("/student-data")
-public class StudentServlet extends HttpServlet {
+public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
   private static String TIMEZONE_PST = "PST";
 
   @Override
@@ -139,7 +141,7 @@ public class StudentServlet extends HttpServlet {
     }
   }
 
-  private Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
+  public static Entity getStudent(String userEmail, DatastoreService datastore) throws IOException {
     // Get the user's information from Datastore
     Query query = new Query(userEmail);
     PreparedQuery results = datastore.prepare(query);
@@ -157,7 +159,7 @@ public class StudentServlet extends HttpServlet {
     return students.get(0);
   }
 
-  private Entity createStudentEntity(String userEmail) {
+  private static Entity createStudentEntity(String userEmail) {
     Entity studentEntity = new Entity(userEmail);
     studentEntity.setProperty(Constants.PROPERTY_NAME, "First Last");
     studentEntity.setProperty(Constants.PROPERTY_EMAIL, userEmail);
@@ -229,6 +231,16 @@ public class StudentServlet extends HttpServlet {
       return null;
     }
     return clubs.get(0);
+  }
+
+  @Override
+  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+    return ServletUtil.getRedirectUri(req);
+  }
+
+  @Override
+  protected AuthorizationCodeFlow initializeFlow() throws IOException {
+    return ServletUtil.newFlow();
   }
 }
 

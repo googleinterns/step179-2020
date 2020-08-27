@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example club content */
 @WebServlet("/announcements")
 public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServlet {
+  // The special value "me" can be used to indicate the authenticated user
+  private static final String AUTH_USER = "me";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -100,23 +102,21 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
   public static Gmail getGmailService() throws IOException, GeneralSecurityException {
     final NetHttpTransport GMAIL_HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-    System.out.println("userId: " + userId);
     Credential credential = ServletUtil.newFlow().loadCredential(userId);
-    System.out.println("credential: " + credential.toString());
     return new Gmail.Builder(GMAIL_HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
         .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
         .build();
   }
 
-  public static void sendEmail(String recipientEmail, String body, String subject) {
+  public static void sendEmail(Gmail service, String recipientEmail, String body, String subject) {
     try {
-      System.out.println("here i am");
       // Set up Gmail service if necessary and send email
-      Gmail service = getGmailService();
-      System.out.println("service: " + service);
+      if (service == null) {
+        service = getGmailService();
+      }
       MimeMessage email = EmailFactory.createEmail(recipientEmail, subject, body);
       Message message = EmailFactory.createMessageWithEmail(email);
-      service.users().messages().send("me", message).execute();
+      service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
       e.printStackTrace();
