@@ -153,7 +153,8 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
 
-      // Test for sending welcome email is in EmailFactoryTest
+      // For testing purposes - no need to test welcome email here since we test this in
+      // EmailFactoryTest
       if (request.getParameter(Constants.SERVICE_PROP) == null) {
         EmailFactory.sendWelcomeEmail(userEmail);
       }

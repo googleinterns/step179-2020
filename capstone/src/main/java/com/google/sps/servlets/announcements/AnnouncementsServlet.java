@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example club content */
 @WebServlet("/announcements")
 public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServlet {
-  // The special value "me" can be used to indicate the authenticated user
-  private static final String AUTH_USER = "me";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

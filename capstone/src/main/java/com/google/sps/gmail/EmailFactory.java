@@ -29,6 +29,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.codec.binary.Base64;
 
 public class EmailFactory {
+  // The special value "me" can be used to indicate the authenticated user
   private static final String AUTH_USER = "me";
   private static final String SENDER_EMAIL =
       "kakm+clubhub@google.com"; // TODO: create dummy email to send email notifications from
@@ -38,7 +39,7 @@ public class EmailFactory {
     this.service = service;
   }
 
-  public static Message createMessageWithEmail(MimeMessage emailContent)
+  private static Message createMessageWithEmail(MimeMessage emailContent)
       throws MessagingException, IOException {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     emailContent.writeTo(buffer);
@@ -50,7 +51,7 @@ public class EmailFactory {
     return message;
   }
 
-  public static MimeMessage createEmail(String recipientEmail, String subject, String body)
+  private static MimeMessage createEmail(String recipientEmail, String subject, String body)
       throws MessagingException {
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
