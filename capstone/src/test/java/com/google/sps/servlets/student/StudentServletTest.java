@@ -87,10 +87,12 @@ public final class StudentServletTest {
     club1 = new Entity("Club");
     club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
     club1.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGHA_EMAIL));
+    club1.setProperty(Constants.EXCLUSIVE_PROP, false);
 
     club2 = new Entity("Club");
     club2.setProperty(Constants.PROPERTY_NAME, CLUB_2);
-    club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of());
+    club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(TEST_EMAIL));
+    club2.setProperty(Constants.EXCLUSIVE_PROP, false);
   }
 
   @After

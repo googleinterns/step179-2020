@@ -46,13 +46,16 @@ async function loadListings (clubs, studentClubs, interestedClubs) {
     template.content.querySelector('#exclusive').innerHTML = club['exclusive'] ? 'Exclusive' : '';
     template.content.querySelector('#members').innerHTML = club.members.length + ' members';
     template.content.querySelector('.join-button').value = club.name;
+    if (club['exclusive']) {
+      template.content.querySelector('.join-button').innerText = 'Request to Join';
+    }
     template.content.querySelector('.interested-join-button').value = club.name;
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);
     addAlertOnclick('join-button', club.name);
     addAlertOnclick('interested-join-button', club.name);
-    editButton(club.name, studentClubs, 'join-button');
-    editButton(club.name, interestedClubs, 'interested-join-button');
+    editButton(club.name, studentClubs, 'join-button', club['exclusive']);
+    editButton(club.name, interestedClubs, 'interested-join-button', club['exclusive']);
   }
 }
 
@@ -87,7 +90,7 @@ function editButton(club, joinedClubList, className) {
           ? function() {sendJoinedAlert('interested', true, club)} 
           : function() {sendJoinedAlert('joined', true, club)};
     
-      if (button.innerText == 'Join Club') {
+      if (button.innerText == 'Join Club' || button.innerText == 'Request to Join') {
         button.innerText = 'Joined';
       }
     }

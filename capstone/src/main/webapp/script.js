@@ -44,6 +44,12 @@ async function getClubInfo() {
 
     if (clubInfo['exclusive']) {
       document.getElementById('makeExclusive').checked = true;
+      document.getElementById('requests-header').removeAttribute('hidden');
+      var requestList = document.getElementById('requests');
+      for (request of clubInfo['requested']) {
+        requestList.innerHTML += '<input type="checkbox" name=\"' + request + '\" value=\"' + request + '\">';
+        requestList.innerHTML += '<label for=\"' + request + '\">' + request + '</label><br>';
+      }
     }
     document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
@@ -188,7 +194,6 @@ async function loadScheduledAnnouncements() {
   const color2 = '#BBB';
   var evenOdd = true;
   for (var announcement of json) {
-    const pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
     var pictureSrc;
     if (announcement.picture) {
         pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
@@ -334,7 +339,7 @@ function saveClubChanges() {
   const params = new URLSearchParams(window.location.search);
 
   const newDesc = document.getElementById("description").innerHTML;
-  const newWebsite = document.getElementById("website").innerHTML;
+  const newWebsite = document.getElementById("website").href;
 
   var newOfficers = [];
   const officerListElement = document.getElementById('officers-list');

@@ -98,6 +98,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
         entity.getProperty(Constants.CALENDAR_PROP).toString(),
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         (Boolean) entity.getProperty(Constants.EXCLUSIVE_PROP),
+        ServletUtil.getPropertyList(entity, Constants.REQUEST_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 

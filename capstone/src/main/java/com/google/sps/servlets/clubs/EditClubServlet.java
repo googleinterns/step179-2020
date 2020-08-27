@@ -60,7 +60,17 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       if (intersect.isEmpty()) {
         intersect = ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
       }
-
+      ImmutableList<String> requests =
+          ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+      for (String joinRequest : requests) {
+        String nameToAdd = request.getParameter(joinRequest);
+        if (nameToAdd != null) {
+          clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToAdd, Constants.MEMBER_PROP);
+          clubEntity =
+              ServletUtil.removeItemFromEntity(clubEntity, nameToAdd, Constants.REQUEST_PROP);
+          datastore.put(clubEntity);
+        }
+      }
       String newLabelsList = request.getParameter(Constants.LABELS_PROP);
       ImmutableList<String> rawLabels =
           Strings.isNullOrEmpty(newLabelsList)

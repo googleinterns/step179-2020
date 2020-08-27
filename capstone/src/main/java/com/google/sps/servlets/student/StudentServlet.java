@@ -97,13 +97,26 @@ public class StudentServlet extends HttpServlet {
       if (club == null) {
         return;
       }
-      club = ServletUtil.addItemToEntity(club, userEmail, Constants.MEMBER_PROP);
-      datastore.put(club);
+      ImmutableList<String> clubMembers =
+          ImmutableList.copyOf((ArrayList<String>) club.getProperty(Constants.MEMBER_PROP));
+      if ((Boolean) club.getProperty(Constants.EXCLUSIVE_PROP)
+          && !clubMembers.contains(userEmail)) {
+        ImmutableList<String> currentRequests =
+            ImmutableList.copyOf((ArrayList<String>) club.getProperty(Constants.REQUEST_PROP));
+        if (!currentRequests.contains(userEmail)) {
+          ServletUtil.addItemToEntity(club, userEmail, Constants.REQUEST_PROP);
+          datastore.put(club);
+        }
+        response.sendRedirect("/explore.html");
+      } else {
+        club = ServletUtil.addItemToEntity(club, userEmail, Constants.MEMBER_PROP);
+        datastore.put(club);
 
-      // Add new club to student's club list and update Datastore
-      student = ServletUtil.addItemToEntity(student, clubToJoin, Constants.PROPERTY_CLUBS);
-      datastore.put(student);
-      response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
+        // Add new club to student's club list and update Datastore
+        student = ServletUtil.addItemToEntity(student, clubToJoin, Constants.PROPERTY_CLUBS);
+        datastore.put(student);
+        response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
+      }
     } else if (clubToRemove != null && !clubToRemove.isEmpty()) {
       // Remove member from club's member list and update Datastore
       Entity club = retrieveClub(clubToRemove, datastore, response);
