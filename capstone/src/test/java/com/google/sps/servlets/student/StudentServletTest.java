@@ -1,8 +1,13 @@
 package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -35,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -56,7 +62,11 @@ public final class StudentServletTest {
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
   @Mock Principal principal;
-  private StudentServlet studentServlet = new StudentServlet();
+  @Mock private Gmail gmail;
+  @Mock private Gmail.Users users;
+  @Mock private Gmail.Users.Messages messages;
+  @Mock private Gmail.Users.Messages.Send send;
+  private StudentServlet studentServlet;
   private LocalServiceTestHelper localHelper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -69,6 +79,16 @@ public final class StudentServletTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     localHelper.setUp();
+
+    // Set up mock Gmail service to send welcome email
+    gmail = mock(Gmail.class);
+    studentServlet = new StudentServlet(gmail);
+    users = mock(Gmail.Users.class);
+    messages = mock(Gmail.Users.Messages.class);
+    send = mock(Gmail.Users.Messages.Send.class);
+    when(gmail.users()).thenReturn(users);
+    when(users.messages()).thenReturn(messages);
+    when(messages.send(any(), any())).thenReturn(send);
 
     studentMegan = new Entity(MEGAN_EMAIL);
     studentMegan.setProperty(Constants.PROPERTY_NAME, MEGAN_NAME);
@@ -125,6 +145,7 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("example.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(TEST_EMAIL);
+    ArgumentCaptor<Message> argument = ArgumentCaptor.forClass(Message.class);
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();
@@ -136,6 +157,9 @@ public final class StudentServletTest {
     ImmutableList responseClubs =
         ImmutableList.copyOf(responseStudent.get(Constants.PROPERTY_CLUBS).getAsJsonArray());
 
+    // Verify welcome email was sent
+    verify(messages).send(any(), argument.capture());
+    
     Assert.assertEquals("First Last", responseName);
     Assert.assertEquals(TEST_EMAIL, responseEmail);
     Assert.assertEquals(0, responseYear);

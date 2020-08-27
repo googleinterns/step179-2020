@@ -62,8 +62,13 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
   }
 
   private static ImmutableList<String> getStudentClubList(
-      String userEmail, String property, DatastoreService datastore) throws IOException {
-    Entity student = StudentServlet.getStudent(userEmail, datastore);
+      String userEmail, String property, DatastoreService datastore) {
+    Query query = new Query(userEmail);
+    PreparedQuery results = datastore.prepare(query);
+    Entity student = results.asSingleEntity();
+    if (student == null) {
+      return null;
+    }
     return ServletUtil.getPropertyList(student, property);
   }
 

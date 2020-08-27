@@ -4,6 +4,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.services.gmail.Gmail;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -32,6 +33,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/student-data")
 public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
   private static String TIMEZONE_PST = "PST";
+
+  // Add Gmail service for testing purposes only
+  private static Gmail service;
+
+  public StudentServlet(Gmail service) {
+    this.service = service;
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -151,7 +159,12 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
     if (students.isEmpty()) {
       Entity studentEntity = createStudentEntity(userEmail);
       datastore.put(studentEntity);
-      EmailFactory.sendWelcomeEmail(userEmail);
+      if (service != null) {
+        EmailFactory testEmailFactory = new EmailFactory(service);
+        testEmailFactory.sendWelcomeEmail(userEmail);
+      } else {
+        EmailFactory.sendWelcomeEmail(userEmail);
+      }
       results = datastore.prepare(query);
       students = ImmutableList.copyOf(results.asIterable());
     }

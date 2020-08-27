@@ -8,7 +8,6 @@ import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineA
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Message;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -24,7 +23,6 @@ import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -106,21 +104,6 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
     return new Gmail.Builder(GMAIL_HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
         .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
         .build();
-  }
-
-  public static void sendEmail(Gmail service, String recipientEmail, String body, String subject) {
-    try {
-      // Set up Gmail service if necessary and send email
-      if (service == null) {
-        service = getGmailService();
-      }
-      MimeMessage email = EmailFactory.createEmail(recipientEmail, subject, body);
-      Message message = EmailFactory.createMessageWithEmail(email);
-      service.users().messages().send(AUTH_USER, message).execute();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   @Override
