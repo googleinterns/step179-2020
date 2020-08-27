@@ -52,6 +52,7 @@ public final class StudentServletTest {
   public static final String MAJOR = "Computer Science";
   public static final String CLUB_1 = "Club 1";
   public static final String CLUB_2 = "Club 2";
+  public static final String CLUB_3 = "Club 3";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -64,6 +65,7 @@ public final class StudentServletTest {
   private Entity studentMegha;
   private Entity club1;
   private Entity club2;
+  private Entity club3;
 
   @Before
   public void setUp() throws Exception {
@@ -93,6 +95,12 @@ public final class StudentServletTest {
     club2.setProperty(Constants.PROPERTY_NAME, CLUB_2);
     club2.setProperty(Constants.MEMBER_PROP, ImmutableList.of(TEST_EMAIL));
     club2.setProperty(Constants.EXCLUSIVE_PROP, false);
+
+    club3 = new Entity("Club");
+    club3.setProperty(Constants.PROPERTY_NAME, CLUB_3);
+    club3.setProperty(Constants.MEMBER_PROP, ImmutableList.of(MEGAN_EMAIL));
+    club3.setProperty(Constants.EXCLUSIVE_PROP, true);
+    club3.setProperty(Constants.REQUEST_PROP, ImmutableList.of(TEST_EMAIL));
   }
 
   @After
@@ -386,6 +394,55 @@ public final class StudentServletTest {
 
     Assert.assertEquals(null, student.getProperty(Constants.PROPERTY_CLUBS));
     Mockito.verify(response).sendRedirect("/profile.html");
+  }
+
+  @Test
+  public void doPost_studentRequestsToExclusiveJoinClub() throws ServletException, IOException {
+    localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGHA_EMAIL);
+    datastore.put(studentMegan);
+    datastore.put(club3);
+    when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_3);
+
+    doPost_studentServletResponse();
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, CLUB_3));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+
+    Assert.assertNotNull(clubEntity);
+    ImmutableList<String> newRequests =
+        ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+    Assert.assertEquals(2, newRequests.size());
+    Assert.assertEquals(TEST_EMAIL, newRequests.get(0));
+    Assert.assertEquals(MEGHA_EMAIL, newRequests.get(1));
+    Mockito.verify(response).sendRedirect("/explore.html");
+  }
+
+  @Test
+  public void doPost_studentRequestsToExclusiveJoinClubAlreadyMember()
+      throws ServletException, IOException {
+    localHelper.setEnvEmail(MEGAN_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(MEGAN_EMAIL);
+    datastore.put(studentMegan);
+    datastore.put(club3);
+    when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_3);
+
+    doPost_studentServletResponse();
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, CLUB_3));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+
+    Assert.assertNotNull(clubEntity);
+    ImmutableList<String> newRequests =
+        ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+    Assert.assertEquals(1, newRequests.size());
+    Assert.assertEquals(TEST_EMAIL, newRequests.get(0));
   }
 
   @Test

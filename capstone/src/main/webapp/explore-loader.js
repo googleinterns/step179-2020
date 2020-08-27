@@ -63,9 +63,13 @@ function addAlertOnclick(className, clubName) {
   var allButtons = document.getElementsByClassName(className);
   for (button of allButtons) {
       if (button.value == clubName) {
-        button.onclick = className.includes('interested') 
-            ? function() {sendJoinedAlert('interested', false, clubName)} 
-            : function() {sendJoinedAlert('joined', false, clubName)};
+        if (button.text == 'Request to Join') {
+          alert('You have requested to join ' + clubName + '. You will become a member of this club upon officer approval!');
+        } else {
+          button.onclick = className.includes('interested') 
+              ? function() {sendJoinedAlert('interested', false, clubName)} 
+              : function() {sendJoinedAlert('joined', false, clubName)};
+        }
       }
   }
 }

@@ -99,6 +99,7 @@ public class StudentServlet extends HttpServlet {
       }
       ImmutableList<String> clubMembers =
           ImmutableList.copyOf((ArrayList<String>) club.getProperty(Constants.MEMBER_PROP));
+      // Check that club is exclusive and user is not already in club
       if ((Boolean) club.getProperty(Constants.EXCLUSIVE_PROP)
           && !clubMembers.contains(userEmail)) {
         ImmutableList<String> currentRequests =

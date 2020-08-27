@@ -46,7 +46,7 @@ async function getClubInfo() {
       document.getElementById('makeExclusive').checked = true;
       document.getElementById('requests-header').removeAttribute('hidden');
       var requestList = document.getElementById('requests');
-      for (request of clubInfo['requested']) {
+      for (request of clubInfo['requests']) {
         requestList.innerHTML += '<input type="checkbox" name=\"' + request + '\" value=\"' + request + '\">';
         requestList.innerHTML += '<label for=\"' + request + '\">' + request + '</label><br>';
       }

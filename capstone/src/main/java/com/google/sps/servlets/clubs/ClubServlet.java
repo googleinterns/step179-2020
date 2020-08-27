@@ -61,8 +61,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       }
       String calendar = clubEntity.getProperty(Constants.CALENDAR_PROP).toString();
       boolean isExclusive = (Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP);
-      ImmutableList<String>
-          requests = // ImmutableList.of("test-email@google.com", "hi there", "hewwo");
+      ImmutableList<String> requests =
           ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       if (!members.contains(userEmail) && isExclusive) {
@@ -143,9 +142,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
       clubEntity.setProperty(Constants.EXCLUSIVE_PROP, isExclusive);
-      // clubEntity.setProperty(Constants.REQUEST_PROP, ImmutableList.of());
-      clubEntity.setProperty(
-          Constants.REQUEST_PROP, ImmutableList.of("test-email@google.com", "hi there", "hewwo"));
+      clubEntity.setProperty(Constants.REQUEST_PROP, ImmutableList.of());
       datastore.put(clubEntity);
       addClubToFoundersClubList(datastore, founderEmail, clubName);
     }

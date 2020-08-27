@@ -62,6 +62,7 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       }
       ImmutableList<String> requests =
           ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+
       for (String joinRequest : requests) {
         String nameToAdd = request.getParameter(joinRequest);
         if (nameToAdd != null) {
