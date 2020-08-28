@@ -12,7 +12,9 @@
     <div class="split-front" id="intro-content">
       <p>Welcome to ClubHub, a platform to streamline communication between college campus organizations and college students</p>
       <p>Get started by logging in below!</p>
-      <div id="login-button" class="g-signin2" data-onsuccess="onSignIn"></div>
+      <form id="auth-form" action="/check-status" method="POST">
+        <div id="login-button" class="g-signin2" data-onsuccess="onSignIn"></div>
+      </form>
     </div>
   </body>
 </html>
