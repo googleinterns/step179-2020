@@ -54,8 +54,8 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
         getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
     ImmutableList<String> interestedClubs =
         getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
-    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
 
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
     String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);

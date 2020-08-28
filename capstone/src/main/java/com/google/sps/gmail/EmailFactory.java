@@ -13,6 +13,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.common.io.ByteSource;
+import com.google.sps.servlets.AnnouncementsServlet;
 import com.google.sps.servlets.Constants;
 import com.google.sps.servlets.ServletUtil;
 import com.google.sps.servlets.StudentServlet;
@@ -64,18 +65,18 @@ public class EmailFactory {
     return email;
   }
 
-  private static void sendEmail(String recipientEmail, String body, String subject) {
+  public static void sendEmail(String recipientEmail, String body, String subject) {
     try {
       // Set up Gmail service if necessary and send email
       if (service == null) {
-        service = GmailAPILoader.getGmailService();
+        service = AnnouncementsServlet.getGmailService();
       }
       MimeMessage email = createEmail(recipientEmail, subject, body);
       Message message = createMessageWithEmail(email);
       service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
-      System.out.println("ERROR: Unable to send message : " + e.toString());
+      e.printStackTrace();
     }
   }
 
