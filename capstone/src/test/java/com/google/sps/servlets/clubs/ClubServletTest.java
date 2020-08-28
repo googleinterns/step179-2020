@@ -106,7 +106,7 @@ public class ClubServletTest {
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
     Assert.assertEquals(SAMPLE_CAL_ID, clubEntity.getProperty(Constants.CALENDAR_PROP));
     Assert.assertFalse((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
-    //  Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
+    Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
@@ -131,7 +131,7 @@ public class ClubServletTest {
 
     Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertTrue((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
-    // Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
+    Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
 
