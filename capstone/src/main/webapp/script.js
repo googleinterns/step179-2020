@@ -180,7 +180,7 @@ async function loadScheduledAnnouncements() {
   const color2 = '#BBB';
   var evenOdd = true;
   for (var announcement of json) {
-    var pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
+    var pictureSrc;
     if (announcement.picture) {
         pictureSrc = await fetch('/get-image?blobKey=' + announcement.picture);
         pictureSrc = pictureSrc.url;

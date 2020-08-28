@@ -71,8 +71,8 @@ public class EmailFactory {
       if (service == null) {
         service = AnnouncementsServlet.getGmailService();
       }
-      MimeMessage email = EmailFactory.createEmail(recipientEmail, subject, body);
-      Message message = EmailFactory.createMessageWithEmail(email);
+      MimeMessage email = createEmail(recipientEmail, subject, body);
+      Message message = createMessageWithEmail(email);
       service.users().messages().send(AUTH_USER, message).execute();
 
     } catch (Exception e) {
