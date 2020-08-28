@@ -18,7 +18,6 @@ import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import javax.servlet.annotation.WebServlet;
@@ -50,12 +49,8 @@ public class StudentServlet extends HttpServlet {
 
     // Get club list from entity and convert to an ImmutableList
     // Initally empty in case there is no club list
-    ImmutableList<String> clubs = ImmutableList.of();
-    if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
-      clubs =
-          ImmutableList.copyOf(
-              (ArrayList<String>) currentStudent.getProperty(Constants.PROPERTY_CLUBS));
-    }
+    ImmutableList<String> clubs =
+        ServletUtil.getPropertyList(currentStudent, Constants.PROPERTY_CLUBS);
 
     // Create Student object based on stored information
     Student student =
@@ -97,13 +92,12 @@ public class StudentServlet extends HttpServlet {
       if (club == null) {
         return;
       }
-      ImmutableList<String> clubMembers =
-          ImmutableList.copyOf((ArrayList<String>) club.getProperty(Constants.MEMBER_PROP));
+      ImmutableList<String> clubMembers = ServletUtil.getPropertyList(club, Constants.MEMBER_PROP);
       // Check that club is exclusive and user is not already in club
       if ((Boolean) club.getProperty(Constants.EXCLUSIVE_PROP)
           && !clubMembers.contains(userEmail)) {
         ImmutableList<String> currentRequests =
-            ImmutableList.copyOf((ArrayList<String>) club.getProperty(Constants.REQUEST_PROP));
+            ServletUtil.getPropertyList(club, Constants.REQUEST_PROP);
         if (!currentRequests.contains(userEmail)) {
           ServletUtil.addItemToEntity(club, userEmail, Constants.REQUEST_PROP);
           datastore.put(club);

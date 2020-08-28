@@ -54,7 +54,7 @@ public class InterestedClubServlet extends HttpServlet {
           ServletUtil.addItemToEntity(
               student, interestedClubToJoin, Constants.INTERESTED_CLUB_PROP);
       datastore.put(student);
-      response.sendRedirect("/about-us.html?name=" + interestedClubToJoin);
+      response.sendRedirect("/explore.html");
     }
     // Remove interested club if necessary
     String interestedClubToLeave = request.getParameter(Constants.INTERESTED_LEAVE_PROP);

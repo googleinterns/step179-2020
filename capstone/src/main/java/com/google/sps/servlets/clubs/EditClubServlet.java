@@ -60,18 +60,17 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       if (intersect.isEmpty()) {
         intersect = ServletUtil.getPropertyList(clubEntity, Constants.OFFICER_PROP);
       }
+
+      boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
       ImmutableList<String> requests =
           ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
 
-      for (String joinRequest : requests) {
-        String nameToAdd = request.getParameter(joinRequest);
-        if (nameToAdd != null) {
-          clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToAdd, Constants.MEMBER_PROP);
-          clubEntity =
-              ServletUtil.removeItemFromEntity(clubEntity, nameToAdd, Constants.REQUEST_PROP);
-          datastore.put(clubEntity);
-        }
-      }
+      requests.stream()
+          .forEach(
+              joinRequest ->
+                  updateMemberRequestList(
+                      request.getParameter(joinRequest), clubEntity, isExclusive));
+
       String newLabelsList = request.getParameter(Constants.LABELS_PROP);
       ImmutableList<String> rawLabels =
           Strings.isNullOrEmpty(newLabelsList)
@@ -86,18 +85,37 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
                           .replaceAll("\\s", "")) // Removes all whitespace and moves to lower case.
               .filter(Predicates.not(Strings::isNullOrEmpty))
               .collect(toImmutableList());
-      boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
+
       clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
       clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
       clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
       clubEntity.setProperty(Constants.LABELS_PROP, labels);
       clubEntity.setProperty(Constants.EXCLUSIVE_PROP, isExclusive);
+
       datastore.put(clubEntity);
       response.sendRedirect(
           "/about-us.html?name="
               + clubEntity.getProperty(Constants.PROPERTY_NAME)
               + "&is-invalid="
               + isInvalid);
+    }
+  }
+
+  private void updateMemberRequestList(
+      String nameToUpdate, Entity clubEntity, boolean isExclusive) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    if (nameToUpdate != null || !isExclusive) {
+      clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToUpdate, Constants.MEMBER_PROP);
+      clubEntity =
+          ServletUtil.removeItemFromEntity(clubEntity, nameToUpdate, Constants.REQUEST_PROP);
+      Query query = new Query(nameToUpdate);
+      Entity student = datastore.prepare(query).asSingleEntity();
+      ServletUtil.addItemToEntity(
+          student,
+          clubEntity.getProperty(Constants.PROPERTY_NAME).toString(),
+          Constants.PROPERTY_CLUBS);
+      datastore.put(student);
+      datastore.put(clubEntity);
     }
   }
 
