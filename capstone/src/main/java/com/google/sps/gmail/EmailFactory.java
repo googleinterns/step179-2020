@@ -65,21 +65,6 @@ public class EmailFactory {
     return email;
   }
 
-  private static String getHTMLAsString(String path) throws IOException {
-    // Load HTML file and convert to String
-    InputStream inputStream = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
-    ByteSource byteSource =
-        new ByteSource() {
-          @Override
-          public InputStream openStream() throws IOException {
-            return inputStream;
-          }
-        };
-
-    String emailBody = byteSource.asCharSource(Charsets.UTF_8).read();
-    return emailBody;
-  }
-
   public static void sendEmail(String recipientEmail, String body, String subject) {
     try {
       // Set up Gmail service if necessary and send email
@@ -93,6 +78,21 @@ public class EmailFactory {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private static String getHTMLAsString(String path) throws IOException {
+    // Load HTML file and convert to String
+    InputStream inputStream = EmailFactory.class.getResourceAsStream(Constants.EMAIL_PATH + path);
+    ByteSource byteSource =
+        new ByteSource() {
+          @Override
+          public InputStream openStream() throws IOException {
+            return inputStream;
+          }
+        };
+
+    String emailBody = byteSource.asCharSource(Charsets.UTF_8).read();
+    return emailBody;
   }
 
   public static void sendWelcomeEmail(String recipientEmail) throws IOException {
