@@ -30,10 +30,9 @@ import org.mockito.Spy;
 @RunWith(JUnit4.class)
 public class DeleteEventServletTest {
   private static final String CLUB_1 = "Club 1";
-  private static final String EVENT_TITLE = "Club 1 Hangout";
-  private final String EVENT_DESCRIPTION = "Meeting description";
-  private final String CALENDAR_ID = "Club 1 Calendar ID";
-  private final String OFFICER_EMAIL = "kshao@google.com";
+  private static final String CALENDAR_ID = "Club 1 Calendar ID";
+  private static final String OFFICER_EMAIL = "kshao@google.com";
+
   private final DeleteEventServlet servlet = new DeleteEventServlet();
 
   @Mock HttpServletRequest request;

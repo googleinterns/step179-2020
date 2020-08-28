@@ -19,7 +19,7 @@ public class EventsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String clubName = request.getParameter(Constants.PROPERTY_NAME);
     String calendarId = ServletUtil.getPropertyFromClub(clubName, Constants.CALENDAR_PROP);
-    List<Event> allEvents = getEvents(calendarId);
+    List<Event> allEvents = getEvents(calendarId, response);
 
     Gson gson = new Gson();
     String json = gson.toJson(allEvents);
@@ -27,7 +27,7 @@ public class EventsServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  List<Event> getEvents(String calendarId) {
+  List<Event> getEvents(String calendarId, HttpServletResponse response) throws IOException {
     List<Event> allEvents = new ArrayList<Event>();
     try {
       Calendar service = ClubServlet.getCalendarService();
@@ -39,7 +39,7 @@ public class EventsServlet extends HttpServlet {
         pageToken = events.getNextPageToken();
       } while (pageToken != null);
     } catch (Exception e) {
-      System.out.println("Error: " + e);
+      response.getWriter().println("Error: " + e);
     }
     return allEvents;
   }

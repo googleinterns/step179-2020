@@ -35,9 +35,9 @@ import org.mockito.Spy;
 public class EventsServletTest {
   private static final String CLUB_1 = "Club 1";
   private static final String EVENT_TITLE = "Club 1 Hangout";
-  private final String EVENT_DESCRIPTION = "Meeting description";
-  private final String CALENDAR_ID = "Club 1 Calendar ID";
-  private final String OFFICER_EMAIL = "kshao@google.com";
+  private static final String EVENT_DESCRIPTION = "Meeting description";
+  private static final String CALENDAR_ID = "Club 1 Calendar ID";
+  private static final String OFFICER_EMAIL = "kshao@google.com";
   private final EventsServlet servlet = new EventsServlet();
 
   @Mock HttpServletRequest request;
@@ -80,7 +80,7 @@ public class EventsServletTest {
     Event event = new Event().setSummary(EVENT_TITLE).setDescription(EVENT_DESCRIPTION);
     List<Event> events = new ArrayList<Event>();
     events.add(event);
-    Mockito.doReturn(events).when(servletSpy).getEvents(CALENDAR_ID);
+    Mockito.doReturn(events).when(servletSpy).getEvents(CALENDAR_ID, response);
 
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_1);
 
