@@ -14,6 +14,11 @@ async function loadLabels () {
   }
 }
 
+async function clearFiltersAndReload () {
+  document.getElementById('labels').innerHTML = '';
+  getListings();
+}
+
 async function addFilterAndReload () {
   const filter = document.getElementById('labels-select').value;
   document.getElementById('labels').innerHTML += '<li>' + filter + '</li>';
