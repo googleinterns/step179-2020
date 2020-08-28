@@ -25,16 +25,17 @@ public class DeleteEventServlet extends HttpServlet {
       return;
     }
 
-    executeDelete(calendarId, eventId);
+    executeDelete(calendarId, eventId, response);
     response.getWriter().println(eventId);
   }
 
-  public void executeDelete(String calendarId, String eventId) {
+  void executeDelete(String calendarId, String eventId, HttpServletResponse response)
+      throws IOException {
     try {
       Calendar service = ClubServlet.getCalendarService();
       service.events().delete(calendarId, eventId).execute();
     } catch (Exception e) {
-      System.out.println("Error: " + e);
+      response.getWriter().println("Error: " + e);
     }
   }
 }

@@ -27,7 +27,7 @@ public class EventsServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  public List<Event> getEvents(String calendarId) {
+  List<Event> getEvents(String calendarId) {
     List<Event> allEvents = new ArrayList<Event>();
     try {
       Calendar service = ClubServlet.getCalendarService();

@@ -65,13 +65,11 @@ public class EventsServletTest {
   }
 
   @Test
-  public void doPost_desiredBehavior()
+  public void doPost_returnedJsonIsCorrect()
       throws ServletException, IOException, GeneralSecurityException {
     helper.setEnvEmail(OFFICER_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(OFFICER_EMAIL);
-    String eventId = "event";
-    String calendarId = "calendar";
 
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, CLUB_1);

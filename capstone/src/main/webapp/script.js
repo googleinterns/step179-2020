@@ -249,7 +249,7 @@ async function loadCalendar () {
 async function deleteEvent (id) {
   var params = new URLSearchParams(window.location.search);
   const response = await fetch('/delete-event?name=' + params.get('name') + '&id=' + id, {method: 'POST'});
-  window.location.href = "/about-us.html?name=" + params.get('name') + "&tab=calendar";
+  window.location.href = '/about-us.html?name=' + params.get('name') + '&tab=calendar';
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 

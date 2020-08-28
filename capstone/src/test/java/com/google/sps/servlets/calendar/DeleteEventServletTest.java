@@ -61,13 +61,12 @@ public class DeleteEventServletTest {
   }
 
   @Test
-  public void doPost_desiredBehavior()
+  public void doPost_deleteEventDeletesCorrectId()
       throws ServletException, IOException, GeneralSecurityException {
     helper.setEnvEmail(OFFICER_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(OFFICER_EMAIL);
     String eventId = "event";
-    String calendarId = "calendar";
 
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, CLUB_1);
@@ -75,7 +74,7 @@ public class DeleteEventServletTest {
     clubEntity.setProperty(Constants.CALENDAR_PROP, CALENDAR_ID);
     datastore.put(clubEntity);
 
-    Mockito.doNothing().when(servletSpy).executeDelete(CALENDAR_ID, eventId);
+    Mockito.doNothing().when(servletSpy).executeDelete(CALENDAR_ID, eventId, response);
 
     when(request.getParameter(Constants.ID_PROP)).thenReturn(eventId);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(CLUB_1);
