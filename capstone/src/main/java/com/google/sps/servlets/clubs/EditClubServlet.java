@@ -64,12 +64,10 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
       ImmutableList<String> requests =
           ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
-
       requests.stream()
           .forEach(
               joinRequest ->
-                  updateMemberRequestList(
-                      request.getParameter(joinRequest), clubEntity, isExclusive));
+                  updateMemberRequestList(joinRequest, request, clubEntity, isExclusive));
 
       String newLabelsList = request.getParameter(Constants.LABELS_PROP);
       ImmutableList<String> rawLabels =
@@ -102,9 +100,9 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   }
 
   private void updateMemberRequestList(
-      String nameToUpdate, Entity clubEntity, boolean isExclusive) {
+      String nameToUpdate, HttpServletRequest request, Entity clubEntity, boolean isExclusive) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    if (nameToUpdate != null || !isExclusive) {
+    if (request.getParameter(nameToUpdate) != null || !isExclusive) {
       clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToUpdate, Constants.MEMBER_PROP);
       clubEntity =
           ServletUtil.removeItemFromEntity(clubEntity, nameToUpdate, Constants.REQUEST_PROP);

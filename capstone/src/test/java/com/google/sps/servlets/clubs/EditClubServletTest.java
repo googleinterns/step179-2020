@@ -236,14 +236,6 @@ public class EditClubServletTest {
     startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
     datastore.put(startingEntity);
 
-    Entity testStudent1 = new Entity(JOIN_EMAIL_1);
-    testStudent1.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
-    datastore.put(testStudent1);
-
-    Entity testStudent2 = new Entity(JOIN_EMAIL_2);
-    testStudent2.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
-    datastore.put(testStudent2);
-
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(TEST_EMAIL);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
@@ -314,10 +306,6 @@ public class EditClubServletTest {
 
   @Test
   public void doPost_addOneRequestedMember() throws ServletException, IOException {
-    Entity testStudent = new Entity(JOIN_EMAIL_1);
-    testStudent.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
-    datastore.put(testStudent);
-
     Entity startingEntity = makeClubEntity();
     startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
     datastore.put(startingEntity);
@@ -361,6 +349,15 @@ public class EditClubServletTest {
         Constants.MEMBER_PROP,
         ImmutableList.of(TEST_EMAIL, "meganshi@google.com", "kakm@google.com", "kshao@google.com"));
     clubEntity.setProperty(Constants.REQUEST_PROP, ImmutableList.of(JOIN_EMAIL_1, JOIN_EMAIL_2));
+
+    Entity testStudent1 = new Entity(JOIN_EMAIL_1);
+    testStudent1.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(testStudent1);
+
+    Entity testStudent2 = new Entity(JOIN_EMAIL_2);
+    testStudent2.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(testStudent2);
+
     return clubEntity;
   }
 }
