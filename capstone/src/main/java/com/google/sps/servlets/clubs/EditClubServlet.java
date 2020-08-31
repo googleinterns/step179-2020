@@ -75,10 +75,12 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
                           .replaceAll("\\s", "")) // Removes all whitespace and moves to lower case.
               .filter(Predicates.not(Strings::isNullOrEmpty))
               .collect(toImmutableList());
+      boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
       clubEntity.setProperty(Constants.DESCRIP_PROP, request.getParameter(Constants.DESCRIP_PROP));
       clubEntity.setProperty(Constants.WEBSITE_PROP, request.getParameter(Constants.WEBSITE_PROP));
       clubEntity.setProperty(Constants.OFFICER_PROP, intersect);
       clubEntity.setProperty(Constants.LABELS_PROP, labels);
+      clubEntity.setProperty(Constants.EXCLUSIVE_PROP, isExclusive);
       datastore.put(clubEntity);
       response.sendRedirect(
           "/about-us.html?name="

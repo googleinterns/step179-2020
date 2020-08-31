@@ -63,10 +63,33 @@ button {
 }
 
 #login {
-  position: absolute;
+  position: revert;
+  color: #000;
+  height: 100vh;
+  background-image: linear-gradient(45deg, #6495ED, #f5fcfcfc);
+}
+
+#main-heading {
+  font: 100px 'Montserrat';
+  font-weight: bold;
+  left: 0;
   top: 25%;
-  transform: translateY(-50%);
-  left: 25%;
+}
+
+#intro-content {
+  font-size: 40px;
+  right: 5%;
+  top: 25%;
+}
+
+.split-front {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
 }
 
 .save-button {
@@ -281,7 +304,8 @@ button:hover {
   border: 0;
   width: 800px;
   height: 600px;
-  display:inline-block;
+  display: inline-block;
+  padding: 20px;
 }
 
 #row {
@@ -296,6 +320,10 @@ button:hover {
   display: none; 
 }
 
+#delete-button {
+    display: none;
+}
+
 #club-join-container,
 #interested-club-container {
   display: inline;
@@ -307,4 +335,8 @@ button:hover {
 
 #hidden-input {
   all: revert;
+}
+
+#event-input {
+  visibility: hidden;
 }

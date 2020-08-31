@@ -114,6 +114,7 @@ public final class ExploreServletTest {
     club1.setProperty(Constants.WEBSITE_PROP, SITE_1);
     club1.setProperty(Constants.LOGO_PROP, BLOB_KEY_1);
     club1.setProperty(Constants.CALENDAR_PROP, CALENDAR_ID_1);
+    club1.setProperty(Constants.EXCLUSIVE_PROP, true);
     club1.setProperty(Constants.TIME_PROP, TIME_1);
 
     Entity club2 = new Entity(Constants.CLUB_ENTITY_PROP);
@@ -124,6 +125,7 @@ public final class ExploreServletTest {
     club2.setProperty(Constants.WEBSITE_PROP, SITE_2);
     club2.setProperty(Constants.LOGO_PROP, BLOB_KEY_2);
     club2.setProperty(Constants.CALENDAR_PROP, CALENDAR_ID_2);
+    club2.setProperty(Constants.EXCLUSIVE_PROP, false);
     club2.setProperty(Constants.TIME_PROP, TIME_2);
 
     this.datastore.put(club1);
@@ -154,6 +156,7 @@ public final class ExploreServletTest {
     Assert.assertEquals(object0.get(Constants.WEBSITE_PROP).getAsString(), SITE_1);
     Assert.assertEquals(object0.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_1);
     Assert.assertEquals(object0.get(Constants.CALENDAR_PROP).getAsString(), CALENDAR_ID_1);
+    Assert.assertEquals(object0.get(Constants.EXCLUSIVE_PROP).getAsBoolean(), true);
     Assert.assertEquals(object0.get(Constants.TIME_PROP).getAsLong(), TIME_1);
 
     JsonElement element1 = response.get(1);
@@ -176,6 +179,7 @@ public final class ExploreServletTest {
     Assert.assertEquals(object1.get(Constants.WEBSITE_PROP).getAsString(), SITE_2);
     Assert.assertEquals(object1.get(Constants.LOGO_PROP).getAsString(), BLOB_KEY_2);
     Assert.assertEquals(object1.get(Constants.CALENDAR_PROP).getAsString(), CALENDAR_ID_2);
+    Assert.assertEquals(object1.get(Constants.EXCLUSIVE_PROP).getAsBoolean(), false);
     Assert.assertEquals(object1.get(Constants.TIME_PROP).getAsLong(), TIME_2);
   }
 

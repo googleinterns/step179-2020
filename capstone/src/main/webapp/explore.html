@@ -22,6 +22,7 @@
           <input list="labels-select-options" name="labels-select" id="labels-select">
           <datalist id="labels-select-options"></datalist>
           <input type="button" onclick="addFilterAndReload()" value="Add">
+          <input type="button" onclick="clearFiltersAndReload()" value="Clear Filters">
         </div>
         <ul id="labels"></ul>
       </div>
@@ -33,6 +34,7 @@
         <div class="club-info-container">
           <h2><a href="" id="club-name"></a></h2>
           <p id="description"></p>
+          <p id="exclusive"></p>
           <p id="members"></p>
         </div> 
         <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">

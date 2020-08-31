@@ -43,8 +43,6 @@ import org.mockito.MockitoAnnotations;
 public class EmailFactoryTest {
   private static final String CLUB_1 = "Club 1";
   private static final String MEGHA_EMAIL = "kakm@google.com";
-  //   private static final String KEVIN_EMAIL = "kshao@google.com";
-  //   private static final String MEGAN_EMAIL = "meganshi@google.com";
   private static final String ANNOUNCEMENT = "Here is an announcement";
 
   private Entity club1;

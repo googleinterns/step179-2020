@@ -24,12 +24,13 @@
     <div id="tab"></div>
     <template id="about-us">
       <div id="about-us-view">
+        <a id="website">
+          <h3>Visit club website</h3>
+        </a>
         <h3>Description:</h3>
         <p class="club-element" id="description"></p>
         <h3>Officers:</h3>
         <ul class="club-element" id="officers-list"></ul>
-        <h3>Website:</h3>
-        <p class="club-element" id="website"></p>
         <h3>Club Size:</h3>
         <p class="club-element" id="members"></p>
         <h3>Labels:</h3>
@@ -43,6 +44,8 @@
           <input type="submit">
         </form>
         <form hidden action="/club-edit" method="POST" id="edit-form" name="edit-about">
+          <input type="checkbox" id="makeExclusive" name="exclusive">
+          <label for="exclusive">Make this club exclusive</label></br>
           <input type="hidden" id="new-name" name="name">
           <input type="hidden" id="new-desc" name="description">
           <input type="hidden" id="new-web" name="website">
@@ -105,7 +108,21 @@
       </div>
     </template>
     <template id="calendar">
-      <iframe id="calendar-element" title="Club Calendar"></iframe>
+      <iframe id="calendar-element" title="Club Calendar" src=""></iframe>
+      <form action="/calendar" method="POST"> 
+        <input type="hidden" name="name" id="club-name-cal">
+      </form>
+      <div id="event-input">
+        <p>Add an event for your club by filling out the necessary information below:</p>
+        <form action="/add-event" method="POST">
+          <input id="club-name-input" type="hidden" name="club" value="">
+          From <input type="datetime-local" name="start-time" required> To <input type="datetime-local" name="end-time" required>
+          <input type="text" name="event-title" placeholder="Event title..." required>
+          <input type="text" name="event-description" placeholder="Event description...">
+          <input type="hidden" name="timezone" id="timezone">
+          <input type="submit" value="Add Event">
+        </form>
+      </div>
       <div id="events-list" hidden>
         <h1>Upcoming Events</h1>
         <template id="event-listing">

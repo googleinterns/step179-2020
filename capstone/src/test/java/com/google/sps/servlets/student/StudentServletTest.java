@@ -125,6 +125,9 @@ public final class StudentServletTest {
     localHelper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("example.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(TEST_EMAIL);
+    // Tests for sending emails is done in EmailFactoryTest.java so we can ignore the welcome email
+    // here
+    when(request.getParameter(Constants.SERVICE_PROP)).thenReturn("do not test gmail service here");
 
     JsonObject responseJson = doGet_studentServletResponse();
     JsonObject responseStudent = responseJson.get(STUDENT).getAsJsonObject();

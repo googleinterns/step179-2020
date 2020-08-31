@@ -54,8 +54,8 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
         getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
     ImmutableList<String> interestedClubs =
         getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
-    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
 
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
     String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -97,6 +97,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
         key,
         entity.getProperty(Constants.CALENDAR_PROP).toString(),
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
+        (Boolean) entity.getProperty(Constants.EXCLUSIVE_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 
