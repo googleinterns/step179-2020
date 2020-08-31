@@ -33,6 +33,10 @@ async function getListings () {
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
   const response = await fetch(query);
   const json = await response.json();
+  if (json.noClubsMessage != "") {
+    document.getElementById('no-clubs-message').innerText = json.noClubsMessage;
+    return;
+  }
   loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
 }
 

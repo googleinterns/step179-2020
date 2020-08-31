@@ -79,7 +79,8 @@ public final class ServletUtil {
     // If you want to run this locally, you will need to replace this with your dev server URI
     // - then add "/oauth2callback" to the end of it and add that to you API console under
     // Authorized URIs.
-    return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    // return "https://clubhub-step-2020.googleplex.com/oauth2callback";
+    return "https://8080-4afd6625-e4a1-43f4-8d79-fc4c0cf1c87d.us-west1.cloudshell.dev/oauth2callback";
   }
 
   public static GoogleAuthorizationCodeFlow newFlow() throws IOException {
@@ -94,7 +95,6 @@ public final class ServletUtil {
                 GmailScopes.GMAIL_SEND))
         .setDataStoreFactory(AppEngineDataStoreFactory.getDefaultInstance())
         .setAccessType(OFFLINE_ACCESS_TYPE)
-        .setApprovalPrompt("force")
         .build();
   }
 
