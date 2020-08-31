@@ -94,6 +94,7 @@ public final class ServletUtil {
                 GmailScopes.GMAIL_SEND))
         .setDataStoreFactory(AppEngineDataStoreFactory.getDefaultInstance())
         .setAccessType(OFFLINE_ACCESS_TYPE)
+        .setApprovalPrompt("force")
         .build();
   }
 

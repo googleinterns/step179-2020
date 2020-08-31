@@ -31,11 +31,17 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     Gson gson = new Gson();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    String sort = request.getParameter(Constants.SORT_PROP);
+    String sort =
+        request.getParameter(Constants.SORT_PROP) == null
+            ? Constants.DEFAULT
+            : request.getParameter(Constants.SORT_PROP);
     Comparator<Club> comparator = getComparator(sort);
 
-    ImmutableList<String> rawLabels =
-        ImmutableList.copyOf(request.getParameter(Constants.LABELS_PROP).split(","));
+    String rawLabelsStr =
+        request.getParameter(Constants.LABELS_PROP) == null
+            ? ""
+            : request.getParameter(Constants.LABELS_PROP);
+    ImmutableList<String> rawLabels = ImmutableList.copyOf(rawLabelsStr.split(","));
     ImmutableList<String> labels =
         rawLabels.stream()
             .filter(Predicates.not(Strings::isNullOrEmpty))
@@ -50,26 +56,17 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
 
+    // Get or create student entity and store club lists
+    Entity student = StudentServlet.getStudent(request, userEmail, datastore);
     ImmutableList<String> studentClubs =
-        getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
+        ServletUtil.getPropertyList(student, Constants.PROPERTY_CLUBS);
     ImmutableList<String> interestedClubs =
-        getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
+        ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP);
 
     ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
     String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
-  }
-
-  private static ImmutableList<String> getStudentClubList(
-      String userEmail, String property, DatastoreService datastore) {
-    Query query = new Query(userEmail);
-    PreparedQuery results = datastore.prepare(query);
-    Entity student = results.asSingleEntity();
-    if (student == null) {
-      return null;
-    }
-    return ServletUtil.getPropertyList(student, property);
   }
 
   private static boolean matchesLabels(Club club, ImmutableList<String> labels) {

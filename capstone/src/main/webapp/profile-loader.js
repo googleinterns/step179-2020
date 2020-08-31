@@ -101,5 +101,5 @@ function fetchBlobstoreProfileUrl() {
 
 /** Direct to Explore page once logged in */
 function onSignIn() {
-  window.location.href = '/explore?sort=default&labels=';
+  document.getElementById('auth-form').submit();
 }

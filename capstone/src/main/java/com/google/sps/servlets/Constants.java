@@ -57,4 +57,5 @@ public final class Constants {
   public static final String TIMEZONE_PROP = "timezone";
   public static final String EMAIL_PATH = "/emailTemplates/";
   public static final String SERVICE_PROP = "service";
+  public static final String DEFAULT = "default";
 }
