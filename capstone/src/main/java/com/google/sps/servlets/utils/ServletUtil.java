@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,6 +25,25 @@ public final class ServletUtil {
   static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
   private static GoogleClientSecrets clientSecrets = null;
   private static final String OFFLINE_ACCESS_TYPE = "offline";
+
+  public static String getPropertyFromClub(String clubName, String property) {
+    Entity club = getClubAsEntity(clubName);
+    if (club != null) {
+      return club.getProperty(property).toString();
+    }
+    return null;
+  }
+
+  public static Entity getClubAsEntity(String clubName) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(Constants.PROPERTY_NAME, FilterOperator.EQUAL, clubName));
+    PreparedQuery results = datastore.prepare(query);
+    Entity club = results.asSingleEntity();
+    return club;
+  }
 
   public static ImmutableList<String> getPropertyList(Entity entity, String property) {
     if (entity.getProperty(property) != null) {

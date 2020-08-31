@@ -89,8 +89,9 @@ async function showHidePostAnnouncement () {
   var params = new URLSearchParams(window.location.search);
   const query = '/officer?name=' + params.get('name');
   const response = await fetch(query);
-  const text = await response.text();
-  if (JSON.parse(text)) {
+  const text = await response.text(); 
+  const isOfficer = JSON.parse(text);
+  if (isOfficer) {
     document.getElementById('post-announcement').removeAttribute('hidden');
     document.getElementById('scheduled-announcements').removeAttribute('hidden');
   }
@@ -171,10 +172,11 @@ async function loadAnnouncements () {
 /** Accesses and displays club announcement data from servlet. */
 async function loadScheduledAnnouncements() {
   var params = new URLSearchParams(window.location.search);
-  const isOfficerQuery = '/officer?name=' + params.get('name');
-  const isOfficerResponse = await fetch(isOfficerQuery);
-  const isOfficer = await isOfficerResponse.text();
-  if (!JSON.parse(isOfficer)) {
+  const officerQuery = '/officer?name=' + params.get('name');
+  const officerResponse = await fetch(officerQuery);
+  const officerText = await officerResponse.text(); 
+  const isOfficer = JSON.parse(officerText);
+  if (!isOfficer) {
     return; // Not an officer, don't load scheduled announcements. Servlet won't give anything anyway. 
   }    
 
@@ -233,12 +235,32 @@ async function loadCalendar () {
   if (json['club']['calendar'].length != 0) {
     document.getElementById('calendar-element').src = "https://calendar.google.com/calendar/embed?src=" + json['club']['calendar'];
   }
+  
   if(json['club']['isOfficer']) {
     document.getElementById('event-input').style.visibility = 'visible';
     document.getElementById('club-name-input').value = json['club']['name'];
+    
+    const eventsList = await fetch('/events?name=' + params.get('name'));
+    const eventsJson = await eventsList.json();
+    document.getElementById('events-list').removeAttribute('hidden');
+    const template = document.querySelector('#event-listing');
+
+    for (var event of eventsJson) {
+      template.content.querySelector('.event-name').innerHTML = event.summary;
+      template.content.querySelector('.event-time').innerHTML = new Date(event.start.dateTime.value).toString();
+      template.content.querySelector('.delete-event').setAttribute('onclick', 'deleteEvent("' + event.id + '");');
+      var clone = document.importNode(template.content, true);
+      document.getElementById('events-list').appendChild(clone);
+    }
   }
   document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   document.getElementById('club-name-cal').value = params.get('name');
+}
+
+async function deleteEvent (id) {
+  var params = new URLSearchParams(window.location.search);
+  const response = await fetch('/delete-event?name=' + params.get('name') + '&id=' + id, {method: 'POST'});
+  window.location.href = '/about-us.html?name=' + params.get('name') + '&tab=calendar';
 }
 
 /** Displays a certain tab for a club, by first checking for a GET parameter 
