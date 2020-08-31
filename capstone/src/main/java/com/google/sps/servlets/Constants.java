@@ -3,6 +3,7 @@ package com.google.sps.servlets;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+// TODO: Refactor and organize this class
 /* Stores constants shared between multiple servlets. */
 public final class Constants {
   public Constants() {}

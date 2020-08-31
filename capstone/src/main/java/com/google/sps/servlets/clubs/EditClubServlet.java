@@ -64,10 +64,14 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       boolean isExclusive = request.getParameter(Constants.EXCLUSIVE_PROP) != null;
       ImmutableList<String> requests =
           ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
-      requests.stream()
-          .forEach(
-              joinRequest ->
-                  updateMemberRequestList(joinRequest, request, clubEntity, isExclusive));
+
+      if (isExclusive) {
+        requests.stream()
+            .filter(joinRequest -> request.getParameter(joinRequest) != null)
+            .forEach(joinRequest -> updateMemberRequestList(joinRequest, clubEntity));
+      } else {
+        requests.stream().forEach(joinRequest -> updateMemberRequestList(joinRequest, clubEntity));
+      }
 
       String newLabelsList = request.getParameter(Constants.LABELS_PROP);
       ImmutableList<String> rawLabels =
@@ -99,22 +103,18 @@ public class EditClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
     }
   }
 
-  private void updateMemberRequestList(
-      String nameToUpdate, HttpServletRequest request, Entity clubEntity, boolean isExclusive) {
+  private void updateMemberRequestList(String nameToUpdate, Entity clubEntity) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    if (request.getParameter(nameToUpdate) != null || !isExclusive) {
-      clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToUpdate, Constants.MEMBER_PROP);
-      clubEntity =
-          ServletUtil.removeItemFromEntity(clubEntity, nameToUpdate, Constants.REQUEST_PROP);
-      Query query = new Query(nameToUpdate);
-      Entity student = datastore.prepare(query).asSingleEntity();
-      ServletUtil.addItemToEntity(
-          student,
-          clubEntity.getProperty(Constants.PROPERTY_NAME).toString(),
-          Constants.PROPERTY_CLUBS);
-      datastore.put(student);
-      datastore.put(clubEntity);
-    }
+    clubEntity = ServletUtil.addItemToEntity(clubEntity, nameToUpdate, Constants.MEMBER_PROP);
+    clubEntity = ServletUtil.removeItemFromEntity(clubEntity, nameToUpdate, Constants.REQUEST_PROP);
+    Query query = new Query(nameToUpdate);
+    Entity student = datastore.prepare(query).asSingleEntity();
+    ServletUtil.addItemToEntity(
+        student,
+        clubEntity.getProperty(Constants.PROPERTY_NAME).toString(),
+        Constants.PROPERTY_CLUBS);
+    datastore.put(student);
+    datastore.put(clubEntity);
   }
 
   @Override
