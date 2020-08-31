@@ -36,6 +36,7 @@ public class EditClubServletTest {
   private final String TEST_EMAIL = "test-email@gmail.com";
   private final String JOIN_EMAIL_1 = "email_1@gmail.com";
   private final String JOIN_EMAIL_2 = "email_2@gmail.com";
+  private final String CHECKBOX_ON = "on";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -188,7 +189,7 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
-    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(TEST_EMAIL);
     editClubServlet.doPost(request, response);
@@ -242,7 +243,7 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
     when(request.getParameter(JOIN_EMAIL_1)).thenReturn(JOIN_EMAIL_1);
     when(request.getParameter(JOIN_EMAIL_2)).thenReturn(JOIN_EMAIL_2);
     editClubServlet.doPost(request, response);
@@ -281,7 +282,7 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
     editClubServlet.doPost(request, response);
 
     Query query =
@@ -316,7 +317,7 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
-    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
     when(request.getParameter(JOIN_EMAIL_1)).thenReturn(JOIN_EMAIL_1);
     editClubServlet.doPost(request, response);
 
