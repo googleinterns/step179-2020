@@ -33,7 +33,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
     String sort =
         request.getParameter(Constants.SORT_PROP) == null
-            ? "default"
+            ? Constants.DEFAULT
             : request.getParameter(Constants.SORT_PROP);
     Comparator<Club> comparator = getComparator(sort);
 
