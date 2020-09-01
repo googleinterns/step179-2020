@@ -88,9 +88,7 @@ public class ClubServletTest {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
     when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(null);
-
     doPost_helper();
-    // clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -118,9 +116,7 @@ public class ClubServletTest {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
     when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
-
     doPost_helper();
-    // clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -142,10 +138,7 @@ public class ClubServletTest {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("officer@example.com");
     doPost_helper();
-    // clubServlet.doPostHelper(request, response, datastore, calendarService);
-
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-    // clubServlet.doPostHelper(request, response, datastore, calendarService);
     doPost_helper();
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
