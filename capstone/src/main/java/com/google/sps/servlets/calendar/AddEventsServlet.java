@@ -48,7 +48,7 @@ public class AddEventsServlet extends HttpServlet {
     } catch (Exception error) {
       System.out.println("Error: " + error);
     }
-    response.sendRedirect(request.getHeader("referer"));
+    response.sendRedirect(String.format("/about-us.html?name=%s&tab=calendar", clubName));
   }
 
   private String getCalendarId(String clubName) {

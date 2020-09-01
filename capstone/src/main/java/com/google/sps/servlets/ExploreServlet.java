@@ -56,6 +56,11 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
 
+    String noClubsMessage =
+        clubs.isEmpty()
+            ? "Welcome to ClubHub! There are no clubs to explore right now. :( Please register a new club!"
+            : "";
+
     // Get or create student entity and store club lists
     Entity student = StudentServlet.getStudent(request, userEmail, datastore);
     ImmutableList<String> studentClubs =
@@ -63,7 +68,7 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     ImmutableList<String> interestedClubs =
         ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP);
 
-    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs, noClubsMessage);
     String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -125,13 +130,16 @@ class ExploreInfo {
   private ImmutableList<Club> clubs;
   private ImmutableList<String> studentClubs;
   private ImmutableList<String> studentInterestedClubs;
+  private String noClubsMessage;
 
   public ExploreInfo(
       ImmutableList<Club> clubs,
       ImmutableList<String> studentClubs,
-      ImmutableList<String> studentInterestedClubs) {
+      ImmutableList<String> studentInterestedClubs,
+      String noClubsMessage) {
     this.clubs = clubs;
     this.studentClubs = studentClubs;
     this.studentInterestedClubs = studentInterestedClubs;
+    this.noClubsMessage = noClubsMessage;
   }
 }
