@@ -6,6 +6,8 @@ import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineA
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.AclRule;
+import com.google.api.services.calendar.model.AclRule.Scope;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -188,13 +190,16 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
   }
 
   /** Return the Calendar ID after creating a calendar for the given club name. */
-  private String createCalendar(String clubName, Calendar service)
+  public String createCalendar(String clubName, Calendar service)
       throws IOException, GeneralSecurityException {
     com.google.api.services.calendar.model.Calendar calendar =
         new com.google.api.services.calendar.model.Calendar()
             .setSummary(clubName + " Calendar")
             .setTimeZone(Constants.TIME_ZONE);
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
+    // Enable reader permission for user
+    AclRule rule = new AclRule().setScope(new Scope().setType("default")).setRole("reader");
+    service.acl().insert(createdCalendarId, rule).execute();
     return createdCalendarId;
   }
 

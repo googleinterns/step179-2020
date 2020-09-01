@@ -91,7 +91,8 @@ public final class ServletUtil {
                 CalendarScopes.CALENDAR,
                 GmailScopes.MAIL_GOOGLE_COM,
                 GmailScopes.GMAIL_INSERT,
-                GmailScopes.GMAIL_SEND))
+                GmailScopes.GMAIL_SEND,
+                CalendarScopes.CALENDAR_EVENTS))
         .setDataStoreFactory(AppEngineDataStoreFactory.getDefaultInstance())
         .setAccessType(OFFLINE_ACCESS_TYPE)
         .build();

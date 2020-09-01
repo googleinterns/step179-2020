@@ -24,6 +24,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -82,13 +83,14 @@ public class ClubServletTest {
   }
 
   @Test
-  public void doPost_registerNewValidClub() throws ServletException, IOException {
+  public void doPost_registerNewValidClub()
+      throws ServletException, IOException, GeneralSecurityException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
     when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(null);
 
     doPost_helper();
-    clubServlet.doPostHelper(request, response, datastore, calendarService);
+    // clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -111,13 +113,14 @@ public class ClubServletTest {
   }
 
   @Test
-  public void doPost_registerNewValidExclusiveClub() throws ServletException, IOException {
+  public void doPost_registerNewValidExclusiveClub()
+      throws ServletException, IOException, GeneralSecurityException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("test-email@gmail.com");
     when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
 
     doPost_helper();
-    clubServlet.doPostHelper(request, response, datastore, calendarService);
+    // clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     Query query =
         new Query(Constants.CLUB_ENTITY_PROP)
@@ -134,14 +137,16 @@ public class ClubServletTest {
   }
 
   @Test
-  public void doPost_registerNewInvalidClub() throws ServletException, IOException {
+  public void doPost_registerNewInvalidClub()
+      throws ServletException, IOException, GeneralSecurityException {
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn("officer@example.com");
     doPost_helper();
-    clubServlet.doPostHelper(request, response, datastore, calendarService);
+    // clubServlet.doPostHelper(request, response, datastore, calendarService);
 
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn("club desc");
-    clubServlet.doPostHelper(request, response, datastore, calendarService);
+    // clubServlet.doPostHelper(request, response, datastore, calendarService);
+    doPost_helper();
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=false");
     Query query =
@@ -218,7 +223,7 @@ public class ClubServletTest {
     return converted;
   }
 
-  private void doPost_helper() throws IOException {
+  private void doPost_helper() throws IOException, GeneralSecurityException {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
@@ -233,5 +238,11 @@ public class ClubServletTest {
     when(mockCalendar.insert(calendar)).thenReturn(calendarInsert);
     when(calendarInsert.execute()).thenReturn(modelCalendar);
     when(modelCalendar.getId()).thenReturn(SAMPLE_CAL_ID);
+
+    ClubServlet servletSpy = Mockito.spy(clubServlet);
+    Mockito.doReturn(SAMPLE_CAL_ID)
+        .when(servletSpy)
+        .createCalendar(SAMPLE_CLUB_NAME, calendarService);
+    servletSpy.doPostHelper(request, response, datastore, calendarService);
   }
 }
