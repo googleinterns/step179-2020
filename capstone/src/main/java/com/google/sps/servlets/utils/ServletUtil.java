@@ -58,7 +58,6 @@ public final class ServletUtil {
     // If you want to run this locally, you will need to replace this with your dev server URI
     // - then add "/oauth2callback" to the end of it and add that to you API console under
     // Authorized URIs.
-
     return "https://clubhub-step-2020.googleplex.com/oauth2callback";
   }
 

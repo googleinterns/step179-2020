@@ -321,7 +321,7 @@ button:hover {
 }
 
 #delete-button {
-    display: none;
+  display: none;
 }
 
 #club-join-container,
@@ -339,4 +339,10 @@ button:hover {
 
 #event-input {
   visibility: hidden;
+}
+
+#website-input {
+  display: none;
+  background: #eee;
+  outline: 2px solid #0000FF;
 }

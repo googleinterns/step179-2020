@@ -129,7 +129,6 @@ class ExploreInfo {
   private ImmutableList<Club> clubs;
   private ImmutableList<String> studentClubs;
   private ImmutableList<String> studentInterestedClubs;
-  private String userEmail;
 
   public ExploreInfo(
       ImmutableList<Club> clubs,

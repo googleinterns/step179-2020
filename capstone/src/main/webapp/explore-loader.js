@@ -64,7 +64,8 @@ function addAlertOnclick(className, clubName) {
   for (button of allButtons) {
       if (button.value == clubName) {
         if (button.innerText == 'Request to Join') {
-          button.onclick = function() {alert('You have requested to join ' + clubName + '. You will become a member of this club upon officer approval!')};
+          button.onclick = function() {alert('You have requested to join ' + clubName + 
+              '. You will become a member of this club upon officer approval!')};
         } else {
           button.onclick = className.includes('interested') 
               ? function() {sendJoinedAlert('interested', false, clubName)} 
