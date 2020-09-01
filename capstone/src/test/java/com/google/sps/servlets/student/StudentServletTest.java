@@ -401,12 +401,13 @@ public final class StudentServletTest {
 
   @Test
   public void doPost_studentRequestsToExclusiveJoinClub() throws ServletException, IOException {
+    datastore.put(studentMegan);
+    datastore.put(club3);
     localHelper.setEnvEmail(MEGHA_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(MEGHA_EMAIL);
-    datastore.put(studentMegan);
-    datastore.put(club3);
     when(request.getParameter(Constants.JOIN_CLUB_PROP)).thenReturn(CLUB_3);
+    when(request.getParameter(Constants.SERVICE_PROP)).thenReturn("do not test gmail service here");
 
     doPost_studentServletResponse();
 
