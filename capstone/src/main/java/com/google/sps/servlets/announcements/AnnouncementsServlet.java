@@ -3,7 +3,11 @@ package com.google.sps.servlets;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.gmail.Gmail;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -11,11 +15,14 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -86,6 +93,15 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
     EmailFactory.sendEmailToAllMembers(clubName, announcementEntity);
 
     response.sendRedirect("/about-us.html?name=" + clubName + "&tab=announcements");
+  }
+
+  public static Gmail getGmailService() throws IOException, GeneralSecurityException {
+    final NetHttpTransport GMAIL_HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+    String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    Credential credential = ServletUtil.newFlow().loadCredential(userId);
+    return new Gmail.Builder(GMAIL_HTTP_TRANSPORT, Constants.JSON_FACTORY, credential)
+        .setApplicationName(Constants.GOOGLE_APPLICATION_NAME)
+        .build();
   }
 
   @Override

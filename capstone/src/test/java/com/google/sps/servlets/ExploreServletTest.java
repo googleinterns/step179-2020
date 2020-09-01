@@ -50,6 +50,7 @@ import org.mockito.MockitoAnnotations;
  */
 @RunWith(JUnit4.class)
 public final class ExploreServletTest {
+  private static final String KEVIN = "kshao@google.com";
 
   private ExploreServlet servlet;
   @Mock private HttpServletRequest request;
@@ -75,9 +76,8 @@ public final class ExploreServletTest {
   }
 
   @Test
-  public void correctNumberAndObjectsReturned() throws IOException {
+  public void doGet_correctNumberAndObjectsReturned() throws IOException {
 
-    String KEVIN = "kshao@google.com";
     String MEGHA = "kakm@google.com";
     String MEGAN = "meganshi@google.com";
 
@@ -105,6 +105,7 @@ public final class ExploreServletTest {
     when(principal.getName()).thenReturn(KEVIN);
     when(request.getParameter(Constants.SORT_PROP)).thenReturn(Constants.DEFAULT_SORT_PROP);
     when(request.getParameter(Constants.LABELS_PROP)).thenReturn("");
+    when(request.getParameter(Constants.SERVICE_PROP)).thenReturn("do not test gmail service here");
 
     Entity club1 = new Entity(Constants.CLUB_ENTITY_PROP);
     club1.setProperty(Constants.PROPERTY_NAME, CLUB_1);
@@ -131,7 +132,8 @@ public final class ExploreServletTest {
     this.datastore.put(club1);
     this.datastore.put(club2);
 
-    JsonArray response = getServletResponse(servlet);
+    JsonObject fullResponse = getServletResponse(servlet);
+    JsonArray response = fullResponse.get("clubs").getAsJsonArray();
 
     int expectedSize = 2;
     Assert.assertEquals(expectedSize, response.size());
@@ -183,7 +185,24 @@ public final class ExploreServletTest {
     Assert.assertEquals(object1.get(Constants.TIME_PROP).getAsLong(), TIME_2);
   }
 
-  private JsonArray getServletResponse(ExploreServlet servlet) throws IOException {
+  @Test
+  public void doGet_noRegisteredClubs() throws IOException {
+    helper.setEnvEmail("kshao").setEnvAuthDomain("gmail.com").setEnvIsLoggedIn(true);
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(KEVIN);
+    when(request.getParameter(Constants.SERVICE_PROP)).thenReturn("do not test gmail service here");
+
+    JsonObject fullResponse = getServletResponse(servlet);
+    String responseMessage = fullResponse.get("noClubsMessage").toString();
+    // Remove additional quotation marks from JSON
+    responseMessage = responseMessage.substring(1, responseMessage.length() - 1);
+    String expectedMessage =
+        "Welcome to ClubHub! There are no clubs to explore right now. :( Please register a new club!";
+
+    Assert.assertEquals(expectedMessage, responseMessage);
+  }
+
+  private JsonObject getServletResponse(ExploreServlet servlet) throws IOException {
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(printWriter);
@@ -193,7 +212,6 @@ public final class ExploreServletTest {
     String responseStr = stringWriter.toString().trim();
     JsonElement responseJsonElement = new JsonParser().parse(responseStr);
     JsonObject responseJsonObject = (JsonObject) responseJsonElement;
-
-    return responseJsonObject.get("clubs").getAsJsonArray();
+    return responseJsonObject;
   }
 }

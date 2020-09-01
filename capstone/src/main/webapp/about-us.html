@@ -127,6 +127,16 @@
           <input type="submit" value="Add Event">
         </form>
       </div>
+      <div id="events-list" hidden>
+        <h1>Upcoming Events</h1>
+        <template id="event-listing">
+          <div class="full-screen-panel">
+            <p class="event-name"></p>
+            <p class="event-time"></p>
+            <button class="delete-event">Delete</button>
+          </div>
+        </template>
+      </div>
     </template>
     <form id="interested-club-container" name="interested-join" action="/interested-clubs" method="POST">
       <button class="interested-join-button" name="interested-join" value="" formmethod="POST" onclick="sendJoinedAlert('interested', false)">Interested</button>

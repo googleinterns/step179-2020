@@ -14,6 +14,11 @@ async function loadLabels () {
   }
 }
 
+async function clearFiltersAndReload () {
+  document.getElementById('labels').innerHTML = '';
+  getListings();
+}
+
 async function addFilterAndReload () {
   const filter = document.getElementById('labels-select').value;
   document.getElementById('labels').innerHTML += '<li>' + filter + '</li>';
@@ -28,7 +33,10 @@ async function getListings () {
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
   const response = await fetch(query);
   const json = await response.json();
-  loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
+  document.getElementById('no-clubs-message').innerText = json.noClubsMessage;
+  if (json.noClubsMessage == '') {
+    loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
+  }
 }
 
 async function loadListings (clubs, studentClubs, interestedClubs) {

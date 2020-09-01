@@ -20,12 +20,10 @@ public class OAuth2CallbackServlet extends AbstractAppEngineAuthorizationCodeCal
   @Override
   protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential)
       throws ServletException, IOException {
-    resp.sendRedirect(
-        "/explore?sort="
-            + req.getParameter(Constants.SORT_PROP)
-            + "&labels="
-            + req.getParameter(Constants.LABELS_PROP));
-    resp.getWriter().print(userEmail + " is logged in and has given access to their calendar.");
+
+    resp.sendRedirect("/explore.html");
+    resp.getWriter()
+        .print(userEmail + " is logged in and has given access to their calendar and Gmail.");
   }
 
   // On failure (i.e user denies access) the callback servlet displays a simple error message."
@@ -33,7 +31,7 @@ public class OAuth2CallbackServlet extends AbstractAppEngineAuthorizationCodeCal
   protected void onError(
       HttpServletRequest req, HttpServletResponse resp, AuthorizationCodeResponseUrl errorResponse)
       throws ServletException, IOException {
-    resp.getWriter().print(userEmail + " has not given access to their calendar");
+    resp.getWriter().print(userEmail + " has not given access to their calendar and/or Gmail");
     resp.setStatus(200);
   }
 

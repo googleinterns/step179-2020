@@ -31,11 +31,17 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
     Gson gson = new Gson();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    String sort = request.getParameter(Constants.SORT_PROP);
+    String sort =
+        request.getParameter(Constants.SORT_PROP) == null
+            ? Constants.DEFAULT
+            : request.getParameter(Constants.SORT_PROP);
     Comparator<Club> comparator = getComparator(sort);
 
-    ImmutableList<String> rawLabels =
-        ImmutableList.copyOf(request.getParameter(Constants.LABELS_PROP).split(","));
+    String rawLabelsStr =
+        request.getParameter(Constants.LABELS_PROP) == null
+            ? ""
+            : request.getParameter(Constants.LABELS_PROP);
+    ImmutableList<String> rawLabels = ImmutableList.copyOf(rawLabelsStr.split(","));
     ImmutableList<String> labels =
         rawLabels.stream()
             .filter(Predicates.not(Strings::isNullOrEmpty))
@@ -50,26 +56,22 @@ public class ExploreServlet extends AbstractAppEngineAuthorizationCodeServlet {
             .limit(Constants.LOAD_LIMIT)
             .collect(toImmutableList());
 
-    ImmutableList<String> studentClubs =
-        getStudentClubList(userEmail, Constants.PROPERTY_CLUBS, datastore);
-    ImmutableList<String> interestedClubs =
-        getStudentClubList(userEmail, Constants.INTERESTED_CLUB_PROP, datastore);
-    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs);
+    String noClubsMessage =
+        clubs.isEmpty()
+            ? "Welcome to ClubHub! There are no clubs to explore right now. :( Please register a new club!"
+            : "";
 
+    // Get or create student entity and store club lists
+    Entity student = StudentServlet.getStudent(request, userEmail, datastore);
+    ImmutableList<String> studentClubs =
+        ServletUtil.getPropertyList(student, Constants.PROPERTY_CLUBS);
+    ImmutableList<String> interestedClubs =
+        ServletUtil.getPropertyList(student, Constants.INTERESTED_CLUB_PROP);
+
+    ExploreInfo exploreInfo = new ExploreInfo(clubs, studentClubs, interestedClubs, noClubsMessage);
     String json = gson.toJson(exploreInfo);
     response.setContentType("application/json;");
     response.getWriter().println(json);
-  }
-
-  private static ImmutableList<String> getStudentClubList(
-      String userEmail, String property, DatastoreService datastore) {
-    Query query = new Query(userEmail);
-    PreparedQuery results = datastore.prepare(query);
-    Entity student = results.asSingleEntity();
-    if (student == null) {
-      return null;
-    }
-    return ServletUtil.getPropertyList(student, property);
   }
 
   private static boolean matchesLabels(Club club, ImmutableList<String> labels) {
@@ -129,13 +131,16 @@ class ExploreInfo {
   private ImmutableList<Club> clubs;
   private ImmutableList<String> studentClubs;
   private ImmutableList<String> studentInterestedClubs;
+  private String noClubsMessage;
 
   public ExploreInfo(
       ImmutableList<Club> clubs,
       ImmutableList<String> studentClubs,
-      ImmutableList<String> studentInterestedClubs) {
+      ImmutableList<String> studentInterestedClubs,
+      String noClubsMessage) {
     this.clubs = clubs;
     this.studentClubs = studentClubs;
     this.studentInterestedClubs = studentInterestedClubs;
+    this.noClubsMessage = noClubsMessage;
   }
 }
