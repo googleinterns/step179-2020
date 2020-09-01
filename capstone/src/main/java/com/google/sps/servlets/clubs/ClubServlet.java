@@ -63,6 +63,8 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       }
       String calendar = clubEntity.getProperty(Constants.CALENDAR_PROP).toString();
       boolean isExclusive = (Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP);
+      ImmutableList<String> requests =
+          ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
       long creationTime = Long.parseLong(clubEntity.getProperty(Constants.TIME_PROP).toString());
       if (!members.contains(userEmail) && isExclusive) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -80,6 +82,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
               calendar,
               labels,
               isExclusive,
+              requests,
               creationTime);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(club);
@@ -141,6 +144,7 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
       clubEntity.setProperty(Constants.LOGO_PROP, "");
       clubEntity.setProperty(Constants.CALENDAR_PROP, calendarId);
       clubEntity.setProperty(Constants.EXCLUSIVE_PROP, isExclusive);
+      clubEntity.setProperty(Constants.REQUEST_PROP, ImmutableList.of());
       datastore.put(clubEntity);
       addClubToFoundersClubList(datastore, founderEmail, clubName);
     }

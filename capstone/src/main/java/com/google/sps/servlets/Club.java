@@ -13,6 +13,7 @@ public class Club {
   private String calendar;
   private ImmutableList<String> labels;
   private boolean exclusive;
+  private ImmutableList<String> requests;
   private long time;
 
   public Club(
@@ -25,6 +26,7 @@ public class Club {
       String calendar,
       ImmutableList<String> labels,
       boolean exclusive,
+      ImmutableList<String> requests,
       long creationTime) {
     this.name = name;
     this.members = members;
@@ -35,6 +37,7 @@ public class Club {
     this.calendar = calendar;
     this.labels = labels;
     this.exclusive = exclusive;
+    this.requests = requests;
     this.time = creationTime;
   }
 

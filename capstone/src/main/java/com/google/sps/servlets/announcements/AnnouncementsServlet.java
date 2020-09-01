@@ -130,14 +130,15 @@ public class AnnouncementsServlet extends AbstractAppEngineAuthorizationCodeServ
 
     return new Club(
         entity.getProperty(Constants.PROPERTY_NAME).toString(),
-        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.MEMBER_PROP)),
-        ImmutableList.copyOf((ArrayList<String>) entity.getProperty(Constants.OFFICER_PROP)),
+        ServletUtil.getPropertyList(entity, Constants.MEMBER_PROP),
+        ServletUtil.getPropertyList(entity, Constants.OFFICER_PROP),
         entity.getProperty(Constants.DESCRIP_PROP).toString(),
         entity.getProperty(Constants.WEBSITE_PROP).toString(),
         key,
         entity.getProperty(Constants.CALENDAR_PROP).toString(),
         ServletUtil.getPropertyList(entity, Constants.LABELS_PROP),
         (Boolean) entity.getProperty(Constants.EXCLUSIVE_PROP),
+        ServletUtil.getPropertyList(entity, Constants.REQUEST_PROP),
         Long.parseLong(entity.getProperty(Constants.TIME_PROP).toString()));
   }
 }

@@ -20,7 +20,6 @@ import com.google.sps.gmail.EmailFactory;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
@@ -52,12 +51,8 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
 
     // Get club list from entity and convert to an ImmutableList
     // Initally empty in case there is no club list
-    ImmutableList<String> clubs = ImmutableList.of();
-    if (currentStudent.getProperty(Constants.PROPERTY_CLUBS) != null) {
-      clubs =
-          ImmutableList.copyOf(
-              (ArrayList<String>) currentStudent.getProperty(Constants.PROPERTY_CLUBS));
-    }
+    ImmutableList<String> clubs =
+        ServletUtil.getPropertyList(currentStudent, Constants.PROPERTY_CLUBS);
 
     // Create Student object based on stored information
     Student student =
@@ -99,13 +94,26 @@ public class StudentServlet extends AbstractAppEngineAuthorizationCodeServlet {
       if (club == null) {
         return;
       }
-      club = ServletUtil.addItemToEntity(club, userEmail, Constants.MEMBER_PROP);
-      datastore.put(club);
+      ImmutableList<String> clubMembers = ServletUtil.getPropertyList(club, Constants.MEMBER_PROP);
+      // Check that club is exclusive and user is not already in club
+      if ((Boolean) club.getProperty(Constants.EXCLUSIVE_PROP)
+          && !clubMembers.contains(userEmail)) {
+        ImmutableList<String> currentRequests =
+            ServletUtil.getPropertyList(club, Constants.REQUEST_PROP);
+        if (!currentRequests.contains(userEmail)) {
+          ServletUtil.addItemToEntity(club, userEmail, Constants.REQUEST_PROP);
+          datastore.put(club);
+        }
+        response.sendRedirect("/explore.html");
+      } else {
+        club = ServletUtil.addItemToEntity(club, userEmail, Constants.MEMBER_PROP);
+        datastore.put(club);
 
-      // Add new club to student's club list and update Datastore
-      student = ServletUtil.addItemToEntity(student, clubToJoin, Constants.PROPERTY_CLUBS);
-      datastore.put(student);
-      response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
+        // Add new club to student's club list and update Datastore
+        student = ServletUtil.addItemToEntity(student, clubToJoin, Constants.PROPERTY_CLUBS);
+        datastore.put(student);
+        response.sendRedirect("/about-us.html?name=" + club.getProperty(Constants.PROPERTY_NAME));
+      }
     } else if (clubToRemove != null && !clubToRemove.isEmpty()) {
       // Remove member from club's member list and update Datastore
       Entity club = retrieveClub(clubToRemove, datastore, response);

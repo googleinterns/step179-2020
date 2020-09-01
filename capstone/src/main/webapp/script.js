@@ -44,6 +44,12 @@ async function getClubInfo() {
 
     if (clubInfo['exclusive']) {
       document.getElementById('makeExclusive').checked = true;
+      document.getElementById('requests-header').removeAttribute('hidden');
+      var requestList = document.getElementById('requests');
+      for (request of clubInfo['requests']) {
+        requestList.innerHTML += '<input type="checkbox" name=\"' + request + '\" value=\"' + request + '\">';
+        requestList.innerHTML += '<label for=\"' + request + '\">' + request + '</label><br>';
+      }
     }
     document.getElementById('club-logo-small').src = imageUrl;
     document.getElementById('club-name').innerHTML = clubInfo['name'];
@@ -68,6 +74,8 @@ async function getClubInfo() {
     }
     var websiteElement = document.getElementById('website');
     websiteElement.setAttribute('href', clubInfo['website']);
+    document.getElementById('website-input').innerHTML = clubInfo['website'];
+    console.log(clubInfo['website']);
     if(clubInfo['isOfficer']) {
       document.getElementById('edit-button').style.display = 'inline-block';
     }
@@ -237,6 +245,7 @@ async function loadCalendar () {
   }
   
   if(json['club']['isOfficer']) {
+    console.log("hello yo uare here");
     document.getElementById('event-input').style.visibility = 'visible';
     document.getElementById('club-name-input').value = json['club']['name'];
     
@@ -346,7 +355,10 @@ function showEdit() {
   document.getElementById('edit-form').removeAttribute('hidden');
   document.getElementById('logo-form').removeAttribute('hidden');
   document.getElementById('delete-button').style.display = 'inline-block';
+  document.getElementById('website-input').style.display = 'block';
   document.getElementById('logo-club-name').value = document.getElementById('club-name').innerHTML;
+  document.getElementById('website-title').removeAttribute('hidden');
+  document.getElementById('website').style.display = 'none';
   fetchBlobstoreUrl();
 }
 
@@ -355,7 +367,7 @@ function saveClubChanges() {
   const params = new URLSearchParams(window.location.search);
 
   const newDesc = document.getElementById("description").innerHTML;
-  const newWebsite = document.getElementById("website").innerHTML;
+  const newWebsite = document.getElementById("website-input").innerText;
 
   var newOfficers = [];
   const officerListElement = document.getElementById('officers-list');

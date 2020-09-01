@@ -3,6 +3,7 @@ package com.google.sps.servlets;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+// TODO: Refactor and organize this class
 /* Stores constants shared between multiple servlets. */
 public final class Constants {
   public Constants() {}
@@ -29,7 +30,7 @@ public final class Constants {
   public static final String LOGO_PROP = "logo";
   public static final String MEMBER_PROP = "members";
   public static final String OFFICER_PROP = "officers";
-  public static final int LOAD_LIMIT = 10;
+  public static final int LOAD_LIMIT = 25;
   public static final String CLUB_ENTITY_PROP = "Club";
   public static final String ANNOUNCEMENT_PROP = "Announcement";
   public static final String FUTURE_ANNOUNCEMENT_PROP = "FutureAnnouncement";
@@ -56,6 +57,7 @@ public final class Constants {
   public static final String TIMEZONE_OFFSET = ":00.000-07:00";
   public static final String TIMEZONE_PROP = "timezone";
   public static final String EMAIL_PATH = "/emailTemplates/";
+  public static final String REQUEST_PROP = "requests";
   public static final String SERVICE_PROP = "service";
   public static final String DEFAULT = "default";
 }

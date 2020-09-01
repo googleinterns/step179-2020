@@ -34,6 +34,9 @@ public class EditClubServletTest {
   private final String SAMPLE_CLUB_DESC_1 = "Test club description";
   private final String SAMPLE_CLUB_WEB = "www.test-club.com";
   private final String TEST_EMAIL = "test-email@gmail.com";
+  private final String JOIN_EMAIL_1 = "email_1@gmail.com";
+  private final String JOIN_EMAIL_2 = "email_2@gmail.com";
+  private final String CHECKBOX_ON = "on";
 
   @Mock private HttpServletRequest request;
   @Mock private HttpServletResponse response;
@@ -186,7 +189,7 @@ public class EditClubServletTest {
     when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL + "," + newOfficer);
     when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(newDescription);
     when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(newWebsite);
-    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn("on");
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
     when(request.getUserPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(TEST_EMAIL);
     editClubServlet.doPost(request, response);
@@ -228,6 +231,114 @@ public class EditClubServletTest {
     Assert.assertFalse((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
   }
 
+  @Test
+  public void doPost_addAllRequestedMembers() throws ServletException, IOException {
+    Entity startingEntity = makeClubEntity();
+    startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
+    datastore.put(startingEntity);
+
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
+    when(request.getParameter(JOIN_EMAIL_1)).thenReturn(JOIN_EMAIL_1);
+    when(request.getParameter(JOIN_EMAIL_2)).thenReturn(JOIN_EMAIL_2);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> newMembers =
+        ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
+    ImmutableList<String> newRequests =
+        ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+
+    Assert.assertEquals(6, newMembers.size());
+    Assert.assertTrue(newMembers.contains(JOIN_EMAIL_1));
+    Assert.assertTrue(newMembers.contains(JOIN_EMAIL_2));
+
+    Assert.assertEquals(0, newRequests.size());
+  }
+
+  @Test
+  public void doPost_addNoRequestedMembers() throws ServletException, IOException {
+    Entity startingEntity = makeClubEntity();
+    startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
+    datastore.put(startingEntity);
+
+    Entity testStudent = new Entity(TEST_EMAIL);
+    testStudent.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(testStudent);
+
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> newMembers =
+        ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
+    ImmutableList<String> newRequests =
+        ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+
+    Assert.assertEquals(4, newMembers.size());
+    Assert.assertFalse(newMembers.contains(JOIN_EMAIL_1));
+    Assert.assertFalse(newMembers.contains(JOIN_EMAIL_2));
+
+    Assert.assertEquals(2, newRequests.size());
+    Assert.assertEquals(JOIN_EMAIL_1, newRequests.get(0));
+    Assert.assertEquals(JOIN_EMAIL_2, newRequests.get(1));
+  }
+
+  @Test
+  public void doPost_addOneRequestedMember() throws ServletException, IOException {
+    Entity startingEntity = makeClubEntity();
+    startingEntity.setProperty(Constants.EXCLUSIVE_PROP, false);
+    datastore.put(startingEntity);
+
+    when(request.getUserPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.PROPERTY_NAME)).thenReturn(SAMPLE_CLUB_NAME);
+    when(request.getParameter(Constants.OFFICER_PROP)).thenReturn(TEST_EMAIL);
+    when(request.getParameter(Constants.DESCRIP_PROP)).thenReturn(SAMPLE_CLUB_DESC_1);
+    when(request.getParameter(Constants.WEBSITE_PROP)).thenReturn(SAMPLE_CLUB_WEB);
+    when(request.getParameter(Constants.EXCLUSIVE_PROP)).thenReturn(CHECKBOX_ON);
+    when(request.getParameter(JOIN_EMAIL_1)).thenReturn(JOIN_EMAIL_1);
+    editClubServlet.doPost(request, response);
+
+    Query query =
+        new Query(Constants.CLUB_ENTITY_PROP)
+            .setFilter(
+                new FilterPredicate(
+                    Constants.PROPERTY_NAME, FilterOperator.EQUAL, SAMPLE_CLUB_NAME));
+    Entity clubEntity = datastore.prepare(query).asSingleEntity();
+    ImmutableList<String> newMembers =
+        ServletUtil.getPropertyList(clubEntity, Constants.MEMBER_PROP);
+    ImmutableList<String> newRequests =
+        ServletUtil.getPropertyList(clubEntity, Constants.REQUEST_PROP);
+
+    Assert.assertEquals(5, newMembers.size());
+    Assert.assertTrue(newMembers.contains(JOIN_EMAIL_1));
+
+    Assert.assertEquals(1, newRequests.size());
+    Assert.assertEquals(JOIN_EMAIL_2, newRequests.get(0));
+  }
+
   private Entity makeClubEntity() {
     helper.setEnvEmail(TEST_EMAIL).setEnvAuthDomain("google.com").setEnvIsLoggedIn(true);
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
@@ -238,6 +349,16 @@ public class EditClubServletTest {
     clubEntity.setProperty(
         Constants.MEMBER_PROP,
         ImmutableList.of(TEST_EMAIL, "meganshi@google.com", "kakm@google.com", "kshao@google.com"));
+    clubEntity.setProperty(Constants.REQUEST_PROP, ImmutableList.of(JOIN_EMAIL_1, JOIN_EMAIL_2));
+
+    Entity testStudent1 = new Entity(JOIN_EMAIL_1);
+    testStudent1.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(testStudent1);
+
+    Entity testStudent2 = new Entity(JOIN_EMAIL_2);
+    testStudent2.setProperty(Constants.PROPERTY_CLUBS, ImmutableList.of());
+    datastore.put(testStudent2);
+
     return clubEntity;
   }
 }

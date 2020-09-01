@@ -106,6 +106,7 @@ public class ClubServletTest {
     Assert.assertEquals(STUDENT_LIST, clubEntity.getProperty(Constants.OFFICER_PROP));
     Assert.assertEquals(SAMPLE_CAL_ID, clubEntity.getProperty(Constants.CALENDAR_PROP));
     Assert.assertFalse((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
+    Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
 
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
@@ -129,6 +130,7 @@ public class ClubServletTest {
 
     Assert.assertEquals(SAMPLE_CLUB_NAME, clubEntity.getProperty(Constants.PROPERTY_NAME));
     Assert.assertTrue((Boolean) clubEntity.getProperty(Constants.EXCLUSIVE_PROP));
+    Assert.assertEquals(null, clubEntity.getProperty(Constants.REQUEST_PROP));
     Mockito.verify(response).sendRedirect("/registration-msg.html?is-valid=true");
   }
 
@@ -162,6 +164,7 @@ public class ClubServletTest {
     when(principal.getName()).thenReturn(officerEmail);
     ImmutableList<String> expectedMembers = ImmutableList.of("student@example.com", officerEmail);
     ImmutableList<String> expectedOfficers = ImmutableList.of(officerEmail);
+    ImmutableList<String> joinRequests = ImmutableList.of(TEST_EMAIL);
 
     Entity clubEntity = new Entity(Constants.CLUB_ENTITY_PROP);
     clubEntity.setProperty(Constants.PROPERTY_NAME, SAMPLE_CLUB_NAME);
@@ -172,6 +175,7 @@ public class ClubServletTest {
     clubEntity.setProperty(Constants.LOGO_PROP, SAMPLE_BLOB);
     clubEntity.setProperty(Constants.CALENDAR_PROP, SAMPLE_CAL_ID);
     clubEntity.setProperty(Constants.EXCLUSIVE_PROP, true);
+    clubEntity.setProperty(Constants.REQUEST_PROP, joinRequests);
     clubEntity.setProperty(Constants.TIME_PROP, SAMPLE_TIME);
     datastore.put(clubEntity);
 
@@ -184,9 +188,9 @@ public class ClubServletTest {
     JsonElement responseJsonElement = new JsonParser().parse(responseStr);
     JsonObject response = (JsonObject) responseJsonElement;
     response = response.get("club").getAsJsonObject();
-
     ImmutableList<String> actualMembers = convertJsonList(response.get(Constants.MEMBER_PROP));
     ImmutableList<String> actualOfficers = convertJsonList(response.get(Constants.OFFICER_PROP));
+    ImmutableList<String> actualRequests = convertJsonList(response.get(Constants.REQUEST_PROP));
 
     Assert.assertEquals(SAMPLE_CLUB_NAME, response.get(Constants.PROPERTY_NAME).getAsString());
     Assert.assertEquals("test description", response.get(Constants.DESCRIP_PROP).getAsString());
@@ -195,6 +199,7 @@ public class ClubServletTest {
     Assert.assertEquals("website.com", response.get(Constants.WEBSITE_PROP).getAsString());
     Assert.assertEquals(SAMPLE_CAL_ID, response.get(Constants.CALENDAR_PROP).getAsString());
     Assert.assertTrue(response.get(Constants.EXCLUSIVE_PROP).getAsBoolean());
+    Assert.assertEquals(joinRequests, actualRequests);
     Assert.assertEquals(SAMPLE_TIME, response.get(Constants.TIME_PROP).getAsLong());
   }
 
