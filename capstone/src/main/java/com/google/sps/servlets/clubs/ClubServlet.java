@@ -198,7 +198,10 @@ public class ClubServlet extends AbstractAppEngineAuthorizationCodeServlet {
             .setTimeZone(Constants.TIME_ZONE);
     String createdCalendarId = service.calendars().insert(calendar).execute().getId();
     // Enable reader permission for user
-    AclRule rule = new AclRule().setScope(new Scope().setType("default")).setRole("reader");
+    AclRule rule =
+        new AclRule()
+            .setScope(new Scope().setType(Constants.DEFAULT))
+            .setRole(USER_CALENDAR_PERMISSIONS);
     service.acl().insert(createdCalendarId, rule).execute();
     return createdCalendarId;
   }
