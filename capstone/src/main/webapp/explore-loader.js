@@ -33,9 +33,11 @@ async function getListings () {
   var query = '/explore?sort=' + sortType + '&labels=' + labels;
   const response = await fetch(query);
   const json = await response.json();
-  document.getElementById('no-clubs-message').innerText = json.noClubsMessage;
   if (json.noClubsMessage == '') {
     loadListings(json.clubs, json.studentClubs, json.studentInterestedClubs);
+  }
+  else {
+    document.getElementById('no-clubs-message').innerText = json.noClubsMessage;
   }
 }
 
@@ -54,9 +56,7 @@ async function loadListings (clubs, studentClubs, interestedClubs) {
     template.content.querySelector('#exclusive').innerHTML = club['exclusive'] ? 'Exclusive' : '';
     template.content.querySelector('#members').innerHTML = club.members.length + ' members';
     template.content.querySelector('.join-button').value = club.name;
-    if (club['exclusive']) {
-      template.content.querySelector('.join-button').innerText = 'Request to Join';
-    }
+    template.content.querySelector('.join-button').innerText = club['exclusive'] ? 'Request to Join' : "Join";
     template.content.querySelector('.interested-join-button').value = club.name;
     var clone = document.importNode(template.content, true);
     document.getElementById('club-listings').appendChild(clone);
